@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hourly to Salary Calculator — Convert Wage to Annual Pay</title>
+  <meta name="description" content="Convert hourly pay to annual salary or salary to hourly rate. Accounts for hours per week, weeks per year, paid time off, and overtime.">
+  <meta name="keywords" content="hourly to salary calculator, hourly to annual salary, salary to hourly calculator, wage converter, hourly rate calculator, annual pay calculator">
+  <meta property="og:title" content="Hourly to Salary Calculator — Convert Wage to Annual Pay">
+  <meta property="og:description" content="Convert hourly pay to annual salary or salary to hourly rate. Accounts for hours per week, weeks per year, paid time off, and overtime.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/hourly-to-salary/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/hourly-to-salary/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>⏰</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--muted:#8b949e;--green:#3fb950;--text:#e6edf3;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+    body { background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;padding:0 0 80px; }
+    a { color:var(--accent);text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px; }
+    header .logo { font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:-0.3px; }
+    header .logo span { color:var(--accent); }
+    .back-link { color:var(--muted);font-size:0.85rem; }
+    .container { max-width:680px;margin:0 auto;padding:32px 20px; }
+    .page-title { font-size:1.75rem;font-weight:700;margin:12px 0 6px;letter-spacing:-0.5px; }
+    .page-subtitle { color:var(--muted);font-size:0.95rem;margin-bottom:28px; }
+    .card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px; }
+    .card-title { font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:18px; }
+    .section-divider { border:none;border-top:1px solid var(--border);margin:24px 0; }
+    .section-label { font-size:0.85rem;font-weight:600;color:var(--accent);margin-bottom:16px;letter-spacing:0.03em; }
+    .fields-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    @media (max-width:520px) { .fields-grid { grid-template-columns:1fr; } .page-title { font-size:1.4rem; } }
+    .field { display:flex;flex-direction:column;gap:6px; }
+    label { font-size:0.85rem;color:var(--muted);font-weight:500; }
+    input[type="number"],input[type="text"],select { background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font);font-size:0.95rem;padding:9px 12px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
+    input:focus,select:focus { outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12); }
+    .calc-btn { margin-top:20px;background:var(--accent);color:#0d1117;border:none;border-radius:6px;font-family:var(--font);font-size:0.95rem;font-weight:600;padding:11px 28px;cursor:pointer;transition:opacity 0.15s;width:100%; }
+    .calc-btn:hover { opacity:0.88; }
+    #results1, #results2 { display:none; }
+    .results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+    @media (max-width:520px) { .results-grid { grid-template-columns:1fr 1fr; } }
+    .result-card { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center; }
+    .result-card.primary { border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,0.15); }
+    .result-label { font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:8px; }
+    .result-value { font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.5px; }
+    .result-card.primary .result-value { font-size:1.9rem;color:var(--green); }
+    .explainer { color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px; }
+    .explainer h2 { color:var(--text);font-size:1.1rem;font-weight:600;margin:24px 0 10px; }
+    .footer { margin-top:40px;padding-top:20px;border-top:1px solid #21262d;font-size:0.8rem;color:#6e7681;text-align:center; }
+    .footer a { color:var(--accent); }
+    .coffee-btn { position:fixed;bottom:24px;right:24px;z-index:100;background:#ffdd00;color:#000;font-size:0.8rem;font-weight:700;padding:10px 16px;border-radius:24px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.15s; }
+    .coffee-btn:hover { opacity:0.9;text-decoration:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Profiterole <span>Finance</span></div>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <div class="page-title">Hourly to Salary Calculator</div>
+  <div class="page-subtitle">Convert hourly pay to annual salary or salary to hourly rate. Accounts for hours per week, weeks per year, paid time off, and overtime.</div>
+
+  <!-- Hourly → Salary -->
+  <div class="card">
+    <div class="card-title">Hourly → Annual Salary</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="hourlyRate">Hourly Rate ($)</label>
+        <input type="number" id="hourlyRate" value="25" min="0" step="0.25" oninput="calcHourly()">
+      </div>
+      <div class="field">
+        <label for="hoursPerWeek">Hours per Week</label>
+        <input type="number" id="hoursPerWeek" value="40" min="1" max="168" step="1" oninput="calcHourly()">
+      </div>
+      <div class="field">
+        <label for="weeksPerYear">Weeks Worked per Year</label>
+        <input type="number" id="weeksPerYear" value="52" min="1" max="52" step="1" oninput="calcHourly()">
+      </div>
+      <div class="field">
+        <label for="otHours">Overtime Hours/Week</label>
+        <input type="number" id="otHours" value="0" min="0" step="0.5" oninput="calcHourly()">
+      </div>
+      <div class="field">
+        <label for="otMultiplier">Overtime Multiplier</label>
+        <input type="number" id="otMultiplier" value="1.5" min="1" step="0.1" oninput="calcHourly()">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcHourly()">Calculate Annual Salary</button>
+  </div>
+
+  <div id="results1">
+    <div class="card">
+      <div class="card-title">Hourly → Salary Results</div>
+      <div class="results-grid">
+        <div class="result-card primary">
+          <div class="result-label">Annual Salary</div>
+          <div class="result-value" id="annualSalary">—</div>
+        </div>
+        <div class="result-card primary">
+          <div class="result-label">Annual w/ Overtime</div>
+          <div class="result-value" id="annualOT">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Monthly Pay</div>
+          <div class="result-value" id="monthlyPay">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Bi-Weekly Pay</div>
+          <div class="result-value" id="biweeklyPay">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Weekly Pay</div>
+          <div class="result-value" id="weeklyPay">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Daily Pay</div>
+          <div class="result-value" id="dailyPay">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salary → Hourly -->
+  <div class="card">
+    <div class="card-title">Salary → Hourly Rate</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="annualInput">Annual Salary ($)</label>
+        <input type="number" id="annualInput" value="52000" min="0" step="1000" oninput="calcSalary()">
+      </div>
+      <div class="field">
+        <label for="hoursWeek2">Hours per Week</label>
+        <input type="number" id="hoursWeek2" value="40" min="1" max="168" step="1" oninput="calcSalary()">
+      </div>
+      <div class="field">
+        <label for="weeksYear2">Weeks per Year</label>
+        <input type="number" id="weeksYear2" value="52" min="1" max="52" step="1" oninput="calcSalary()">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcSalary()">Calculate Hourly Rate</button>
+  </div>
+
+  <div id="results2">
+    <div class="card">
+      <div class="card-title">Salary → Hourly Results</div>
+      <div class="results-grid">
+        <div class="result-card primary">
+          <div class="result-label">Hourly Rate</div>
+          <div class="result-value" id="hourlyResult">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Effective Hourly (50 wks)</div>
+          <div class="result-value" id="effectiveHourly">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Monthly Pay</div>
+          <div class="result-value" id="monthlyResult">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>How to Use This Calculator</h2>
+    <p>Use the top section to convert an hourly wage to annual salary — enter your hourly rate, typical hours per week, and how many weeks a year you actually work (account for PTO and holidays). Add overtime hours if applicable. Use the bottom section to reverse the calculation from a salary offer back to an hourly equivalent.</p>
+
+    <h2>Understanding Hourly vs. Salary Compensation</h2>
+    <p>The standard "hourly to annual" shortcut multiplies your hourly rate by 2,000 (40 hrs x 50 weeks). But that ignores overtime, actual weeks worked, and unpaid time off. A salaried employee earning $52,000 sounds like $25/hr — but if they regularly work 50-hour weeks, their effective rate drops to $20/hr. This calculator shows you the real numbers so you can compare job offers on equal footing. When evaluating total compensation, always consider benefits, PTO, and whether overtime is paid.</p>
+  </div>
+
+  <div class="footer">
+    <p>Part of <a href="/profiterole-blog/finance/">Profiterole Finance Hub</a> — Free financial calculators.</p>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+  const fmt = (n) => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const fmtShort = (n) => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  function calcHourly() {
+    const rate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+    const hrs = parseFloat(document.getElementById('hoursPerWeek').value) || 0;
+    const weeks = parseFloat(document.getElementById('weeksPerYear').value) || 52;
+    const otHrs = parseFloat(document.getElementById('otHours').value) || 0;
+    const otMult = parseFloat(document.getElementById('otMultiplier').value) || 1.5;
+
+    if (rate <= 0 || hrs <= 0) return;
+
+    const weeklyRegular = rate * hrs;
+    const annualSalary = weeklyRegular * weeks;
+
+    const weeklyOT = rate * otMult * otHrs;
+    const annualOT = annualSalary + weeklyOT * weeks;
+
+    const monthly = annualSalary / 12;
+    const biweekly = annualSalary / 26;
+    const weekly = annualSalary / 52;
+    const daily = rate * (hrs / 5);
+
+    document.getElementById('annualSalary').textContent = fmt(annualSalary);
+    document.getElementById('annualOT').textContent = fmt(annualOT);
+    document.getElementById('monthlyPay').textContent = fmt(monthly);
+    document.getElementById('biweeklyPay').textContent = fmt(biweekly);
+    document.getElementById('weeklyPay').textContent = fmt(weekly);
+    document.getElementById('dailyPay').textContent = fmt(daily);
+    document.getElementById('results1').style.display = 'block';
+  }
+
+  function calcSalary() {
+    const annual = parseFloat(document.getElementById('annualInput').value) || 0;
+    const hrs = parseFloat(document.getElementById('hoursWeek2').value) || 40;
+    const weeks = parseFloat(document.getElementById('weeksYear2').value) || 52;
+
+    if (annual <= 0 || hrs <= 0 || weeks <= 0) return;
+
+    const totalHours = hrs * weeks;
+    const hourly = annual / totalHours;
+    const effective50 = annual / (hrs * 50);
+    const monthly = annual / 12;
+
+    document.getElementById('hourlyResult').textContent = fmt(hourly);
+    document.getElementById('effectiveHourly').textContent = fmt(effective50);
+    document.getElementById('monthlyResult').textContent = fmt(monthly);
+    document.getElementById('results2').style.display = 'block';
+  }
+
+  calcHourly();
+  calcSalary();
+</script>
+</body>
+</html>

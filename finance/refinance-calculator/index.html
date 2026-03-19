@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mortgage Refinance Calculator — Break-Even Analysis</title>
+  <meta name="description" content="Should you refinance? Calculate your monthly savings, closing costs, and how long until refinancing pays off.">
+  <meta name="keywords" content="mortgage refinance calculator, refinance break-even, should I refinance, refinance savings calculator, closing costs payoff">
+  <meta property="og:title" content="Mortgage Refinance Calculator — Break-Even Analysis">
+  <meta property="og:description" content="Should you refinance? Calculate your monthly savings, closing costs, and how long until refinancing pays off.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/refinance-calculator/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/refinance-calculator/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🏠</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--muted:#8b949e;--green:#3fb950;--red:#f85149;--text:#e6edf3;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+    body { background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;padding:0 0 80px; }
+    a { color:var(--accent);text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px; }
+    header .logo { font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:-0.3px; }
+    header .logo span { color:var(--accent); }
+    .back-link { color:var(--muted);font-size:0.85rem; }
+    .container { max-width:680px;margin:0 auto;padding:32px 20px; }
+    .page-title { font-size:1.75rem;font-weight:700;margin:12px 0 6px;letter-spacing:-0.5px; }
+    .page-subtitle { color:var(--muted);font-size:0.95rem;margin-bottom:28px; }
+    .card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px; }
+    .card-title { font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:18px; }
+    .fields-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    @media (max-width:520px) { .fields-grid { grid-template-columns:1fr; } .page-title { font-size:1.4rem; } }
+    .field { display:flex;flex-direction:column;gap:6px; }
+    label { font-size:0.85rem;color:var(--muted);font-weight:500; }
+    input[type="number"],input[type="text"],select { background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font);font-size:0.95rem;padding:9px 12px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
+    input:focus,select:focus { outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12); }
+    .calc-btn { margin-top:20px;background:var(--accent);color:#0d1117;border:none;border-radius:6px;font-family:var(--font);font-size:0.95rem;font-weight:600;padding:11px 28px;cursor:pointer;transition:opacity 0.15s;width:100%; }
+    .calc-btn:hover { opacity:0.88; }
+    #results { display:none; }
+    .results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+    @media (max-width:520px) { .results-grid { grid-template-columns:1fr 1fr; } }
+    .result-card { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center; }
+    .result-card.primary { border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,0.15); }
+    .result-card.warning { border-color:var(--red);box-shadow:0 0 0 1px rgba(248,81,73,0.15); }
+    .result-label { font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:8px; }
+    .result-value { font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.5px; }
+    .result-card.primary .result-value { font-size:1.9rem;color:var(--green); }
+    .result-card.warning .result-value { color:var(--red); }
+    .warning-note { background:#1c1117;border:1px solid var(--red);border-radius:8px;padding:14px 16px;color:var(--red);font-size:0.88rem;margin-bottom:20px; }
+    .good-note { background:#0d1f12;border:1px solid var(--green);border-radius:8px;padding:14px 16px;color:var(--green);font-size:0.88rem;margin-bottom:20px; }
+    #advisoryNote { display:none; }
+    .explainer { color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px; }
+    .explainer h2 { color:var(--text);font-size:1.1rem;font-weight:600;margin:24px 0 10px; }
+    .footer { margin-top:40px;padding-top:20px;border-top:1px solid #21262d;font-size:0.8rem;color:#6e7681;text-align:center; }
+    .footer a { color:var(--accent); }
+    .coffee-btn { position:fixed;bottom:24px;right:24px;z-index:100;background:#ffdd00;color:#000;font-size:0.8rem;font-weight:700;padding:10px 16px;border-radius:24px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.15s; }
+    .coffee-btn:hover { opacity:0.9;text-decoration:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Profiterole <span>Finance</span></div>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <div class="page-title">Mortgage Refinance Calculator</div>
+  <div class="page-subtitle">Should you refinance? Calculate your monthly savings, closing costs, and how long until refinancing pays off.</div>
+
+  <div class="card">
+    <div class="card-title">Current Loan</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="balance">Current Loan Balance ($)</label>
+        <input type="number" id="balance" value="300000" min="0" step="1000" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="currentRate">Current Rate (%)</label>
+        <input type="number" id="currentRate" value="7.0" min="0" step="0.1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="remainingTerm">Remaining Term (years)</label>
+        <input type="number" id="remainingTerm" value="25" min="1" max="50" step="1" oninput="calculate()">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">New Loan</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="newRate">New Rate (%)</label>
+        <input type="number" id="newRate" value="6.0" min="0" step="0.1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="newTerm">New Term (years)</label>
+        <input type="number" id="newTerm" value="30" min="1" max="50" step="1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="closingCosts">Closing Costs ($)</label>
+        <input type="number" id="closingCosts" value="5000" min="0" step="100" oninput="calculate()">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Refinance Savings</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="card-title">Monthly Payment Comparison</div>
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="result-label">Current Payment</div>
+          <div class="result-value" id="currentPayment">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">New Payment</div>
+          <div class="result-value" id="newPayment">—</div>
+        </div>
+        <div class="result-card primary">
+          <div class="result-label">Monthly Savings</div>
+          <div class="result-value" id="monthlySavings">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Break-Even Analysis</div>
+      <div id="advisoryNote"></div>
+      <div class="results-grid">
+        <div class="result-card" id="breakEvenCard">
+          <div class="result-label">Break-Even</div>
+          <div class="result-value" id="breakEvenMonths">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Break-Even Date</div>
+          <div class="result-value" id="breakEvenDate" style="font-size:1.1rem">—</div>
+        </div>
+        <div class="result-card primary">
+          <div class="result-label">5-Year Net Savings</div>
+          <div class="result-value" id="fiveYearSavings">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>How to Use This Calculator</h2>
+    <p>Enter your current loan balance, interest rate, and remaining term. Then enter the proposed new rate, new loan term, and estimated closing costs. The calculator instantly shows your monthly payment change and how many months until refinancing breaks even.</p>
+
+    <h2>Understanding Refinance Break-Even</h2>
+    <p>Refinancing costs money upfront (closing costs typically run 2–5% of the loan balance) but saves money each month. The break-even point is when cumulative monthly savings equal those upfront costs. If you plan to stay in the home past the break-even date, refinancing usually makes financial sense. If you might move before then, the costs may outweigh the savings. A rate drop of even 0.5–1% can be worth refinancing if you have a large balance and intend to stay long-term.</p>
+  </div>
+
+  <div class="footer">
+    <p>Part of <a href="/profiterole-blog/finance/">Profiterole Finance Hub</a> — Free financial calculators.</p>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+  const fmt = (n) => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  function monthlyPayment(principal, annualRate, termYears) {
+    const r = annualRate / 100 / 12;
+    const n = termYears * 12;
+    if (r === 0) return principal / n;
+    return principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function calculate() {
+    const balance = parseFloat(document.getElementById('balance').value) || 0;
+    const currentRate = parseFloat(document.getElementById('currentRate').value) || 0;
+    const remainingTerm = parseFloat(document.getElementById('remainingTerm').value) || 0;
+    const newRate = parseFloat(document.getElementById('newRate').value) || 0;
+    const newTerm = parseFloat(document.getElementById('newTerm').value) || 0;
+    const closingCosts = parseFloat(document.getElementById('closingCosts').value) || 0;
+
+    if (balance <= 0 || remainingTerm <= 0 || newTerm <= 0) return;
+
+    const currentPmt = monthlyPayment(balance, currentRate, remainingTerm);
+    const newPmt = monthlyPayment(balance, newRate, newTerm);
+    const savings = currentPmt - newPmt;
+
+    document.getElementById('currentPayment').textContent = fmt(currentPmt);
+    document.getElementById('newPayment').textContent = fmt(newPmt);
+    document.getElementById('monthlySavings').textContent = savings >= 0 ? fmt(savings) : '-' + fmt(Math.abs(savings));
+
+    const noteEl = document.getElementById('advisoryNote');
+    const breakEvenCard = document.getElementById('breakEvenCard');
+
+    if (savings <= 0) {
+      document.getElementById('breakEvenMonths').textContent = 'N/A';
+      document.getElementById('breakEvenDate').textContent = 'N/A';
+      document.getElementById('fiveYearSavings').textContent = fmt(savings * 60 - closingCosts);
+      noteEl.className = 'warning-note';
+      noteEl.textContent = 'Warning: The new rate does not reduce your monthly payment. Refinancing is not recommended in this scenario.';
+      noteEl.style.display = 'block';
+      breakEvenCard.className = 'result-card warning';
+    } else {
+      const breakEvenMonths = closingCosts / savings;
+      const fiveYearNet = savings * 60 - closingCosts;
+
+      document.getElementById('breakEvenMonths').textContent = Math.ceil(breakEvenMonths) + ' mo';
+      breakEvenCard.className = breakEvenMonths > 60 ? 'result-card warning' : 'result-card';
+
+      const today = new Date();
+      today.setMonth(today.getMonth() + Math.ceil(breakEvenMonths));
+      const dateStr = today.toLocaleDateString('en-US', {month:'short', year:'numeric'});
+      document.getElementById('breakEvenDate').textContent = dateStr;
+      document.getElementById('fiveYearSavings').textContent = fmt(fiveYearNet);
+
+      if (breakEvenMonths > 60) {
+        noteEl.className = 'warning-note';
+        noteEl.textContent = 'Warning: Break-even takes over 5 years. This may not make sense unless you plan to stay in the home long-term.';
+        noteEl.style.display = 'block';
+      } else {
+        noteEl.className = 'good-note';
+        noteEl.textContent = 'Refinancing looks favorable — you recover closing costs in under 5 years.';
+        noteEl.style.display = 'block';
+      }
+    }
+
+    document.getElementById('results').style.display = 'block';
+  }
+
+  calculate();
+</script>
+</body>
+</html>

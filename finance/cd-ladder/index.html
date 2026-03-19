@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CD Ladder Calculator — Optimize Your CD Investments</title>
+  <meta name="description" content="Build a CD ladder strategy. Calculate earnings and maturity schedule for a multi-rung CD ladder to maximize yield while maintaining liquidity.">
+  <meta name="keywords" content="CD ladder calculator, certificate of deposit ladder, CD ladder strategy, CD investment calculator, CD maturity schedule">
+  <meta property="og:title" content="CD Ladder Calculator — Optimize Your CD Investments">
+  <meta property="og:description" content="Build a CD ladder strategy. Calculate earnings and maturity schedule for a multi-rung CD ladder to maximize yield while maintaining liquidity.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/cd-ladder/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/cd-ladder/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🏦</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--muted:#8b949e;--green:#3fb950;--text:#e6edf3;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+    body { background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;padding:0 0 80px; }
+    a { color:var(--accent);text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px; }
+    header .logo { font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:-0.3px; }
+    header .logo span { color:var(--accent); }
+    .back-link { color:var(--muted);font-size:0.85rem; }
+    .container { max-width:720px;margin:0 auto;padding:32px 20px; }
+    .page-title { font-size:1.75rem;font-weight:700;margin:12px 0 6px;letter-spacing:-0.5px; }
+    .page-subtitle { color:var(--muted);font-size:0.95rem;margin-bottom:28px; }
+    .card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px; }
+    .card-title { font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:18px; }
+    .fields-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    @media (max-width:520px) { .fields-grid { grid-template-columns:1fr; } .page-title { font-size:1.4rem; } }
+    .field { display:flex;flex-direction:column;gap:6px; }
+    label { font-size:0.85rem;color:var(--muted);font-weight:500; }
+    input[type="number"],input[type="text"],select { background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font);font-size:0.95rem;padding:9px 12px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
+    input:focus,select:focus { outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12); }
+    .calc-btn { margin-top:20px;background:var(--accent);color:#0d1117;border:none;border-radius:6px;font-family:var(--font);font-size:0.95rem;font-weight:600;padding:11px 28px;cursor:pointer;transition:opacity 0.15s;width:100%; }
+    .calc-btn:hover { opacity:0.88; }
+    #results { display:none; }
+    .results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+    @media (max-width:520px) { .results-grid { grid-template-columns:1fr 1fr; } }
+    .result-card { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center; }
+    .result-card.primary { border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,0.15); }
+    .result-label { font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:8px; }
+    .result-value { font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.5px; }
+    .result-card.primary .result-value { font-size:1.9rem;color:var(--green); }
+    /* Table styles */
+    .table-wrap { overflow-x:auto;margin-bottom:20px; }
+    table { width:100%;border-collapse:collapse;font-size:0.88rem; }
+    thead th { background:var(--bg);color:var(--muted);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap; }
+    tbody tr { border-bottom:1px solid var(--border); }
+    tbody tr:last-child { border-bottom:none; }
+    tbody td { padding:10px 12px;color:var(--text); }
+    tbody tr:hover { background:rgba(88,166,255,0.04); }
+    .td-green { color:var(--green);font-weight:600; }
+    tfoot td { padding:10px 12px;font-weight:700;border-top:1px solid var(--accent);color:var(--text); }
+    .field-hidden { display:none; }
+    .explainer { color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px; }
+    .explainer h2 { color:var(--text);font-size:1.1rem;font-weight:600;margin:24px 0 10px; }
+    .footer { margin-top:40px;padding-top:20px;border-top:1px solid #21262d;font-size:0.8rem;color:#6e7681;text-align:center; }
+    .footer a { color:var(--accent); }
+    .coffee-btn { position:fixed;bottom:24px;right:24px;z-index:100;background:#ffdd00;color:#000;font-size:0.8rem;font-weight:700;padding:10px 16px;border-radius:24px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.15s; }
+    .coffee-btn:hover { opacity:0.9;text-decoration:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Profiterole <span>Finance</span></div>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <div class="page-title">CD Ladder Calculator</div>
+  <div class="page-subtitle">Build a CD ladder strategy. Calculate earnings and maturity schedule for a multi-rung CD ladder to maximize yield while maintaining liquidity.</div>
+
+  <div class="card">
+    <div class="card-title">Ladder Settings</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="totalInvestment">Total Investment ($)</label>
+        <input type="number" id="totalInvestment" value="50000" min="0" step="1000" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="numCDs">Number of CDs (Rungs)</label>
+        <select id="numCDs" onchange="updateFields(); calculate();">
+          <option value="3">3 CDs</option>
+          <option value="4">4 CDs</option>
+          <option value="5" selected>5 CDs</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">APY by Term</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="apy1">1-Year APY (%)</label>
+        <input type="number" id="apy1" value="4.8" min="0" step="0.1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="apy2">2-Year APY (%)</label>
+        <input type="number" id="apy2" value="4.6" min="0" step="0.1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="apy3">3-Year APY (%)</label>
+        <input type="number" id="apy3" value="4.5" min="0" step="0.1" oninput="calculate()">
+      </div>
+      <div class="field" id="field4">
+        <label for="apy4">4-Year APY (%)</label>
+        <input type="number" id="apy4" value="4.4" min="0" step="0.1" oninput="calculate()">
+      </div>
+      <div class="field" id="field5">
+        <label for="apy5">5-Year APY (%)</label>
+        <input type="number" id="apy5" value="4.3" min="0" step="0.1" oninput="calculate()">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Build CD Ladder</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="card-title">Summary</div>
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="result-label">Total Invested</div>
+          <div class="result-value" id="sumInvested">—</div>
+        </div>
+        <div class="result-card primary">
+          <div class="result-label">Total Interest</div>
+          <div class="result-value" id="sumInterest">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Total at Maturity</div>
+          <div class="result-value" id="sumMaturity">—</div>
+        </div>
+        <div class="result-card" style="grid-column:1/-1">
+          <div class="result-label">Average Weighted APY</div>
+          <div class="result-value" id="weightedAPY">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">CD Ladder Schedule</div>
+      <div class="table-wrap">
+        <table id="ladderTable">
+          <thead>
+            <tr>
+              <th>CD #</th>
+              <th>Investment</th>
+              <th>APY</th>
+              <th>Term</th>
+              <th>Maturity Value</th>
+              <th>Interest</th>
+              <th>Maturity Date</th>
+            </tr>
+          </thead>
+          <tbody id="ladderBody"></tbody>
+          <tfoot id="ladderFoot"></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>How to Use This Calculator</h2>
+    <p>Enter your total investment amount and choose how many CD rungs you want (3–5). Then set the APY for each term length. The calculator splits your money equally across all rungs and shows exactly what each CD will be worth at maturity, plus when it matures.</p>
+
+    <h2>Understanding CD Ladders</h2>
+    <p>A CD ladder is a strategy where you spread your money across multiple CDs with staggered maturity dates. When each CD matures, you reinvest it into a new long-term CD. The benefit: you get the higher rates of longer-term CDs while still having regular access to cash. A 5-rung ladder gives you one CD maturing every year, so you're never locked out of your money for more than 12 months. This beats keeping everything in a 1-year CD (lower rates) or a single 5-year CD (no liquidity).</p>
+  </div>
+
+  <div class="footer">
+    <p>Part of <a href="/profiterole-blog/finance/">Profiterole Finance Hub</a> — Free financial calculators.</p>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+  const fmt = (n) => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  function updateFields() {
+    const n = parseInt(document.getElementById('numCDs').value);
+    document.getElementById('field4').style.display = n >= 4 ? 'flex' : 'none';
+    document.getElementById('field5').style.display = n >= 5 ? 'flex' : 'none';
+  }
+
+  function calculate() {
+    const total = parseFloat(document.getElementById('totalInvestment').value) || 0;
+    const n = parseInt(document.getElementById('numCDs').value);
+    const apys = [];
+    for (let i = 1; i <= n; i++) {
+      apys.push(parseFloat(document.getElementById('apy' + i).value) || 0);
+    }
+
+    if (total <= 0) return;
+
+    const perCD = total / n;
+    const today = new Date();
+    const tbody = document.getElementById('ladderBody');
+    const tfoot = document.getElementById('ladderFoot');
+    tbody.innerHTML = '';
+
+    let totalInterest = 0;
+    let totalMaturity = 0;
+    let weightedAPYSum = 0;
+
+    for (let i = 0; i < n; i++) {
+      const term = i + 1;
+      const apy = apys[i];
+      const maturityValue = perCD * Math.pow(1 + apy / 100, term);
+      const interest = maturityValue - perCD;
+      totalInterest += interest;
+      totalMaturity += maturityValue;
+      weightedAPYSum += apy;
+
+      const matDate = new Date(today);
+      matDate.setFullYear(matDate.getFullYear() + term);
+      const matDateStr = matDate.toLocaleDateString('en-US', {month:'short', year:'numeric'});
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>CD ${i + 1}</td>
+        <td>${fmt(perCD)}</td>
+        <td>${apy.toFixed(2)}%</td>
+        <td>${term} yr${term > 1 ? 's' : ''}</td>
+        <td>${fmt(maturityValue)}</td>
+        <td class="td-green">${fmt(interest)}</td>
+        <td>${matDateStr}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    const avgAPY = weightedAPYSum / n;
+
+    tfoot.innerHTML = `
+      <tr>
+        <td colspan="4">Totals</td>
+        <td>${fmt(totalMaturity)}</td>
+        <td class="td-green">${fmt(totalInterest)}</td>
+        <td></td>
+      </tr>
+    `;
+
+    document.getElementById('sumInvested').textContent = fmt(total);
+    document.getElementById('sumInterest').textContent = fmt(totalInterest);
+    document.getElementById('sumMaturity').textContent = fmt(totalMaturity);
+    document.getElementById('weightedAPY').textContent = avgAPY.toFixed(2) + '%';
+    document.getElementById('results').style.display = 'block';
+  }
+
+  updateFields();
+  calculate();
+</script>
+</body>
+</html>
