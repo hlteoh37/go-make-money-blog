@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>W-4 Tax Withholding Calculator 2024 — Free, No Login</title>
+  <meta name="description" content="Calculate your W-4 withholding to avoid owing money or getting a huge refund. Adjust allowances and deductions. Free, instant, no signup.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/w4-calculator/">
+  <meta property="og:title" content="W-4 Tax Withholding Calculator 2024 — Free, No Login">
+  <meta property="og:description" content="Calculate your W-4 withholding to avoid owing money or getting a huge refund. Adjust allowances and deductions. Free, instant, no signup.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/w4-calculator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="W-4 Tax Withholding Calculator 2024 — Free, No Login">
+  <meta name="twitter:description" content="Calculate your W-4 withholding to avoid owing money or getting a huge refund. Free, instant, no signup.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    header .logo span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full-width { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .calc-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    #results { display: none; }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 520px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+
+    .result-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .result-card.primary {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px rgba(63,185,80,0.15);
+    }
+
+    .result-card.warning {
+      border-color: var(--red);
+      box-shadow: 0 0 0 1px rgba(248,81,73,0.15);
+    }
+
+    .result-card.caution {
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 1px rgba(210,153,34,0.15);
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .result-card.primary .result-value { color: var(--green); font-size: 1.9rem; }
+    .result-card.warning .result-value { color: var(--red); }
+    .result-card.caution .result-value { color: var(--yellow); }
+
+    .verdict-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+
+    .verdict-card.refund { border-left: 4px solid var(--green); }
+    .verdict-card.owe { border-left: 4px solid var(--red); }
+    .verdict-card.ok { border-left: 4px solid var(--yellow); }
+
+    .verdict-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .verdict-title.green { color: var(--green); }
+    .verdict-title.red { color: var(--red); }
+    .verdict-title.yellow { color: var(--yellow); }
+
+    .verdict-body {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin-top: 4px;
+    }
+
+    .breakdown-table td {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      color: var(--text);
+    }
+
+    .breakdown-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .breakdown-table tr:last-child td { border-bottom: none; }
+    .breakdown-table .total-row td { font-weight: 700; color: var(--accent); padding-top: 12px; }
+
+    .explainer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .explainer h2 {
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .explainer h3 {
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 16px 0 6px;
+    }
+
+    .explainer p { margin-bottom: 10px; }
+
+    .bmac-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+    }
+
+    .bmac-float a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFDD00;
+      color: #000;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .bmac-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">W-4 Tax Withholding Calculator</h1>
+  <p class="page-subtitle">Find the right withholding to break even at tax time — no nasty surprise bill, no oversized refund.</p>
+
+  <div class="card">
+    <div class="card-title">Your Tax Situation</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="annual-income">Annual Gross Income ($)</label>
+        <input type="number" id="annual-income" value="75000" min="0" step="1000">
+        <span class="field-hint">Total wages before any deductions</span>
+      </div>
+      <div class="field">
+        <label for="filing-status">Filing Status</label>
+        <select id="filing-status">
+          <option value="single">Single</option>
+          <option value="mfj" selected>Married Filing Jointly</option>
+          <option value="mfs">Married Filing Separately</option>
+          <option value="hoh">Head of Household</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="pay-periods">Pay Periods Per Year</label>
+        <select id="pay-periods">
+          <option value="52">Weekly (52)</option>
+          <option value="26" selected>Biweekly (26)</option>
+          <option value="24">Semi-monthly (24)</option>
+          <option value="12">Monthly (12)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="spouse-income">Spouse Income ($)</label>
+        <input type="number" id="spouse-income" value="0" min="0" step="1000">
+        <span class="field-hint">Leave 0 if single or only earner</span>
+      </div>
+      <div class="field">
+        <label for="other-income">Other Income ($)</label>
+        <input type="number" id="other-income" value="0" min="0" step="500">
+        <span class="field-hint">Freelance, dividends, interest, etc.</span>
+      </div>
+      <div class="field">
+        <label for="deductions">Extra Deductions ($)</label>
+        <input type="number" id="deductions" value="0" min="0" step="500">
+        <span class="field-hint">If you itemize above the standard deduction</span>
+      </div>
+      <div class="field">
+        <label for="child-tax-credits">Child Tax Credits ($)</label>
+        <input type="number" id="child-tax-credits" value="0" min="0" step="2000">
+        <span class="field-hint">$2,000 per qualifying child under 17</span>
+      </div>
+      <div class="field">
+        <label for="other-credits">Other Tax Credits ($)</label>
+        <input type="number" id="other-credits" value="0" min="0" step="100">
+        <span class="field-hint">Education, energy, dependent care, etc.</span>
+      </div>
+      <div class="field">
+        <label for="current-withheld">Current Annual Withholding ($)</label>
+        <input type="number" id="current-withheld" value="0" min="0" step="100">
+        <span class="field-hint">Check your last paystub × pay periods</span>
+      </div>
+      <div class="field">
+        <label for="pretax-401k">Pre-Tax 401k / HSA ($)</label>
+        <input type="number" id="pretax-401k" value="0" min="0" step="500">
+        <span class="field-hint">Annual pre-tax retirement/HSA contributions</span>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Withholding</button>
+  </div>
+
+  <div id="results">
+    <div class="results-grid">
+      <div class="result-card primary">
+        <div class="result-label">Federal Tax Owed</div>
+        <div class="result-value" id="res-tax-owed">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Ideal Per-Paycheck Withholding</div>
+        <div class="result-value" id="res-per-paycheck">—</div>
+      </div>
+      <div class="result-card" id="res-diff-card">
+        <div class="result-label">Refund / Amount Owed</div>
+        <div class="result-value" id="res-diff">—</div>
+      </div>
+    </div>
+
+    <div class="verdict-card" id="verdict-card">
+      <div class="verdict-title" id="verdict-title"></div>
+      <div class="verdict-body" id="verdict-body"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tax Calculation Breakdown</div>
+      <table class="breakdown-table">
+        <tbody id="breakdown-body"></tbody>
+      </table>
+    </div>
+
+    <div class="card" style="background: rgba(88,166,255,0.05); border-color: rgba(88,166,255,0.3);">
+      <div class="card-title" style="color: var(--accent);">W-4 Step 4 Adjustments</div>
+      <div id="w4-instructions" style="color: var(--muted); font-size: 0.9rem; line-height: 1.7;"></div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="explainer">
+    <h2>How W-4 Withholding Works</h2>
+    <p>
+      Your W-4 tells your employer how much federal income tax to withhold from each paycheck. The IRS redesigned the form in 2020 — it no longer uses "allowances." Instead, it uses dollar amounts in specific steps.
+    </p>
+
+    <h3>The Goal: Break Even</h3>
+    <p>
+      A big refund sounds nice, but it just means you gave the IRS an interest-free loan all year. A big tax bill at filing means you underpaid and might owe a penalty. Aim to land within a few hundred dollars of zero.
+    </p>
+
+    <h3>W-4 Step 2: Multiple Jobs</h3>
+    <p>
+      If you or your spouse have multiple jobs, tax withholding gets complicated because each employer only knows about one income. Step 2 on the W-4 accounts for this — the IRS withholding estimator is the most accurate tool for this scenario.
+    </p>
+
+    <h3>Step 3: Claim Your Credits</h3>
+    <p>
+      Enter the dollar amount of your credits (e.g., $2,000 per qualifying child). This reduces your withholding directly.
+    </p>
+
+    <h3>Step 4: Fine-Tuning</h3>
+    <p>
+      Use Step 4(a) for other income not subject to withholding. Use 4(b) for extra deductions. Use 4(c) to add a flat dollar amount of additional withholding per paycheck if you want to make sure you don't underpay.
+    </p>
+
+    <h3>When to Update Your W-4</h3>
+    <p>
+      After any major life event: marriage, divorce, new child, second job, large investment income, or purchasing a home. Even if nothing changes, checking once a year is good practice.
+    </p>
+  </div>
+</div>
+
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  function fmt(n) {
+    const abs = Math.abs(n);
+    return '$' + abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function fmtSigned(n) {
+    if (n >= 0) return '+' + fmt(n);
+    return '-' + fmt(n);
+  }
+
+  // 2024 federal tax brackets
+  const brackets = {
+    single: [
+      { limit: 11600, rate: 0.10 },
+      { limit: 47150, rate: 0.12 },
+      { limit: 100525, rate: 0.22 },
+      { limit: 191950, rate: 0.24 },
+      { limit: 243725, rate: 0.32 },
+      { limit: 609350, rate: 0.35 },
+      { limit: Infinity, rate: 0.37 }
+    ],
+    mfj: [
+      { limit: 23200, rate: 0.10 },
+      { limit: 94300, rate: 0.12 },
+      { limit: 201050, rate: 0.22 },
+      { limit: 383900, rate: 0.24 },
+      { limit: 487450, rate: 0.32 },
+      { limit: 731200, rate: 0.35 },
+      { limit: Infinity, rate: 0.37 }
+    ],
+    mfs: [
+      { limit: 11600, rate: 0.10 },
+      { limit: 47150, rate: 0.12 },
+      { limit: 100525, rate: 0.22 },
+      { limit: 191950, rate: 0.24 },
+      { limit: 243725, rate: 0.32 },
+      { limit: 365600, rate: 0.35 },
+      { limit: Infinity, rate: 0.37 }
+    ],
+    hoh: [
+      { limit: 16550, rate: 0.10 },
+      { limit: 63100, rate: 0.12 },
+      { limit: 100500, rate: 0.22 },
+      { limit: 191950, rate: 0.24 },
+      { limit: 243700, rate: 0.32 },
+      { limit: 609350, rate: 0.35 },
+      { limit: Infinity, rate: 0.37 }
+    ]
+  };
+
+  const standardDeductions = {
+    single: 14600,
+    mfj: 29200,
+    mfs: 14600,
+    hoh: 21900
+  };
+
+  function calcTax(taxableIncome, status) {
+    const bkts = brackets[status];
+    let tax = 0;
+    let prev = 0;
+    for (const b of bkts) {
+      if (taxableIncome <= prev) break;
+      const chunk = Math.min(taxableIncome, b.limit) - prev;
+      tax += chunk * b.rate;
+      prev = b.limit;
+    }
+    return Math.max(0, tax);
+  }
+
+  function calculate() {
+    const grossIncome = parseFloat(document.getElementById('annual-income').value) || 0;
+    const status = document.getElementById('filing-status').value;
+    const payPeriods = parseInt(document.getElementById('pay-periods').value);
+    const spouseIncome = parseFloat(document.getElementById('spouse-income').value) || 0;
+    const otherIncome = parseFloat(document.getElementById('other-income').value) || 0;
+    const extraDeductions = parseFloat(document.getElementById('deductions').value) || 0;
+    const childCredits = parseFloat(document.getElementById('child-tax-credits').value) || 0;
+    const otherCredits = parseFloat(document.getElementById('other-credits').value) || 0;
+    const currentWithheld = parseFloat(document.getElementById('current-withheld').value) || 0;
+    const pretax401k = parseFloat(document.getElementById('pretax-401k').value) || 0;
+
+    const totalIncome = grossIncome + spouseIncome + otherIncome;
+    const adjustedGross = totalIncome - pretax401k;
+    const stdDed = standardDeductions[status];
+    const totalDeductions = stdDed + extraDeductions;
+    const taxableIncome = Math.max(0, adjustedGross - totalDeductions);
+    const grossTax = calcTax(taxableIncome, status);
+    const totalCredits = childCredits + otherCredits;
+    const taxOwed = Math.max(0, grossTax - totalCredits);
+
+    const idealWithholding = taxOwed;
+    const perPaycheck = idealWithholding / payPeriods;
+    const diff = currentWithheld - taxOwed; // positive = refund, negative = owe
+
+    document.getElementById('res-tax-owed').textContent = fmt(taxOwed);
+    document.getElementById('res-per-paycheck').textContent = fmt(perPaycheck);
+
+    const diffCard = document.getElementById('res-diff-card');
+    const diffEl = document.getElementById('res-diff');
+
+    if (currentWithheld === 0) {
+      diffEl.textContent = 'Enter current withholding';
+      diffCard.className = 'result-card';
+      diffEl.style.fontSize = '0.9rem';
+    } else if (diff > 50) {
+      diffEl.textContent = '+' + fmt(diff) + ' refund';
+      diffCard.className = 'result-card caution';
+      diffEl.style.fontSize = '1.5rem';
+    } else if (diff < -50) {
+      diffEl.textContent = '-' + fmt(Math.abs(diff)) + ' owed';
+      diffCard.className = 'result-card warning';
+      diffEl.style.fontSize = '1.5rem';
+    } else {
+      diffEl.textContent = 'On track';
+      diffCard.className = 'result-card primary';
+      diffEl.style.fontSize = '1.5rem';
+    }
+
+    // Verdict
+    const verdictCard = document.getElementById('verdict-card');
+    const verdictTitle = document.getElementById('verdict-title');
+    const verdictBody = document.getElementById('verdict-body');
+
+    if (currentWithheld === 0) {
+      verdictCard.className = 'verdict-card ok';
+      verdictTitle.textContent = 'Enter your current withholding for a verdict';
+      verdictTitle.className = 'verdict-title yellow';
+      verdictBody.textContent = 'Look at your most recent paystub for "Federal Income Tax Withheld" and multiply by your annual pay periods to get your annual withholding estimate.';
+    } else if (diff > 500) {
+      verdictCard.className = 'verdict-card refund';
+      verdictTitle.textContent = 'You\'re over-withholding — the IRS owes you money';
+      verdictTitle.className = 'verdict-title green';
+      verdictBody.textContent = `You're on track for a $${Math.round(diff).toLocaleString()} refund. That's money you could have had all year earning interest. Consider increasing your W-4 Step 3 credits or entering additional deductions in Step 4(b) to reduce withholding by about $${Math.round(diff / payPeriods)}/paycheck.`;
+    } else if (diff < -200) {
+      verdictCard.className = 'verdict-card owe';
+      verdictTitle.textContent = 'You\'re under-withholding — you may owe at filing';
+      verdictTitle.className = 'verdict-title red';
+      verdictBody.textContent = `You're on track to owe about $${Math.abs(Math.round(diff)).toLocaleString()} at tax time, plus a potential underpayment penalty. Add an extra $${Math.round(Math.abs(diff) / payPeriods)}/paycheck in W-4 Step 4(c) "Extra withholding" to cover the gap.`;
+    } else {
+      verdictCard.className = 'verdict-card ok';
+      verdictTitle.textContent = 'Your withholding looks about right';
+      verdictTitle.className = 'verdict-title yellow';
+      verdictBody.textContent = `You're within a comfortable margin. At tax filing, expect to ${diff >= 0 ? 'receive a refund of about $' + Math.abs(Math.round(diff)).toLocaleString() : 'owe about $' + Math.abs(Math.round(diff)).toLocaleString()}. No major changes needed.`;
+    }
+
+    // Breakdown table
+    const tbody = document.getElementById('breakdown-body');
+    tbody.innerHTML = '';
+    const rows = [
+      ['Gross income (all sources)', '+' + fmt(totalIncome)],
+      ['Pre-tax deductions (401k/HSA)', '−' + fmt(pretax401k)],
+      ['Adjusted Gross Income (AGI)', fmt(adjustedGross)],
+      ['Standard deduction (' + status.toUpperCase() + ')', '−' + fmt(stdDed)],
+      ['Extra itemized deductions', '−' + fmt(extraDeductions)],
+      ['Taxable income', fmt(taxableIncome)],
+      ['Federal income tax (before credits)', fmt(grossTax)],
+      ['Child tax credits', '−' + fmt(childCredits)],
+      ['Other credits', '−' + fmt(otherCredits)],
+    ];
+    rows.forEach(([label, value]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${label}</td><td>${value}</td>`;
+      tbody.appendChild(tr);
+    });
+    const totalTr = document.createElement('tr');
+    totalTr.className = 'total-row';
+    totalTr.innerHTML = `<td>Total Federal Tax Owed</td><td>${fmt(taxOwed)}</td>`;
+    tbody.appendChild(totalTr);
+
+    // W-4 instructions
+    const w4El = document.getElementById('w4-instructions');
+    const extraPerPay = currentWithheld > 0 ? Math.max(0, Math.round((taxOwed - currentWithheld) / payPeriods)) : 0;
+    w4El.innerHTML = `
+      <strong>Step 3 — Dependents:</strong> Enter <strong>${fmt(childCredits + otherCredits)}</strong> in total qualifying credits.<br><br>
+      <strong>Step 4(a) — Other income:</strong> Enter <strong>${fmt(otherIncome)}</strong> if you have non-wage income.<br><br>
+      <strong>Step 4(b) — Deductions:</strong> Enter <strong>${fmt(Math.max(0, extraDeductions))}</strong> if you itemize above the standard deduction.<br><br>
+      ${extraPerPay > 0
+        ? `<strong>Step 4(c) — Extra withholding:</strong> Consider adding <strong>$${extraPerPay}/paycheck</strong> to avoid underpaying.`
+        : '<strong>Step 4(c) — Extra withholding:</strong> No extra withholding needed based on current inputs.'}
+    `;
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+
+</body>
+</html>

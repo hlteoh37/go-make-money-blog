@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>50/30/20 Budget Planner — Free, No Login</title>
+  <meta name="description" content="Apply the 50/30/20 budgeting rule to your income. Enter your income and expenses to see how much to spend on needs, wants, and savings. Free, instant, no signup.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/budget-planner/">
+  <meta property="og:title" content="50/30/20 Budget Planner — Free, No Login">
+  <meta property="og:description" content="Apply the 50/30/20 budgeting rule to your income. See needs, wants, and savings allocations instantly. Free, instant, no signup.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/budget-planner/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="50/30/20 Budget Planner — Free, No Login">
+  <meta name="twitter:description" content="Apply the 50/30/20 rule to your income. See allocations for needs, wants, and savings. Free, instant, no signup.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --purple: #bc8cff;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    header .logo { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: -0.3px; }
+    header .logo span { color: var(--accent); }
+    .back-link { color: var(--muted); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; }
+    .back-link:hover { color: var(--accent); }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 32px 20px; }
+    .page-title { font-size: 1.75rem; font-weight: 700; margin: 12px 0 6px; letter-spacing: -0.5px; }
+    .page-subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+      .allocation-grid { grid-template-columns: 1fr !important; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+
+    label { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+
+    input[type="number"], select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .field-hint { font-size: 0.75rem; color: var(--muted); opacity: 0.7; }
+
+    .calc-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    #results { display: none; }
+
+    /* Allocation cards */
+    .allocation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .alloc-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .alloc-card.needs { border-top: 3px solid var(--accent); }
+    .alloc-card.wants { border-top: 3px solid var(--purple); }
+    .alloc-card.savings { border-top: 3px solid var(--green); }
+
+    .alloc-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .alloc-icon { font-size: 1.4rem; }
+    .alloc-name { font-weight: 700; font-size: 0.95rem; }
+    .alloc-name.needs { color: var(--accent); }
+    .alloc-name.wants { color: var(--purple); }
+    .alloc-name.savings { color: var(--green); }
+
+    .alloc-pct { font-size: 0.75rem; color: var(--muted); margin-bottom: 12px; }
+
+    .alloc-amounts { display: flex; flex-direction: column; gap: 4px; }
+    .alloc-amount-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .alloc-amount-val { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+    .alloc-amount-val.needs { color: var(--accent); }
+    .alloc-amount-val.wants { color: var(--purple); }
+    .alloc-amount-val.savings { color: var(--green); }
+    .alloc-amount-annual { font-size: 0.8rem; color: var(--muted); }
+
+    /* Progress bar */
+    .progress-bar {
+      height: 12px;
+      background: var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      display: flex;
+    }
+
+    .progress-segment {
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    .progress-segment.needs { background: var(--accent); }
+    .progress-segment.wants { background: var(--purple); }
+    .progress-segment.savings { background: var(--green); }
+    .progress-segment.overage { background: var(--red); }
+
+    /* Actual vs target comparison */
+    .compare-section { margin-bottom: 24px; }
+
+    .compare-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+    }
+
+    .compare-row:last-child { border-bottom: none; }
+    .compare-label { flex: 1; font-size: 0.88rem; color: var(--muted); }
+    .compare-actual { width: 100px; text-align: right; font-size: 0.88rem; font-weight: 600; }
+    .compare-target { width: 100px; text-align: right; font-size: 0.88rem; color: var(--muted); }
+    .compare-status { width: 80px; text-align: right; font-size: 0.78rem; font-weight: 600; }
+    .status-ok { color: var(--green); }
+    .status-over { color: var(--red); }
+    .status-under { color: var(--yellow); }
+
+    /* Category details */
+    .category-section { margin-bottom: 8px; }
+    .category-header {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 12px 0 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .category-header.needs { color: var(--accent); }
+    .category-header.wants { color: var(--purple); }
+    .category-header.savings { color: var(--green); }
+
+    .expense-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(48,54,61,0.3);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .expense-row:last-child { border-bottom: none; }
+    .expense-row .exp-name { flex: 1; }
+    .expense-row .exp-val { font-variant-numeric: tabular-nums; color: var(--text); }
+
+    .explainer { color: var(--muted); font-size: 0.9rem; line-height: 1.75; }
+    .explainer h2 { color: var(--text); font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; }
+    .explainer h3 { color: var(--text); font-size: 0.92rem; font-weight: 600; margin: 16px 0 6px; }
+    .explainer p { margin-bottom: 10px; }
+
+    .bmac-float { position: fixed; bottom: 24px; right: 24px; z-index: 100; }
+    .bmac-float a {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #FFDD00; color: #000;
+      font-family: var(--font); font-size: 0.85rem; font-weight: 700;
+      padding: 10px 16px; border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; white-space: nowrap;
+    }
+    .bmac-float a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">50/30/20 Budget Planner</h1>
+  <p class="page-subtitle">Enter your income and actual expenses to see where you stand against the classic budgeting rule.</p>
+
+  <div class="card">
+    <div class="card-title">Income</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="take-home">Monthly Take-Home Pay ($)</label>
+        <input type="number" id="take-home" value="5000" min="0" step="100">
+        <span class="field-hint">After taxes, 401k, health insurance</span>
+      </div>
+      <div class="field">
+        <label for="other-income-budget">Other Monthly Income ($)</label>
+        <input type="number" id="other-income-budget" value="0" min="0" step="50">
+        <span class="field-hint">Side income, freelance, etc.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Needs — 50% Target (housing, food, utilities, transport, insurance, minimum debt)</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="rent">Rent / Mortgage ($)</label>
+        <input type="number" id="rent" value="1500" min="0" step="50">
+      </div>
+      <div class="field">
+        <label for="utilities">Utilities &amp; Internet ($)</label>
+        <input type="number" id="utilities" value="150" min="0" step="10">
+      </div>
+      <div class="field">
+        <label for="groceries">Groceries ($)</label>
+        <input type="number" id="groceries" value="400" min="0" step="25">
+      </div>
+      <div class="field">
+        <label for="transport">Transportation ($)</label>
+        <input type="number" id="transport" value="300" min="0" step="25">
+        <span class="field-hint">Gas, car payment, transit pass</span>
+      </div>
+      <div class="field">
+        <label for="insurance">Insurance ($)</label>
+        <input type="number" id="insurance" value="200" min="0" step="25">
+        <span class="field-hint">Health, auto, renters/home</span>
+      </div>
+      <div class="field">
+        <label for="min-debt">Minimum Debt Payments ($)</label>
+        <input type="number" id="min-debt" value="100" min="0" step="25">
+        <span class="field-hint">Student loans, credit card minimums</span>
+      </div>
+      <div class="field">
+        <label for="childcare">Childcare / Medical ($)</label>
+        <input type="number" id="childcare" value="0" min="0" step="50">
+      </div>
+      <div class="field">
+        <label for="other-needs">Other Needs ($)</label>
+        <input type="number" id="other-needs" value="0" min="0" step="25">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Wants — 30% Target (dining out, subscriptions, hobbies, shopping, travel)</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="dining">Dining Out &amp; Takeout ($)</label>
+        <input type="number" id="dining" value="250" min="0" step="25">
+      </div>
+      <div class="field">
+        <label for="entertainment">Entertainment &amp; Streaming ($)</label>
+        <input type="number" id="entertainment" value="100" min="0" step="10">
+      </div>
+      <div class="field">
+        <label for="shopping">Shopping &amp; Clothing ($)</label>
+        <input type="number" id="shopping" value="150" min="0" step="25">
+      </div>
+      <div class="field">
+        <label for="hobbies">Hobbies &amp; Sports ($)</label>
+        <input type="number" id="hobbies" value="100" min="0" step="25">
+      </div>
+      <div class="field">
+        <label for="travel">Travel (monthly budget) ($)</label>
+        <input type="number" id="travel" value="100" min="0" step="25">
+      </div>
+      <div class="field">
+        <label for="personal-care">Personal Care &amp; Gym ($)</label>
+        <input type="number" id="personal-care" value="80" min="0" step="10">
+      </div>
+      <div class="field">
+        <label for="other-wants">Other Wants ($)</label>
+        <input type="number" id="other-wants" value="0" min="0" step="25">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Savings &amp; Extra Debt — 20% Target (emergency fund, retirement, investing, extra debt payments)</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="emergency-savings">Emergency Fund Contributions ($)</label>
+        <input type="number" id="emergency-savings" value="200" min="0" step="50">
+      </div>
+      <div class="field">
+        <label for="retirement-savings">Retirement (IRA, taxable) ($)</label>
+        <input type="number" id="retirement-savings" value="300" min="0" step="50">
+        <span class="field-hint">Beyond 401k (already in paycheck)</span>
+      </div>
+      <div class="field">
+        <label for="investments">Additional Investments ($)</label>
+        <input type="number" id="investments" value="0" min="0" step="50">
+      </div>
+      <div class="field">
+        <label for="extra-debt">Extra Debt Payments ($)</label>
+        <input type="number" id="extra-debt" value="100" min="0" step="25">
+        <span class="field-hint">Above minimums</span>
+      </div>
+      <div class="field">
+        <label for="other-savings">Other Savings ($)</label>
+        <input type="number" id="other-savings" value="0" min="0" step="25">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Build My Budget</button>
+  </div>
+
+  <div id="results">
+    <!-- Allocation cards -->
+    <div class="allocation-grid">
+      <div class="alloc-card needs">
+        <div class="alloc-header">
+          <span class="alloc-icon">🏠</span>
+          <span class="alloc-name needs">Needs</span>
+        </div>
+        <div class="alloc-pct">Target: 50% of take-home</div>
+        <div class="alloc-amounts">
+          <div class="alloc-amount-label">Target monthly</div>
+          <div class="alloc-amount-val needs" id="needs-target">—</div>
+          <div class="alloc-amount-annual">Actual: <span id="needs-actual">—</span></div>
+        </div>
+      </div>
+      <div class="alloc-card wants">
+        <div class="alloc-header">
+          <span class="alloc-icon">✨</span>
+          <span class="alloc-name wants">Wants</span>
+        </div>
+        <div class="alloc-pct">Target: 30% of take-home</div>
+        <div class="alloc-amounts">
+          <div class="alloc-amount-label">Target monthly</div>
+          <div class="alloc-amount-val wants" id="wants-target">—</div>
+          <div class="alloc-amount-annual">Actual: <span id="wants-actual">—</span></div>
+        </div>
+      </div>
+      <div class="alloc-card savings">
+        <div class="alloc-header">
+          <span class="alloc-icon">📈</span>
+          <span class="alloc-name savings">Savings</span>
+        </div>
+        <div class="alloc-pct">Target: 20% of take-home</div>
+        <div class="alloc-amounts">
+          <div class="alloc-amount-label">Target monthly</div>
+          <div class="alloc-amount-val savings" id="savings-target">—</div>
+          <div class="alloc-amount-annual">Actual: <span id="savings-actual">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div style="margin-bottom:8px; display:flex; gap:16px; font-size:0.75rem; color:var(--muted);">
+      <span><span style="color:var(--accent);">■</span> Needs</span>
+      <span><span style="color:var(--purple);">■</span> Wants</span>
+      <span><span style="color:var(--green);">■</span> Savings</span>
+      <span><span style="color:var(--red);">■</span> Overspend</span>
+    </div>
+    <div class="progress-bar" id="progress-bar">
+      <div class="progress-segment needs" id="prog-needs" style="width:0%"></div>
+      <div class="progress-segment wants" id="prog-wants" style="width:0%"></div>
+      <div class="progress-segment savings" id="prog-savings" style="width:0%"></div>
+      <div class="progress-segment overage" id="prog-over" style="width:0%"></div>
+    </div>
+
+    <!-- Summary vs target -->
+    <div class="card">
+      <div class="card-title">Actual vs Target</div>
+      <div class="compare-section">
+        <div class="compare-row">
+          <span class="compare-label" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:600; color:var(--muted);">Category</span>
+          <span class="compare-actual" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:600; color:var(--muted);">Actual</span>
+          <span class="compare-target" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:600; color:var(--muted);">Target</span>
+          <span class="compare-status" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:600; color:var(--muted);">Status</span>
+        </div>
+        <div id="compare-rows"></div>
+        <div class="compare-row" style="margin-top:4px; border-top:1px solid var(--border); padding-top:12px;">
+          <span class="compare-label" style="font-weight:700; color:var(--text);">Unallocated / Shortfall</span>
+          <span class="compare-actual" id="unallocated-val" style="font-weight:700;"></span>
+          <span class="compare-target" style="color:var(--muted);">$0</span>
+          <span class="compare-status" id="unallocated-status"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed breakdown -->
+    <div class="card">
+      <div class="card-title">Expense Detail</div>
+      <div id="expense-detail"></div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="explainer">
+    <h2>What Is the 50/30/20 Rule?</h2>
+    <p>
+      Popularized by Senator Elizabeth Warren in her book <em>All Your Worth</em>, the 50/30/20 rule is a simple framework for balancing your spending: 50% of after-tax income on needs, 30% on wants, and 20% on savings and debt repayment.
+    </p>
+
+    <h3>Needs (50%)</h3>
+    <p>
+      These are non-negotiable expenses: rent, groceries, utilities, minimum debt payments, health insurance, transportation to work. If you lost your job tomorrow, these are the bills you'd still have to pay.
+    </p>
+
+    <h3>Wants (30%)</h3>
+    <p>
+      Everything that makes life enjoyable but isn't essential: streaming services, dining out, gym membership, vacations, new clothes, hobbies. You could live without these. Most people have their wants category way too high.
+    </p>
+
+    <h3>Savings &amp; Debt (20%)</h3>
+    <p>
+      Emergency fund contributions, retirement accounts (beyond 401k), investment accounts, and extra debt payments above minimums. This 20% is what builds long-term financial security.
+    </p>
+
+    <h3>When 50/30/20 Doesn't Fit</h3>
+    <p>
+      In high cost-of-living cities, housing alone might take 40%+ of income — which forces you to compress wants or savings. The rule is a starting point, not a law. If you're in an expensive city, try 60/20/20 until you can move or increase income. The key is having explicit targets, not perfection.
+    </p>
+
+    <h3>Pre-Tax vs After-Tax</h3>
+    <p>
+      Apply the rule to your take-home pay, not your gross salary. Your 401k and health insurance premiums are already out before you see the money — they effectively count toward the "savings" bucket without needing to be tracked here.
+    </p>
+  </div>
+</div>
+
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  function fmt(n) {
+    return '$' + Math.round(Math.abs(n)).toLocaleString('en-US');
+  }
+
+  function getVal(id) {
+    return parseFloat(document.getElementById(id).value) || 0;
+  }
+
+  function calculate() {
+    const takeHome = getVal('take-home') + getVal('other-income-budget');
+
+    // Needs
+    const needsItems = [
+      { name: 'Rent / Mortgage', val: getVal('rent') },
+      { name: 'Utilities & Internet', val: getVal('utilities') },
+      { name: 'Groceries', val: getVal('groceries') },
+      { name: 'Transportation', val: getVal('transport') },
+      { name: 'Insurance', val: getVal('insurance') },
+      { name: 'Minimum Debt Payments', val: getVal('min-debt') },
+      { name: 'Childcare / Medical', val: getVal('childcare') },
+      { name: 'Other Needs', val: getVal('other-needs') },
+    ];
+
+    const wantsItems = [
+      { name: 'Dining Out & Takeout', val: getVal('dining') },
+      { name: 'Entertainment & Streaming', val: getVal('entertainment') },
+      { name: 'Shopping & Clothing', val: getVal('shopping') },
+      { name: 'Hobbies & Sports', val: getVal('hobbies') },
+      { name: 'Travel', val: getVal('travel') },
+      { name: 'Personal Care & Gym', val: getVal('personal-care') },
+      { name: 'Other Wants', val: getVal('other-wants') },
+    ];
+
+    const savingsItems = [
+      { name: 'Emergency Fund', val: getVal('emergency-savings') },
+      { name: 'Retirement (IRA/taxable)', val: getVal('retirement-savings') },
+      { name: 'Additional Investments', val: getVal('investments') },
+      { name: 'Extra Debt Payments', val: getVal('extra-debt') },
+      { name: 'Other Savings', val: getVal('other-savings') },
+    ];
+
+    const needsActual = needsItems.reduce((s, i) => s + i.val, 0);
+    const wantsActual = wantsItems.reduce((s, i) => s + i.val, 0);
+    const savingsActual = savingsItems.reduce((s, i) => s + i.val, 0);
+    const totalSpend = needsActual + wantsActual + savingsActual;
+    const unallocated = takeHome - totalSpend;
+
+    const needsTarget = takeHome * 0.50;
+    const wantsTarget = takeHome * 0.30;
+    const savingsTarget = takeHome * 0.20;
+
+    // Allocation cards
+    document.getElementById('needs-target').textContent = fmt(needsTarget);
+    document.getElementById('needs-actual').textContent = fmt(needsActual) + (needsActual > needsTarget ? ' ⚠' : ' ✓');
+    document.getElementById('wants-target').textContent = fmt(wantsTarget);
+    document.getElementById('wants-actual').textContent = fmt(wantsActual) + (wantsActual > wantsTarget ? ' ⚠' : ' ✓');
+    document.getElementById('savings-target').textContent = fmt(savingsTarget);
+    document.getElementById('savings-actual').textContent = fmt(savingsActual) + (savingsActual < savingsTarget ? ' ⚠' : ' ✓');
+
+    // Progress bar
+    const pNeedsW = takeHome > 0 ? Math.min((needsActual / takeHome) * 100, 100) : 0;
+    const pWantsW = takeHome > 0 ? Math.min((wantsActual / takeHome) * 100, 100 - pNeedsW) : 0;
+    const pSavW = takeHome > 0 ? Math.min((savingsActual / takeHome) * 100, 100 - pNeedsW - pWantsW) : 0;
+    const pOverW = Math.max(0, 100 - pNeedsW - pWantsW - pSavW);
+
+    document.getElementById('prog-needs').style.width = pNeedsW.toFixed(1) + '%';
+    document.getElementById('prog-wants').style.width = pWantsW.toFixed(1) + '%';
+    document.getElementById('prog-savings').style.width = pSavW.toFixed(1) + '%';
+    document.getElementById('prog-over').style.width = pOverW.toFixed(1) + '%';
+
+    // Compare rows
+    const compareContainer = document.getElementById('compare-rows');
+    compareContainer.innerHTML = '';
+
+    const compareData = [
+      { label: 'Needs', actual: needsActual, target: needsTarget, type: 'max' },
+      { label: 'Wants', actual: wantsActual, target: wantsTarget, type: 'max' },
+      { label: 'Savings / Debt', actual: savingsActual, target: savingsTarget, type: 'min' },
+    ];
+
+    compareData.forEach(({ label, actual, target, type }) => {
+      const diff = actual - target;
+      const pctActual = takeHome > 0 ? ((actual / takeHome) * 100).toFixed(0) : 0;
+      let statusText, statusClass;
+
+      if (type === 'max') {
+        if (actual <= target * 1.05) { statusText = 'On track'; statusClass = 'status-ok'; }
+        else { statusText = '+' + fmt(diff) + ' over'; statusClass = 'status-over'; }
+      } else {
+        if (actual >= target * 0.95) { statusText = 'On track'; statusClass = 'status-ok'; }
+        else { statusText = fmt(target - actual) + ' short'; statusClass = 'status-under'; }
+      }
+
+      const row = document.createElement('div');
+      row.className = 'compare-row';
+      row.innerHTML = `
+        <span class="compare-label">${label} <span style="color:var(--muted);font-size:0.78rem;">(${pctActual}%)</span></span>
+        <span class="compare-actual">${fmt(actual)}</span>
+        <span class="compare-target">${fmt(target)}</span>
+        <span class="compare-status ${statusClass}">${statusText}</span>
+      `;
+      compareContainer.appendChild(row);
+    });
+
+    // Unallocated
+    const unallocEl = document.getElementById('unallocated-val');
+    const unallocStatus = document.getElementById('unallocated-status');
+    if (unallocated >= 0) {
+      unallocEl.textContent = '+' + fmt(unallocated);
+      unallocEl.style.color = 'var(--green)';
+      unallocStatus.textContent = 'Free';
+      unallocStatus.className = 'compare-status status-ok';
+    } else {
+      unallocEl.textContent = '−' + fmt(unallocated);
+      unallocEl.style.color = 'var(--red)';
+      unallocStatus.textContent = 'Overspent';
+      unallocStatus.className = 'compare-status status-over';
+    }
+
+    // Expense detail
+    const detailEl = document.getElementById('expense-detail');
+    detailEl.innerHTML = '';
+
+    [
+      { label: 'Needs', cls: 'needs', items: needsItems, total: needsActual },
+      { label: 'Wants', cls: 'wants', items: wantsItems, total: wantsActual },
+      { label: 'Savings & Debt', cls: 'savings', items: savingsItems, total: savingsActual },
+    ].forEach(({ label, cls, items, total }) => {
+      const section = document.createElement('div');
+      section.className = 'category-section';
+      section.innerHTML = `<div class="category-header ${cls}">${label} — ${fmt(total)}/month</div>`;
+      items.filter(i => i.val > 0).forEach(({ name, val }) => {
+        const row = document.createElement('div');
+        row.className = 'expense-row';
+        row.innerHTML = `<span class="exp-name">${name}</span><span class="exp-val">${fmt(val)}</span>`;
+        section.appendChild(row);
+      });
+      detailEl.appendChild(section);
+    });
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+
+</body>
+</html>

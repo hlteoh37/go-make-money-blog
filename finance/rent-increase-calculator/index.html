@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rent Increase Impact Calculator — Should You Move or Stay?</title>
+  <meta name="description" content="Calculate the true cost of a rent increase vs moving. See annual cost impact, moving breakeven analysis, and month-by-month comparison. Free, instant, no signup.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/rent-increase-calculator/">
+  <meta property="og:title" content="Rent Increase Impact Calculator — Should You Move or Stay?">
+  <meta property="og:description" content="See the true cost of your rent increase vs moving costs. Find your breakeven month. Free, instant, no signup.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/rent-increase-calculator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Rent Increase Impact Calculator — Should You Move or Stay?">
+  <meta name="twitter:description" content="Calculate the true cost of a rent increase vs moving. Find your breakeven month. Free, instant, no signup.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    header .logo { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: -0.3px; }
+    header .logo span { color: var(--accent); }
+    .back-link { color: var(--muted); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; }
+    .back-link:hover { color: var(--accent); }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 32px 20px; }
+    .page-title { font-size: 1.75rem; font-weight: 700; margin: 12px 0 6px; letter-spacing: -0.5px; }
+    .page-subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+
+    label { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+
+    input[type="number"], select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .field-hint { font-size: 0.75rem; color: var(--muted); opacity: 0.7; }
+
+    .calc-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    #results { display: none; }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 520px) { .results-grid { grid-template-columns: 1fr; } }
+
+    .result-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .result-card.primary { border-color: var(--green); box-shadow: 0 0 0 1px rgba(63,185,80,0.15); }
+    .result-card.warning { border-color: var(--red); box-shadow: 0 0 0 1px rgba(248,81,73,0.15); }
+    .result-card.neutral { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(88,166,255,0.15); }
+
+    .result-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .result-card.primary .result-value { font-size: 1.9rem; color: var(--green); }
+    .result-card.warning .result-value { color: var(--red); }
+    .result-card.neutral .result-value { color: var(--accent); }
+
+    .verdict-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .verdict-card.stay { border-left: 4px solid var(--green); }
+    .verdict-card.move { border-left: 4px solid var(--red); }
+    .verdict-card.close { border-left: 4px solid var(--yellow); }
+
+    .verdict-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .verdict-title.green { color: var(--green); }
+    .verdict-title.red { color: var(--red); }
+    .verdict-title.yellow { color: var(--yellow); }
+    .verdict-body { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    .breakdown-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 4px; }
+    .breakdown-table td { padding: 8px 0; border-bottom: 1px solid rgba(48,54,61,0.5); color: var(--text); }
+    .breakdown-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .breakdown-table tr:last-child td { border-bottom: none; }
+    .breakdown-table .total-row td { font-weight: 700; color: var(--accent); padding-top: 12px; }
+    .breakdown-table .red-row td { color: var(--red); }
+
+    .explainer { color: var(--muted); font-size: 0.9rem; line-height: 1.75; }
+    .explainer h2 { color: var(--text); font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; }
+    .explainer h3 { color: var(--text); font-size: 0.92rem; font-weight: 600; margin: 16px 0 6px; }
+    .explainer p { margin-bottom: 10px; }
+
+    .bmac-float { position: fixed; bottom: 24px; right: 24px; z-index: 100; }
+    .bmac-float a {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #FFDD00; color: #000;
+      font-family: var(--font); font-size: 0.85rem; font-weight: 700;
+      padding: 10px 16px; border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; white-space: nowrap;
+    }
+    .bmac-float a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">Rent Increase Impact Calculator</h1>
+  <p class="page-subtitle">Your landlord raised the rent. Should you absorb it or move? Run the numbers before you decide.</p>
+
+  <div class="card">
+    <div class="card-title">Current Situation</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="current-rent">Current Monthly Rent ($)</label>
+        <input type="number" id="current-rent" value="2000" min="0" step="50">
+      </div>
+      <div class="field">
+        <label for="new-rent">New Monthly Rent ($)</label>
+        <input type="number" id="new-rent" value="2250" min="0" step="50">
+        <span class="field-hint">After the increase</span>
+      </div>
+      <div class="field">
+        <label for="new-place-rent">Alternative Place Monthly Rent ($)</label>
+        <input type="number" id="new-place-rent" value="2100" min="0" step="50">
+        <span class="field-hint">Comparable unit you could move to</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Moving Costs (if you leave)</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="moving-cost">Moving Company / Truck ($)</label>
+        <input type="number" id="moving-cost" value="1500" min="0" step="100">
+      </div>
+      <div class="field">
+        <label for="security-deposit">New Security Deposit ($)</label>
+        <input type="number" id="security-deposit" value="2100" min="0" step="100">
+        <span class="field-hint">Net of deposit you'll get back from current place</span>
+      </div>
+      <div class="field">
+        <label for="application-fees">Application Fees ($)</label>
+        <input type="number" id="application-fees" value="150" min="0" step="25">
+      </div>
+      <div class="field">
+        <label for="overlap-months">Overlap / Double-Rent Months</label>
+        <input type="number" id="overlap-months" value="0" min="0" max="3" step="1">
+        <span class="field-hint">Months paying both places (0 if seamless)</span>
+      </div>
+      <div class="field">
+        <label for="time-off-work">Time Off Work / Lost Income ($)</label>
+        <input type="number" id="time-off-work" value="500" min="0" step="100">
+        <span class="field-hint">Days off, setup costs, productivity loss</span>
+      </div>
+      <div class="field">
+        <label for="misc-costs">Misc (cleaning, supplies, etc.) ($)</label>
+        <input type="number" id="misc-costs" value="300" min="0" step="50">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Breakeven</button>
+  </div>
+
+  <div id="results">
+    <div class="results-grid">
+      <div class="result-card warning">
+        <div class="result-label">Annual Cost of Staying</div>
+        <div class="result-value" id="res-annual-increase">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Total Move-Out Costs</div>
+        <div class="result-value" id="res-move-cost">—</div>
+      </div>
+      <div class="result-card neutral">
+        <div class="result-label">Breakeven Month</div>
+        <div class="result-value" id="res-breakeven">—</div>
+      </div>
+    </div>
+
+    <div class="verdict-card" id="verdict-card">
+      <div class="verdict-title" id="verdict-title"></div>
+      <div class="verdict-body" id="verdict-body"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Full Cost Comparison</div>
+      <table class="breakdown-table">
+        <tbody id="breakdown-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="explainer">
+    <h2>The Real Math Behind Rent Increases</h2>
+    <p>
+      Most people see a rent increase and immediately think "I need to move." But moving has real costs that take months to recoup. This calculator helps you find your breakeven point — the month at which moving actually starts saving you money.
+    </p>
+
+    <h3>The Breakeven Calculation</h3>
+    <p>
+      If your new place is $150/month cheaper than the increased rent, but moving costs you $4,500 upfront, your breakeven is 30 months (4,500 ÷ 150). Before month 30, you've lost money by moving. After month 30, you start saving.
+    </p>
+
+    <h3>Hidden Moving Costs</h3>
+    <p>
+      The security deposit is the sneaky one — it's technically returned eventually, but it ties up cash for years. Moving company costs have surged since 2021. Don't forget application fees ($30–$100 per property), time off work, and the mental overhead of moving.
+    </p>
+
+    <h3>Rent Increase Percentage vs Dollar Amount</h3>
+    <p>
+      A 10% increase on $1,500 rent ($150/month, $1,800/year) hits very differently than a 10% increase on $3,500 rent ($350/month, $4,200/year). The dollar amount is what matters for your budget, not the percentage.
+    </p>
+
+    <h3>Negotiating with Your Landlord</h3>
+    <p>
+      Before moving, consider negotiating. Landlords hate vacancy — finding a new tenant costs them 1–2 months rent in lost income plus marketing costs. Offering to sign a 2-year lease in exchange for a smaller increase often works. You have more leverage than you think.
+    </p>
+  </div>
+</div>
+
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  function fmt(n) {
+    return '$' + Math.round(Math.abs(n)).toLocaleString('en-US');
+  }
+
+  function calculate() {
+    const currentRent = parseFloat(document.getElementById('current-rent').value) || 0;
+    const newRent = parseFloat(document.getElementById('new-rent').value) || 0;
+    const newPlaceRent = parseFloat(document.getElementById('new-place-rent').value) || 0;
+    const movingCost = parseFloat(document.getElementById('moving-cost').value) || 0;
+    const securityDeposit = parseFloat(document.getElementById('security-deposit').value) || 0;
+    const appFees = parseFloat(document.getElementById('application-fees').value) || 0;
+    const overlapMonths = parseFloat(document.getElementById('overlap-months').value) || 0;
+    const timeOff = parseFloat(document.getElementById('time-off-work').value) || 0;
+    const misc = parseFloat(document.getElementById('misc-costs').value) || 0;
+
+    const monthlyIncrease = newRent - currentRent;
+    const annualIncrease = monthlyIncrease * 12;
+    const percentIncrease = currentRent > 0 ? (monthlyIncrease / currentRent) * 100 : 0;
+
+    // Moving cost = one-time + overlap rent
+    const overlapCost = overlapMonths * currentRent;
+    const totalMoveCost = movingCost + securityDeposit + appFees + overlapCost + timeOff + misc;
+
+    // Monthly savings by moving (new place vs increased rent at current place)
+    const monthlyMovesSaving = newRent - newPlaceRent;
+
+    // Breakeven: when does cumulative savings from cheaper place cover move cost?
+    let breakevenMonths = Infinity;
+    if (monthlyMovesSaving > 0) {
+      breakevenMonths = Math.ceil(totalMoveCost / monthlyMovesSaving);
+    }
+
+    // Update results
+    document.getElementById('res-annual-increase').textContent = fmt(annualIncrease) + '/yr';
+    document.getElementById('res-move-cost').textContent = fmt(totalMoveCost);
+
+    if (!isFinite(breakevenMonths)) {
+      document.getElementById('res-breakeven').textContent = 'Never';
+    } else {
+      const breakevenYrs = Math.floor(breakevenMonths / 12);
+      const breakevenMos = breakevenMonths % 12;
+      let breakevenText = breakevenMonths + ' mo';
+      if (breakevenYrs > 0) breakevenText = breakevenYrs + 'y ' + breakevenMos + 'm';
+      document.getElementById('res-breakeven').textContent = breakevenText;
+    }
+
+    // Verdict
+    const verdictCard = document.getElementById('verdict-card');
+    const verdictTitle = document.getElementById('verdict-title');
+    const verdictBody = document.getElementById('verdict-body');
+
+    if (newPlaceRent >= newRent) {
+      verdictCard.className = 'verdict-card stay';
+      verdictTitle.textContent = 'Stay — moving won\'t save you money';
+      verdictTitle.className = 'verdict-title green';
+      verdictBody.textContent = `The alternative place costs $${fmt(newPlaceRent - newRent).replace('$','')}/month more (or the same) as staying with the increase. Moving would cost you $${fmt(totalMoveCost)} upfront with no monthly savings. Negotiate the increase or stay.`;
+    } else if (breakevenMonths <= 12) {
+      verdictCard.className = 'verdict-card move';
+      verdictTitle.textContent = 'Moving pays off quickly — within a year';
+      verdictTitle.className = 'verdict-title red';
+      verdictBody.textContent = `By moving, you'll save $${Math.round(monthlyMovesSaving)}/month ($${Math.round(monthlyMovesSaving * 12).toLocaleString()}/year). With $${fmt(totalMoveCost)} in move costs, you break even at month ${breakevenMonths}. After that, you're ahead by $${Math.round(monthlyMovesSaving * 12).toLocaleString()}/year.`;
+    } else if (breakevenMonths <= 24) {
+      verdictCard.className = 'verdict-card close';
+      verdictTitle.textContent = 'Close call — breakeven in under 2 years';
+      verdictTitle.className = 'verdict-title yellow';
+      verdictBody.textContent = `Monthly savings of $${Math.round(monthlyMovesSaving)} if you move, but $${fmt(totalMoveCost)} upfront means ${breakevenMonths} months to break even. If you plan to stay in the new place 2+ years, moving makes financial sense. If not, absorbing the increase is cheaper.`;
+    } else if (isFinite(breakevenMonths)) {
+      verdictCard.className = 'verdict-card stay';
+      verdictTitle.textContent = `Stay — breakeven takes ${breakevenMonths} months`;
+      verdictTitle.className = 'verdict-title green';
+      verdictBody.textContent = `The monthly savings ($${Math.round(monthlyMovesSaving)}/mo) don't justify $${fmt(totalMoveCost)} in move costs unless you're staying ${Math.ceil(breakevenMonths/12)} years at the new place. Try negotiating the increase first.`;
+    } else {
+      verdictCard.className = 'verdict-card stay';
+      verdictTitle.textContent = 'Stay — you can\'t save money by moving';
+      verdictTitle.className = 'verdict-title green';
+      verdictBody.textContent = `The alternative place is not cheaper than your increased rent. Moving would cost you money. Consider negotiating with your landlord or looking for a cheaper alternative.`;
+    }
+
+    // Breakdown table
+    const tbody = document.getElementById('breakdown-body');
+    tbody.innerHTML = '';
+    const stayRows = [
+      ['Current monthly rent', '$' + Math.round(currentRent).toLocaleString()],
+      ['New monthly rent (after increase)', '$' + Math.round(newRent).toLocaleString()],
+      ['Monthly rent increase', '+$' + Math.round(monthlyIncrease).toLocaleString()],
+      ['Annual cost of the increase', fmt(annualIncrease) + '/year'],
+      ['Increase percentage', percentIncrease.toFixed(1) + '%'],
+    ];
+    const moveRows = [
+      ['Alternative place monthly rent', '$' + Math.round(newPlaceRent).toLocaleString()],
+      ['Monthly savings vs increased rent', monthlyMovesSaving >= 0 ? '$' + Math.round(monthlyMovesSaving).toLocaleString() : '−$' + Math.round(Math.abs(monthlyMovesSaving)).toLocaleString()],
+      ['Moving company / truck', fmt(movingCost)],
+      ['Security deposit (net)', fmt(securityDeposit)],
+      ['Application fees', fmt(appFees)],
+      ['Overlap rent (' + overlapMonths + ' months)', fmt(overlapCost)],
+      ['Time off / lost income', fmt(timeOff)],
+      ['Misc costs', fmt(misc)],
+    ];
+
+    stayRows.forEach(([label, value]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${label}</td><td>${value}</td>`;
+      tbody.appendChild(tr);
+    });
+
+    const sepTr = document.createElement('tr');
+    sepTr.innerHTML = `<td colspan="2" style="padding:12px 0 6px; color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; font-weight:600;">If You Move</td>`;
+    tbody.appendChild(sepTr);
+
+    moveRows.forEach(([label, value]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${label}</td><td>${value}</td>`;
+      tbody.appendChild(tr);
+    });
+
+    const totalTr = document.createElement('tr');
+    totalTr.className = 'total-row';
+    totalTr.innerHTML = `<td>Total one-time moving costs</td><td>${fmt(totalMoveCost)}</td>`;
+    tbody.appendChild(totalTr);
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+
+</body>
+</html>
