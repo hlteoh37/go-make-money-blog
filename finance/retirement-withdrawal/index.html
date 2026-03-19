@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retirement Withdrawal Calculator — How Long Will My Money Last?</title>
+  <meta name="description" content="How long will your retirement savings last? Enter your balance, annual withdrawals, and expected return to see if your money will outlast you — with inflation adjustment.">
+  <meta name="keywords" content="retirement withdrawal calculator, how long will my money last, retirement savings calculator, retirement drawdown calculator, portfolio withdrawal rate, retirement income calculator, how long will 1 million last">
+  <meta property="og:title" content="Retirement Withdrawal Calculator — How Long Will My Savings Last?">
+  <meta property="og:description" content="Find out if your retirement savings will last. Model withdrawals, investment returns, and inflation to see your exact runway.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/retirement-withdrawal/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/retirement-withdrawal/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🏖️</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid #30363d;
+      padding: 14px 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    header .logo { font-weight: 700; font-size: 1rem; color: #e6edf3; }
+    header .logo span { color: #58a6ff; }
+
+    .container { max-width: 820px; margin: 0 auto; padding: 32px 20px; }
+    .back { color: #8b949e; font-size: 0.85rem; display: inline-block; margin-bottom: 20px; }
+    .back:hover { color: #58a6ff; }
+
+    h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .subtitle { color: #8b949e; font-size: 0.95rem; margin-bottom: 32px; }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card-title { font-size: 0.78rem; font-weight: 600; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 580px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    label { display: block; font-size: 0.82rem; color: #8b949e; margin-bottom: 6px; margin-top: 12px; }
+    label:first-of-type { margin-top: 0; }
+    input, select {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 0.95rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus { border-color: #58a6ff; }
+
+    .btn {
+      width: 100%; background: #238636; border: none; color: #fff;
+      font-size: 1rem; font-weight: 600; padding: 12px; border-radius: 8px;
+      cursor: pointer; transition: background 0.15s; margin-top: 20px;
+    }
+    .btn:hover { background: #2ea043; }
+
+    .results { display: none; }
+    .results.show { display: block; }
+
+    .verdict {
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .verdict.good { background: rgba(35, 134, 54, 0.15); border: 1px solid rgba(35, 134, 54, 0.4); }
+    .verdict.warn { background: rgba(210, 153, 34, 0.15); border: 1px solid rgba(210, 153, 34, 0.4); }
+    .verdict.bad { background: rgba(248, 81, 73, 0.12); border: 1px solid rgba(248, 81, 73, 0.3); }
+    .verdict-icon { font-size: 2.5rem; margin-bottom: 8px; }
+    .verdict-headline { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    .verdict.good .verdict-headline { color: #3fb950; }
+    .verdict.warn .verdict-headline { color: #d29922; }
+    .verdict.bad .verdict-headline { color: #f85149; }
+    .verdict-sub { color: #8b949e; font-size: 0.9rem; }
+
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+      padding: 16px; text-align: center;
+    }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: #58a6ff; margin-bottom: 4px; }
+    .stat-label { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat.green .stat-value { color: #3fb950; }
+    .stat.red .stat-value { color: #f85149; }
+    .stat.yellow .stat-value { color: #d29922; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    thead th {
+      text-align: left; font-size: 0.72rem; text-transform: uppercase;
+      color: #8b949e; letter-spacing: 0.05em; padding: 8px 12px;
+      border-bottom: 1px solid #30363d;
+    }
+    tbody tr:hover { background: #1c2230; }
+    tbody td { padding: 8px 12px; border-bottom: 1px solid #21262d; color: #e6edf3; }
+    tbody td:not(:first-child) { text-align: right; }
+    tbody tr.depleted td { color: #f85149; }
+
+    .bar-row { margin-bottom: 12px; }
+    .bar-label { font-size: 0.8rem; color: #8b949e; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .bar-track { background: #21262d; border-radius: 4px; height: 10px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+
+    .table-wrap { overflow-x: auto; max-height: 400px; overflow-y: auto; }
+
+    .tip { font-size: 0.82rem; color: #8b949e; line-height: 1.6; }
+    .tip strong { color: #e6edf3; }
+
+    .scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .scenario-btn {
+      background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+      padding: 10px 8px; cursor: pointer; text-align: center; transition: border-color 0.15s;
+    }
+    .scenario-btn:hover { border-color: #58a6ff; }
+    .scenario-btn .s-name { font-size: 0.78rem; font-weight: 600; color: #e6edf3; }
+    .scenario-btn .s-desc { font-size: 0.7rem; color: #8b949e; margin-top: 2px; }
+    @media (max-width: 480px) { .scenarios { grid-template-columns: 1fr; } }
+
+    .coffee-btn {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      background: #ffdd00; color: #000;
+      font-size: 0.8rem; font-weight: 700;
+      padding: 10px 16px; border-radius: 24px;
+      text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .coffee-btn:hover { opacity: 0.9; transform: scale(1.04); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://hlteoh37.github.io/profiterole-blog/" class="logo">Profiterole <span>Tools</span></a>
+  </header>
+
+  <div class="container">
+    <a href="/profiterole-blog/finance/" class="back">← Finance Calculators</a>
+
+    <h1>Retirement Withdrawal Calculator</h1>
+    <p class="subtitle">How long will your savings last? Model your portfolio runway with inflation-adjusted withdrawals.</p>
+
+    <div class="card">
+      <div class="card-title">Quick Scenarios</div>
+      <div class="scenarios">
+        <div class="scenario-btn" onclick="loadScenario('million')">
+          <div class="s-name">$1M Portfolio</div>
+          <div class="s-desc">$40K/yr, 7% return</div>
+        </div>
+        <div class="scenario-btn" onclick="loadScenario('half')">
+          <div class="s-name">$500K Portfolio</div>
+          <div class="s-desc">$30K/yr, 6% return</div>
+        </div>
+        <div class="scenario-btn" onclick="loadScenario('conservative')">
+          <div class="s-name">Conservative</div>
+          <div class="s-desc">$800K, $50K/yr, 5%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Your Numbers</div>
+      <div class="grid-2">
+        <div>
+          <label>Starting Balance ($)</label>
+          <input type="number" id="balance" value="500000" min="0" step="1000">
+        </div>
+        <div>
+          <label>Annual Withdrawal ($)</label>
+          <input type="number" id="withdrawal" value="30000" min="0" step="500">
+        </div>
+        <div>
+          <label>Expected Annual Return (%)</label>
+          <input type="number" id="return-rate" value="6" min="0" max="20" step="0.5">
+        </div>
+        <div>
+          <label>Inflation Rate (%)</label>
+          <input type="number" id="inflation" value="3" min="0" max="15" step="0.5">
+        </div>
+        <div>
+          <label>Current Age (optional)</label>
+          <input type="number" id="current-age" value="65" min="0" max="100" step="1">
+        </div>
+        <div>
+          <label>Max Years to Model</label>
+          <input type="number" id="max-years" value="40" min="10" max="60" step="5">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="calculate()">Calculate Runway</button>
+
+    <div class="results" id="results">
+
+      <div id="verdict-box" style="margin-top:20px;"></div>
+
+      <div class="card">
+        <div class="card-title">Key Stats</div>
+        <div class="summary-grid" id="summary"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Year-by-Year Balance</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Age</th>
+                <th>Start Balance</th>
+                <th>Investment Return</th>
+                <th>Withdrawal</th>
+                <th>End Balance</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">What These Numbers Mean</div>
+        <p class="tip">
+          <strong>Withdrawal Rate:</strong> Your annual withdrawal as a % of starting balance. The classic "4% rule" suggests this rate is sustainable for 30 years in most market conditions.<br><br>
+          <strong>Inflation adjustment:</strong> Each year your withdrawal increases with inflation to maintain purchasing power. A $30K/year withdrawal at 3% inflation becomes $40K after 10 years.<br><br>
+          <strong>Sequence of returns risk:</strong> A bad market in your early retirement years can devastate a portfolio even if long-run averages are fine. Having 1-2 years of cash as a buffer helps.<br><br>
+          <strong>Note:</strong> This calculator models a consistent average return. Real markets are volatile. Consult a financial advisor for personalised retirement planning.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">☕ Buy Me a Coffee</a>
+
+  <script>
+    function loadScenario(s) {
+      const scenarios = {
+        million: { balance: 1000000, withdrawal: 40000, ret: 7, inf: 3, age: 65, years: 40 },
+        half: { balance: 500000, withdrawal: 30000, ret: 6, inf: 3, age: 65, years: 40 },
+        conservative: { balance: 800000, withdrawal: 50000, ret: 5, inf: 2.5, age: 62, years: 40 }
+      };
+      const sc = scenarios[s];
+      document.getElementById('balance').value = sc.balance;
+      document.getElementById('withdrawal').value = sc.withdrawal;
+      document.getElementById('return-rate').value = sc.ret;
+      document.getElementById('inflation').value = sc.inf;
+      document.getElementById('current-age').value = sc.age;
+      document.getElementById('max-years').value = sc.years;
+      calculate();
+    }
+
+    function fmt(n) {
+      if (Math.abs(n) >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+      if (Math.abs(n) >= 1000) return '$' + Math.round(n).toLocaleString();
+      return '$' + n.toFixed(0);
+    }
+    function fmtPct(n) { return n.toFixed(1) + '%'; }
+
+    function calculate() {
+      const balance = parseFloat(document.getElementById('balance').value) || 0;
+      const annualWithdrawal = parseFloat(document.getElementById('withdrawal').value) || 0;
+      const returnRate = (parseFloat(document.getElementById('return-rate').value) || 0) / 100;
+      const inflationRate = (parseFloat(document.getElementById('inflation').value) || 0) / 100;
+      const startAge = parseInt(document.getElementById('current-age').value) || 65;
+      const maxYears = parseInt(document.getElementById('max-years').value) || 40;
+
+      const withdrawalRate = balance > 0 ? (annualWithdrawal / balance) * 100 : 0;
+
+      let currentBalance = balance;
+      let yearsDepleted = null;
+      let rows = [];
+      let currentWithdrawal = annualWithdrawal;
+      let totalWithdrawn = 0;
+      let totalReturns = 0;
+
+      for (let y = 1; y <= maxYears; y++) {
+        if (currentBalance <= 0) break;
+
+        const startBalance = currentBalance;
+        const investmentReturn = currentBalance * returnRate;
+        totalReturns += investmentReturn;
+        currentBalance += investmentReturn;
+
+        const withdrawal = Math.min(currentWithdrawal, currentBalance);
+        currentBalance -= withdrawal;
+        totalWithdrawn += withdrawal;
+
+        if (currentBalance <= 0 && yearsDepleted === null) {
+          yearsDepleted = y;
+        }
+
+        rows.push({
+          year: y,
+          age: startAge + y,
+          startBalance,
+          investmentReturn,
+          withdrawal,
+          endBalance: Math.max(0, currentBalance)
+        });
+
+        // Adjust withdrawal for inflation
+        currentWithdrawal *= (1 + inflationRate);
+      }
+
+      const depleted = yearsDepleted !== null;
+      const lastRow = rows[rows.length - 1];
+      const finalBalance = depleted ? 0 : lastRow.endBalance;
+      const ageAtDepletion = depleted ? startAge + yearsDepleted : null;
+      const yearsLast = depleted ? yearsDepleted : '>' + maxYears;
+
+      // Verdict
+      const verdictEl = document.getElementById('verdict-box');
+      if (depleted) {
+        verdictEl.innerHTML = `
+          <div class="verdict ${yearsDepleted < 20 ? 'bad' : 'warn'}">
+            <div class="verdict-icon">${yearsDepleted < 20 ? '⚠️' : '📊'}</div>
+            <div class="verdict-headline">Your savings last ${yearsDepleted} years</div>
+            <div class="verdict-sub">Portfolio depletes at age ${ageAtDepletion} — you may need to adjust your withdrawal rate or return assumptions.</div>
+          </div>
+        `;
+      } else {
+        verdictEl.innerHTML = `
+          <div class="verdict good">
+            <div class="verdict-icon">✅</div>
+            <div class="verdict-headline">Your savings last ${maxYears}+ years</div>
+            <div class="verdict-sub">Portfolio reaches ${fmt(finalBalance)} by year ${maxYears} — your withdrawal rate appears sustainable.</div>
+          </div>
+        `;
+      }
+
+      // Summary
+      document.getElementById('summary').innerHTML = `
+        <div class="stat ${depleted ? 'yellow' : 'green'}">
+          <div class="stat-value">${yearsLast}</div>
+          <div class="stat-label">Years Money Lasts</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${fmtPct(withdrawalRate)}</div>
+          <div class="stat-label">Withdrawal Rate</div>
+        </div>
+        <div class="stat green">
+          <div class="stat-value">${fmt(totalWithdrawn)}</div>
+          <div class="stat-label">Total Withdrawn</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${fmt(totalReturns)}</div>
+          <div class="stat-label">Total Returns Earned</div>
+        </div>
+        <div class="stat ${depleted ? 'red' : 'green'}">
+          <div class="stat-value">${fmt(finalBalance)}</div>
+          <div class="stat-label">${depleted ? 'Depleted at Year' + yearsDepleted : 'Final Balance (Yr '+maxYears+')'}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">${fmt(rows[Math.min(9, rows.length-1)]?.withdrawal || annualWithdrawal)}</div>
+          <div class="stat-label">Year 10 Withdrawal</div>
+        </div>
+      `;
+
+      // Table
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = rows.map(r => `
+        <tr class="${r.endBalance <= 0 ? 'depleted' : ''}">
+          <td>${r.year}</td>
+          <td>${r.age}</td>
+          <td>${fmt(r.startBalance)}</td>
+          <td style="color:#3fb950">+${fmt(r.investmentReturn)}</td>
+          <td style="color:#f85149">-${fmt(r.withdrawal)}</td>
+          <td style="color:${r.endBalance <= 0 ? '#f85149' : r.endBalance < balance*0.25 ? '#d29922' : '#e6edf3'}">${fmt(r.endBalance)}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('results').classList.add('show');
+    }
+
+    // Auto-calculate on load
+    calculate();
+  </script>
+</body>
+</html>
