@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HELOC Calculator — Home Equity Line of Credit Payments</title>
+  <meta name="description" content="Calculate HELOC monthly payments during draw and repayment periods. Compare interest-only vs. fully amortizing payments. Free HELOC calculator, no login.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/heloc-calculator/">
+  <meta property="og:title" content="HELOC Calculator — Home Equity Line of Credit Payments">
+  <meta property="og:description" content="Calculate HELOC draw period and repayment period payments. Interest-only vs amortizing comparison. Free, no login.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/heloc-calculator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="HELOC Calculator — Monthly Payments & Total Cost">
+  <meta name="twitter:description" content="Calculate HELOC payments for draw and repayment periods. See total interest cost.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --card: #161b22; --border: #30363d; --accent: #58a6ff;
+      --muted: #8b949e; --green: #3fb950; --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; min-height: 100vh; padding: 0 0 80px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header { border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+    header .logo { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: -0.3px; }
+    header .logo span { color: var(--accent); }
+    .back-link { color: var(--muted); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; }
+    .back-link:hover { color: var(--accent); }
+    .container { max-width: 780px; margin: 0 auto; padding: 32px 20px; }
+    .page-title { font-size: 1.75rem; font-weight: 700; margin: 12px 0 6px; letter-spacing: -0.5px; }
+    .page-desc { color: var(--muted); margin-bottom: 32px; font-size: 0.95rem; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+    @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .card h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 20px; font-weight: 600; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    .field input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 0.95rem; font-family: var(--font); transition: border-color 0.2s; }
+    .field input:focus { outline: none; border-color: var(--accent); }
+    .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .metric { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .metric .val { font-size: 1.4rem; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+    .metric .lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+    .phase-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; }
+    .phase-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 10px; }
+    .phase-row { display: flex; justify-content: space-between; font-size: 0.88rem; padding: 4px 0; border-bottom: 1px solid rgba(48,54,61,0.5); }
+    .phase-row:last-child { border-bottom: none; font-weight: 600; }
+    .phase-row .lbl { color: var(--muted); }
+    .note { background: rgba(88,166,255,0.08); border: 1px solid rgba(88,166,255,0.2); border-radius: 8px; padding: 14px 18px; font-size: 0.85rem; color: var(--muted); margin-top: 20px; }
+    .coffee-float { position: fixed; bottom: 24px; right: 24px; z-index: 100; background: #ffdd00; color: #000; font-size: 0.8rem; font-weight: 700; padding: 10px 16px; border-radius: 24px; text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+    .coffee-float:hover { opacity: 0.9; text-decoration: none; }
+    footer { margin-top: 48px; text-align: center; font-size: 0.8rem; color: var(--muted); }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+  <div style="flex:1"></div>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+</header>
+
+<div class="container">
+  <h1 class="page-title">HELOC Calculator</h1>
+  <p class="page-desc">Calculate monthly payments for your Home Equity Line of Credit during draw and repayment periods.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>HELOC Details</h2>
+      <div class="field">
+        <label>HELOC Credit Limit ($)</label>
+        <input type="number" id="creditLimit" value="100000" min="0">
+      </div>
+      <div class="field">
+        <label>Amount Drawn ($)</label>
+        <input type="number" id="amountDrawn" value="75000" min="0">
+      </div>
+      <div class="field">
+        <label>Current Interest Rate (%/year)</label>
+        <input type="number" id="intRate" value="8.5" step="0.1" min="0">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Period Details</h2>
+      <div class="field">
+        <label>Draw Period (years)</label>
+        <input type="number" id="drawPeriod" value="10" min="1">
+      </div>
+      <div class="field">
+        <label>Repayment Period (years)</label>
+        <input type="number" id="repayPeriod" value="20" min="1">
+      </div>
+      <div class="field">
+        <label>Draw Period Payment Type</label>
+        <select id="drawType" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:0.95rem;font-family:var(--font);">
+          <option value="interest-only" selected>Interest Only</option>
+          <option value="amortizing">Fully Amortizing</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px;">
+    <h2>Results</h2>
+    <div class="metric-grid">
+      <div class="metric">
+        <div class="val" id="drawPayment">—</div>
+        <div class="lbl">Draw Period Payment</div>
+      </div>
+      <div class="metric">
+        <div class="val" id="repayPayment">—</div>
+        <div class="lbl">Repayment Payment</div>
+      </div>
+      <div class="metric">
+        <div class="val" id="totalInterest" style="color:#f85149">—</div>
+        <div class="lbl">Total Interest</div>
+      </div>
+      <div class="metric">
+        <div class="val" id="totalPaid">—</div>
+        <div class="lbl">Total Paid</div>
+      </div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-title">Draw Period</div>
+      <div class="phase-row"><span class="lbl">Duration</span><span id="dp-duration">—</span></div>
+      <div class="phase-row"><span class="lbl">Monthly Payment</span><span id="dp-payment">—</span></div>
+      <div class="phase-row"><span class="lbl">Interest Paid This Phase</span><span id="dp-interest">—</span></div>
+      <div class="phase-row"><span class="lbl">Balance at End of Draw</span><span id="dp-balance">—</span></div>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-title">Repayment Period</div>
+      <div class="phase-row"><span class="lbl">Duration</span><span id="rp-duration">—</span></div>
+      <div class="phase-row"><span class="lbl">Monthly Payment</span><span id="rp-payment">—</span></div>
+      <div class="phase-row"><span class="lbl">Interest Paid This Phase</span><span id="rp-interest">—</span></div>
+      <div class="phase-row"><span class="lbl">Balance at End</span><span id="rp-balance">—</span></div>
+    </div>
+
+    <div class="note">
+      HELOCs typically have variable rates (Prime + margin). Rates can change monthly. This calculator assumes a fixed rate for illustration. If your rate adjusts, recalculate using the new rate. Interest-only payments during the draw period keep payments low but leave the full balance for repayment.
+    </div>
+  </div>
+
+  <footer>
+    <p>More calculators: <a href="/profiterole-blog/finance/">Finance Hub</a> · <a href="/profiterole-blog/finance/home-equity/">Home Equity</a> · <a href="/profiterole-blog/finance/mortgage-calculator/">Mortgage</a></p>
+    <p style="margin-top:8px;"><a href="https://buymeacoffee.com/gl89tu25lp">☕ Buy me a coffee</a> · <a href="/profiterole-blog/">Profiterole</a></p>
+  </footer>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-float" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+
+<script>
+  const ids = ['creditLimit','amountDrawn','intRate','drawPeriod','repayPeriod','drawType'];
+  ids.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function fmtPrecise(n) {
+    return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
+
+  function calculate() {
+    const drawn = +document.getElementById('amountDrawn').value || 0;
+    const rate = +document.getElementById('intRate').value / 100;
+    const drawYrs = +document.getElementById('drawPeriod').value || 10;
+    const repayYrs = +document.getElementById('repayPeriod').value || 20;
+    const drawType = document.getElementById('drawType').value;
+
+    const monthlyRate = rate / 12;
+    const drawMonths = drawYrs * 12;
+    const repayMonths = repayYrs * 12;
+
+    let drawPayment, drawInterest, balanceAfterDraw;
+
+    if (drawType === 'interest-only') {
+      drawPayment = drawn * monthlyRate;
+      drawInterest = drawPayment * drawMonths;
+      balanceAfterDraw = drawn;
+    } else {
+      // Fully amortizing over draw + repay period
+      const totalMonths = drawMonths + repayMonths;
+      if (monthlyRate > 0) {
+        drawPayment = drawn * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+      } else {
+        drawPayment = drawn / totalMonths;
+      }
+      // Calculate balance after draw period
+      let bal = drawn;
+      let dInt = 0;
+      for (let m = 0; m < drawMonths; m++) {
+        const intPmt = bal * monthlyRate;
+        const prinPmt = drawPayment - intPmt;
+        dInt += intPmt;
+        bal = Math.max(0, bal - prinPmt);
+      }
+      drawInterest = dInt;
+      balanceAfterDraw = bal;
+    }
+
+    // Repayment period — amortize remaining balance
+    let repayPayment, repayInterest;
+    if (balanceAfterDraw <= 0) {
+      repayPayment = 0;
+      repayInterest = 0;
+    } else if (monthlyRate > 0) {
+      repayPayment = balanceAfterDraw * (monthlyRate * Math.pow(1 + monthlyRate, repayMonths)) / (Math.pow(1 + monthlyRate, repayMonths) - 1);
+    } else {
+      repayPayment = balanceAfterDraw / repayMonths;
+    }
+    repayInterest = (repayPayment * repayMonths) - balanceAfterDraw;
+
+    const totalInterest = drawInterest + repayInterest;
+    const totalPaid = drawn + totalInterest;
+
+    document.getElementById('drawPayment').textContent = fmtPrecise(drawPayment);
+    document.getElementById('repayPayment').textContent = fmtPrecise(repayPayment);
+    document.getElementById('totalInterest').textContent = fmt(totalInterest);
+    document.getElementById('totalPaid').textContent = fmt(totalPaid);
+
+    document.getElementById('dp-duration').textContent = drawYrs + ' years (' + drawMonths + ' months)';
+    document.getElementById('dp-payment').textContent = fmtPrecise(drawPayment) + '/mo';
+    document.getElementById('dp-interest').textContent = fmt(drawInterest);
+    document.getElementById('dp-balance').textContent = fmt(balanceAfterDraw);
+
+    document.getElementById('rp-duration').textContent = repayYrs + ' years (' + repayMonths + ' months)';
+    document.getElementById('rp-payment').textContent = fmtPrecise(repayPayment) + '/mo';
+    document.getElementById('rp-interest').textContent = fmt(repayInterest);
+    document.getElementById('rp-balance').textContent = fmt(0);
+  }
+
+  calculate();
+</script>
+</body>
+</html>

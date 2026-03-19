@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backdoor Roth IRA Calculator — 2024 Contribution Limits & Tax</title>
+  <meta name="description" content="Calculate backdoor Roth IRA contributions, tax implications of the pro-rata rule, and 5-year rule timelines. 2024 income limits and contribution limits included.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/backdoor-roth/">
+  <meta property="og:title" content="Backdoor Roth IRA Calculator — Pro-Rata Rule & Tax Impact">
+  <meta property="og:description" content="Should you do a backdoor Roth? Calculate the pro-rata rule tax impact and compare to direct Roth. Free, no login.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/backdoor-roth/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Backdoor Roth IRA Calculator — 2024 Limits">
+  <meta name="twitter:description" content="Backdoor Roth IRA calculator with pro-rata rule. 2024 income and contribution limits.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --card: #161b22; --border: #30363d; --accent: #58a6ff;
+      --muted: #8b949e; --green: #3fb950; --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; min-height: 100vh; padding: 0 0 80px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header { border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+    header .logo { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: -0.3px; }
+    header .logo span { color: var(--accent); }
+    .back-link { color: var(--muted); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; }
+    .back-link:hover { color: var(--accent); }
+    .container { max-width: 780px; margin: 0 auto; padding: 32px 20px; }
+    .page-title { font-size: 1.75rem; font-weight: 700; margin: 12px 0 6px; letter-spacing: -0.5px; }
+    .page-desc { color: var(--muted); margin-bottom: 32px; font-size: 0.95rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .card h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 20px; font-weight: 600; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    .field input, .field select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 0.95rem; font-family: var(--font); transition: border-color 0.2s; }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+    .status-box { border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
+    .status-box.eligible { background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.4); }
+    .status-box.ineligible { background: rgba(248, 81, 73, 0.1); border: 1px solid rgba(248, 81, 73, 0.4); }
+    .status-box.partial { background: rgba(210, 153, 34, 0.1); border: 1px solid rgba(210, 153, 34, 0.4); }
+    .status-box.backdoor { background: rgba(88, 166, 255, 0.1); border: 1px solid rgba(88, 166, 255, 0.3); }
+    .status-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+    .status-body { font-size: 0.88rem; color: var(--muted); }
+    .breakdown-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-row .lbl { color: var(--muted); }
+    .breakdown-row .val { font-weight: 600; }
+    .green { color: var(--green); }
+    .red { color: #f85149; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    @media (max-width: 500px) { .metric-grid { grid-template-columns: 1fr 1fr; } }
+    .metric { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+    .metric .v { font-size: 1.3rem; font-weight: 800; color: var(--accent); }
+    .metric .l { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+    .note { background: rgba(88,166,255,0.06); border: 1px solid rgba(88,166,255,0.15); border-radius: 8px; padding: 14px 18px; font-size: 0.82rem; color: var(--muted); margin-top: 16px; }
+    .coffee-float { position: fixed; bottom: 24px; right: 24px; z-index: 100; background: #ffdd00; color: #000; font-size: 0.8rem; font-weight: 700; padding: 10px 16px; border-radius: 24px; text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+    .coffee-float:hover { opacity: 0.9; text-decoration: none; }
+    footer { margin-top: 48px; text-align: center; font-size: 0.8rem; color: var(--muted); }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+  <div style="flex:1"></div>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+</header>
+
+<div class="container">
+  <h1 class="page-title">Backdoor Roth IRA Calculator</h1>
+  <p class="page-desc">Check if you qualify for a direct Roth contribution, and if not, calculate the tax impact of the backdoor Roth using the pro-rata rule.</p>
+
+  <div class="card">
+    <h2>Your Situation (2024)</h2>
+    <div class="grid2">
+      <div class="field">
+        <label>Filing Status</label>
+        <select id="filingStatus">
+          <option value="single">Single</option>
+          <option value="married" selected>Married Filing Jointly</option>
+          <option value="mfs">Married Filing Separately</option>
+          <option value="hoh">Head of Household</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Modified AGI ($)</label>
+        <input type="number" id="magi" value="230000" min="0">
+      </div>
+      <div class="field">
+        <label>Age (you)</label>
+        <input type="number" id="age" value="42" min="18" max="80">
+      </div>
+      <div class="field">
+        <label>Pre-tax IRA Balance ($)</label>
+        <input type="number" id="iraBalance" value="0" placeholder="Sum of all traditional, SEP, SIMPLE IRAs">
+      </div>
+      <div class="field">
+        <label>Non-deductible (after-tax) IRA basis ($)</label>
+        <input type="number" id="iraBasis" value="0" placeholder="Your existing after-tax contributions">
+      </div>
+      <div class="field">
+        <label>Marginal Tax Rate (%)</label>
+        <input type="number" id="taxRate" value="32" step="1" min="0">
+      </div>
+    </div>
+  </div>
+
+  <div id="eligibility-box" class="status-box eligible">
+    <div class="status-title" id="eligTitle">Checking eligibility...</div>
+    <div class="status-body" id="eligBody"></div>
+  </div>
+
+  <div class="card">
+    <h2>2024 Contribution Analysis</h2>
+    <div class="metric-grid">
+      <div class="metric">
+        <div class="v" id="maxContrib">—</div>
+        <div class="l">Max Contribution</div>
+      </div>
+      <div class="metric">
+        <div class="v" id="directLimit">—</div>
+        <div class="l">Direct Roth Limit</div>
+      </div>
+      <div class="metric">
+        <div class="v" id="taxOnConversion">—</div>
+        <div class="l">Tax on Conversion</div>
+      </div>
+    </div>
+
+    <div style="margin-top:4px;">
+      <div class="breakdown-row"><span class="lbl">2024 IRA contribution limit</span><span class="val" id="bLimit">—</span></div>
+      <div class="breakdown-row"><span class="lbl">Direct Roth phase-out starts</span><span class="val" id="bPhaseStart">—</span></div>
+      <div class="breakdown-row"><span class="lbl">Direct Roth phase-out ends</span><span class="val" id="bPhaseEnd">—</span></div>
+      <div class="breakdown-row"><span class="lbl">Your direct Roth max</span><span class="val" id="bDirectMax">—</span></div>
+      <div class="breakdown-row"><span class="lbl">Backdoor Roth available</span><span class="val" id="bBackdoor">—</span></div>
+    </div>
+
+    <div id="prorata-section" style="margin-top:20px;display:none;">
+      <div style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:600;margin-bottom:12px;">Pro-Rata Rule (if you have pre-tax IRA funds)</div>
+      <div class="breakdown-row"><span class="lbl">Total IRA value after contribution</span><span class="val" id="bTotalIRA">—</span></div>
+      <div class="breakdown-row"><span class="lbl">After-tax (non-deductible) basis</span><span class="val" id="bBasis">—</span></div>
+      <div class="breakdown-row"><span class="lbl">Tax-free % of conversion</span><span class="val" id="bTaxFreePct">—</span></div>
+      <div class="breakdown-row"><span class="lbl">Taxable amount on conversion</span><span class="val red" id="bTaxable">—</span></div>
+      <div class="breakdown-row"><span class="lbl">Tax owed at your marginal rate</span><span class="val red" id="bTaxOwed">—</span></div>
+    </div>
+
+    <div class="note">
+      <strong>Pro-rata rule:</strong> If you have any pre-tax IRA money (traditional, SEP, or SIMPLE IRA), the IRS treats all your IRAs as one pool when converting. You can't just convert the after-tax portion tax-free. To avoid the pro-rata rule, roll pre-tax IRA funds into your 401(k) before doing the backdoor Roth.
+    </div>
+  </div>
+
+  <footer>
+    <p>More calculators: <a href="/profiterole-blog/finance/">Finance Hub</a> · <a href="/profiterole-blog/finance/roth-conversion/">Roth Conversion</a> · <a href="/profiterole-blog/finance/roth-vs-traditional/">Roth vs Traditional</a></p>
+    <p style="margin-top:8px;"><a href="https://buymeacoffee.com/gl89tu25lp">☕ Buy me a coffee</a> · <a href="/profiterole-blog/">Profiterole</a></p>
+  </footer>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-float" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+
+<script>
+  // 2024 limits
+  const LIMITS_2024 = {
+    contribution: 7000,
+    catchup: 1000,
+    phaseout: {
+      single:   { start: 146000, end: 161000 },
+      married:  { start: 230000, end: 240000 },
+      mfs:      { start: 0, end: 10000 },
+      hoh:      { start: 146000, end: 161000 },
+    }
+  };
+
+  const ids = ['filingStatus','magi','age','iraBalance','iraBasis','taxRate'];
+  ids.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function calculate() {
+    const filing = document.getElementById('filingStatus').value;
+    const magi = +document.getElementById('magi').value || 0;
+    const age = +document.getElementById('age').value || 40;
+    const iraBalance = +document.getElementById('iraBalance').value || 0;
+    const iraBasis = +document.getElementById('iraBasis').value || 0;
+    const taxRate = +document.getElementById('taxRate').value / 100;
+
+    const catchup = age >= 50 ? LIMITS_2024.catchup : 0;
+    const maxContrib = LIMITS_2024.contribution + catchup;
+    const phaseout = LIMITS_2024.phaseout[filing];
+
+    // Calculate direct Roth limit
+    let directLimit = maxContrib;
+    let eligStatus = 'eligible';
+
+    if (magi >= phaseout.end) {
+      directLimit = 0;
+      eligStatus = 'ineligible';
+    } else if (magi > phaseout.start) {
+      const phasePct = (magi - phaseout.start) / (phaseout.end - phaseout.start);
+      directLimit = Math.max(0, Math.round(maxContrib * (1 - phasePct) / 10) * 10);
+      if (directLimit > 0 && directLimit < 200) directLimit = 200; // IRS minimum
+      eligStatus = 'partial';
+    }
+
+    // Update eligibility box
+    const box = document.getElementById('eligibility-box');
+    box.className = 'status-box ';
+    if (eligStatus === 'eligible') {
+      box.className += 'eligible';
+      document.getElementById('eligTitle').textContent = 'You qualify for a direct Roth IRA contribution';
+      document.getElementById('eligBody').textContent = `Your MAGI of ${fmt(magi)} is below the ${fmt(phaseout.start)} phase-out threshold. You can contribute up to ${fmt(directLimit)} directly to a Roth IRA.`;
+    } else if (eligStatus === 'partial') {
+      box.className += 'partial';
+      document.getElementById('eligTitle').textContent = 'Partial direct Roth contribution allowed';
+      document.getElementById('eligBody').textContent = `Your MAGI is in the phase-out range (${fmt(phaseout.start)}–${fmt(phaseout.end)}). You can contribute ${fmt(directLimit)} directly, or use the backdoor Roth for the full ${fmt(maxContrib)}.`;
+    } else {
+      box.className += 'backdoor';
+      document.getElementById('eligTitle').textContent = 'Backdoor Roth required — direct Roth not available';
+      document.getElementById('eligBody').textContent = `Your MAGI of ${fmt(magi)} exceeds the ${fmt(phaseout.end)} limit for direct Roth contributions. Use the backdoor Roth: contribute after-tax to a traditional IRA, then convert to Roth.`;
+    }
+
+    // Contribution metrics
+    document.getElementById('maxContrib').textContent = fmt(maxContrib);
+    document.getElementById('directLimit').textContent = fmt(directLimit);
+
+    // Pro-rata calculation
+    const contribAmount = maxContrib; // Contributing the full amount via backdoor
+    const newBasis = iraBasis + contribAmount;
+    const newTotal = iraBalance + contribAmount;
+    const taxFreePct = newTotal > 0 ? (newBasis / newTotal) * 100 : 100;
+    const taxableOnConversion = contribAmount * (1 - taxFreePct / 100);
+    const taxOwed = taxableOnConversion * taxRate;
+
+    document.getElementById('taxOnConversion').textContent = fmt(taxOwed);
+    document.getElementById('taxOnConversion').style.color = taxOwed > 0 ? '#f85149' : 'var(--green)';
+
+    document.getElementById('bLimit').textContent = fmt(maxContrib) + (catchup > 0 ? ` (includes $${catchup} catch-up)` : '');
+    document.getElementById('bPhaseStart').textContent = fmt(phaseout.start);
+    document.getElementById('bPhaseEnd').textContent = fmt(phaseout.end);
+    document.getElementById('bDirectMax').textContent = fmt(directLimit);
+    document.getElementById('bBackdoor').textContent = eligStatus === 'ineligible' ? `Yes — contribute ${fmt(maxContrib)} non-deductible, then convert` : (eligStatus === 'partial' ? `Yes — backdoor for remaining ${fmt(maxContrib - directLimit)}` : 'Not needed (direct Roth available)');
+
+    // Pro-rata section
+    if (iraBalance > 0) {
+      document.getElementById('prorata-section').style.display = '';
+      document.getElementById('bTotalIRA').textContent = fmt(newTotal);
+      document.getElementById('bBasis').textContent = fmt(newBasis);
+      document.getElementById('bTaxFreePct').textContent = taxFreePct.toFixed(1) + '%';
+      document.getElementById('bTaxable').textContent = fmt(taxableOnConversion);
+      document.getElementById('bTaxOwed').textContent = fmt(taxOwed);
+    } else {
+      document.getElementById('prorata-section').style.display = 'none';
+    }
+  }
+
+  calculate();
+</script>
+</body>
+</html>

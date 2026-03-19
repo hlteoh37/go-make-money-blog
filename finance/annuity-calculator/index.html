@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annuity Calculator — Present Value, Future Value & Payment</title>
+  <meta name="description" content="Calculate annuity present value, future value, and payment amounts. Supports ordinary annuity and annuity due. Free, instant, no signup required.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/annuity-calculator/">
+  <meta property="og:title" content="Annuity Calculator — Present Value, Future Value & Payment">
+  <meta property="og:description" content="Annuity calculator: find present value, future value, or required payment. Supports ordinary annuity and annuity due. Free, no login.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/annuity-calculator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Annuity Calculator — Present Value, Future Value & Payment">
+  <meta name="twitter:description" content="Calculate annuity PV, FV, and payments. Ordinary annuity and annuity due. Free.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --card: #161b22; --border: #30363d; --accent: #58a6ff;
+      --muted: #8b949e; --green: #3fb950; --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; min-height: 100vh; padding: 0 0 80px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header { border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+    header .logo { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: -0.3px; }
+    header .logo span { color: var(--accent); }
+    .back-link { color: var(--muted); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; }
+    .back-link:hover { color: var(--accent); }
+    .container { max-width: 780px; margin: 0 auto; padding: 32px 20px; }
+    .page-title { font-size: 1.75rem; font-weight: 700; margin: 12px 0 6px; letter-spacing: -0.5px; }
+    .page-desc { color: var(--muted); margin-bottom: 32px; font-size: 0.95rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .card h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 20px; font-weight: 600; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+    .field input, .field select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 0.95rem; font-family: var(--font); transition: border-color 0.2s; }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+    .tab-row { display: flex; gap: 8px; margin-bottom: 24px; }
+    .tab { padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--bg); color: var(--muted); transition: all 0.2s; }
+    .tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 500px) { .metric-grid { grid-template-columns: 1fr 1fr; } }
+    .metric { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .metric .val { font-size: 1.4rem; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+    .metric .lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+    .breakdown-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .breakdown-row:last-child { border-bottom: none; font-weight: 700; }
+    .breakdown-row .label { color: var(--muted); }
+    .note { background: rgba(88,166,255,0.08); border: 1px solid rgba(88,166,255,0.2); border-radius: 8px; padding: 14px 18px; font-size: 0.85rem; color: var(--muted); margin-top: 20px; }
+    .coffee-float { position: fixed; bottom: 24px; right: 24px; z-index: 100; background: #ffdd00; color: #000; font-size: 0.8rem; font-weight: 700; padding: 10px 16px; border-radius: 24px; text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+    .coffee-float:hover { opacity: 0.9; text-decoration: none; }
+    footer { margin-top: 48px; text-align: center; font-size: 0.8rem; color: var(--muted); }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+  <div style="flex:1"></div>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+</header>
+
+<div class="container">
+  <h1 class="page-title">Annuity Calculator</h1>
+  <p class="page-desc">Calculate annuity present value, future value, or required payment for retirement income planning.</p>
+
+  <div class="card">
+    <h2>Solve for</h2>
+    <div class="tab-row">
+      <div class="tab active" onclick="setMode('pv')" id="tab-pv">Present Value</div>
+      <div class="tab" onclick="setMode('fv')" id="tab-fv">Future Value</div>
+      <div class="tab" onclick="setMode('pmt')" id="tab-pmt">Payment</div>
+    </div>
+
+    <div class="grid2">
+      <div class="field" id="field-pmt-wrap">
+        <label>Payment Amount ($/period)</label>
+        <input type="number" id="pmt" value="2000" min="0">
+      </div>
+      <div class="field" id="field-pv-wrap">
+        <label>Present Value / Lump Sum ($)</label>
+        <input type="number" id="pv" value="300000" min="0">
+      </div>
+      <div class="field">
+        <label>Annual Interest Rate (%)</label>
+        <input type="number" id="intRate" value="5" step="0.1" min="0">
+      </div>
+      <div class="field">
+        <label>Number of Periods (years)</label>
+        <input type="number" id="nPeriods" value="20" min="1">
+      </div>
+      <div class="field">
+        <label>Payment Frequency</label>
+        <select id="freq">
+          <option value="12">Monthly</option>
+          <option value="4">Quarterly</option>
+          <option value="2">Semi-Annual</option>
+          <option value="1" selected>Annual</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Annuity Type</label>
+        <select id="annType">
+          <option value="0" selected>Ordinary (end of period)</option>
+          <option value="1">Annuity Due (beginning of period)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Results</h2>
+    <div class="metric-grid">
+      <div class="metric">
+        <div class="val" id="resPV">—</div>
+        <div class="lbl">Present Value</div>
+      </div>
+      <div class="metric">
+        <div class="val" id="resFV">—</div>
+        <div class="lbl">Future Value</div>
+      </div>
+      <div class="metric">
+        <div class="val" id="resPMT">—</div>
+        <div class="lbl">Per-Period Payment</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="breakdown-row"><span class="label">Total Payments Made</span><span id="bTotal">—</span></div>
+      <div class="breakdown-row"><span class="label">Total Principal</span><span id="bPrincipal">—</span></div>
+      <div class="breakdown-row"><span class="label">Total Interest</span><span id="bInterest">—</span></div>
+      <div class="breakdown-row"><span class="label">Number of Payments</span><span id="bNumPmt">—</span></div>
+    </div>
+
+    <div class="note">
+      <strong>Ordinary annuity</strong> pays at end of each period (like most bonds). <strong>Annuity due</strong> pays at the start (like most leases). Annuity due is worth slightly more — payments arrive one period earlier.
+    </div>
+  </div>
+
+  <footer>
+    <p>More calculators: <a href="/profiterole-blog/finance/">Finance Hub</a> · <a href="/profiterole-blog/finance/four-percent-rule/">4% Rule</a> · <a href="/profiterole-blog/finance/retirement-withdrawal/">Retirement Withdrawal</a></p>
+    <p style="margin-top:8px;"><a href="https://buymeacoffee.com/gl89tu25lp">☕ Buy me a coffee</a> · <a href="/profiterole-blog/">Profiterole</a></p>
+  </footer>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-float" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+
+<script>
+  let mode = 'pv';
+
+  function setMode(m) {
+    mode = m;
+    ['pv','fv','pmt'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === m);
+    });
+    // Show/hide inputs based on what we're solving for
+    document.getElementById('field-pmt-wrap').style.display = m === 'pmt' ? 'none' : '';
+    document.getElementById('field-pv-wrap').style.display = m === 'pv' ? 'none' : '';
+    calculate();
+  }
+
+  const inputIds = ['pmt','pv','intRate','nPeriods','freq','annType'];
+  inputIds.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+
+  function fmt(n) {
+    return '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  }
+
+  function calculate() {
+    const pmt = +document.getElementById('pmt').value || 0;
+    const pvInput = +document.getElementById('pv').value || 0;
+    const annualRate = +document.getElementById('intRate').value || 0;
+    const years = +document.getElementById('nPeriods').value || 1;
+    const freq = +document.getElementById('freq').value || 1;
+    const due = +document.getElementById('annType').value;
+
+    const r = annualRate / 100 / freq; // period rate
+    const n = years * freq; // total periods
+
+    let pvResult, fvResult, pmtResult;
+
+    if (mode === 'pv') {
+      // Solve for PV given pmt
+      const p = pmt;
+      if (r === 0) {
+        pvResult = p * n;
+      } else {
+        pvResult = p * (1 - Math.pow(1 + r, -n)) / r;
+        if (due) pvResult *= (1 + r);
+      }
+      pmtResult = p;
+      fvResult = pvResult * Math.pow(1 + r, n);
+    } else if (mode === 'fv') {
+      // Solve for FV given pmt
+      const p = pmt;
+      if (r === 0) {
+        fvResult = p * n;
+      } else {
+        fvResult = p * (Math.pow(1 + r, n) - 1) / r;
+        if (due) fvResult *= (1 + r);
+      }
+      pmtResult = p;
+      pvResult = fvResult / Math.pow(1 + r, n);
+    } else {
+      // Solve for PMT given PV
+      const pv = pvInput;
+      if (r === 0) {
+        pmtResult = pv / n;
+      } else {
+        pmtResult = pv * r / (1 - Math.pow(1 + r, -n));
+        if (due) pmtResult /= (1 + r);
+      }
+      pvResult = pv;
+      fvResult = pvResult * Math.pow(1 + r, n);
+    }
+
+    const totalPmt = pmtResult * n;
+    const interest = totalPmt - pvResult;
+
+    document.getElementById('resPV').textContent = fmt(pvResult);
+    document.getElementById('resFV').textContent = fmt(fvResult);
+    document.getElementById('resPMT').textContent = fmt(pmtResult);
+    document.getElementById('bTotal').textContent = fmt(totalPmt);
+    document.getElementById('bPrincipal').textContent = fmt(pvResult);
+    document.getElementById('bInterest').textContent = fmt(Math.abs(interest));
+    document.getElementById('bNumPmt').textContent = n.toLocaleString() + ' payments';
+  }
+
+  setMode('pv');
+</script>
+</body>
+</html>
