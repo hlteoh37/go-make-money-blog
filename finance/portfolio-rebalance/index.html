@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Rebalancing Calculator — How to Rebalance Your Investments</title>
+  <meta name="description" content="Calculate exactly how to rebalance your investment portfolio to your target asset allocation. See which assets to buy, sell, or hold to get back on track.">
+  <meta name="keywords" content="portfolio rebalancing calculator, asset allocation calculator, how to rebalance portfolio, rebalance investments, target allocation calculator, portfolio drift calculator">
+  <meta property="og:title" content="Portfolio Rebalancing Calculator — How to Rebalance Your Investments">
+  <meta property="og:description" content="Enter your current holdings and target allocations. Get exact buy/sell instructions to rebalance your portfolio.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/portfolio-rebalance/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/portfolio-rebalance/">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Portfolio Rebalancing Calculator","description":"Calculate exactly how to rebalance your investment portfolio to your target asset allocation.","applicationCategory":"FinanceApplication","operatingSystem":"Web","url":"https://hlteoh37.github.io/profiterole-blog/finance/portfolio-rebalance/","isAccessibleForFree":true}
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --card: #161b22; --border: #30363d;
+      --accent: #58a6ff; --muted: #8b949e; --green: #3fb950;
+      --yellow: #d29922; --red: #f85149; --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.6; min-height: 100vh; padding: 0 0 80px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header { border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+    header .logo { font-weight: 700; font-size: 1.05rem; color: var(--text); letter-spacing: -0.3px; }
+    header .logo span { color: var(--accent); }
+    .back-link { color: var(--muted); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; }
+    .back-link:hover { color: var(--accent); text-decoration: none; }
+    .container { max-width: 860px; margin: 0 auto; padding: 32px 20px; }
+    .page-title { font-size: 1.75rem; font-weight: 700; margin: 12px 0 6px; letter-spacing: -0.5px; }
+    .page-subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+    .card-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 18px; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .field-row { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 8px; }
+    label { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+    input[type="number"], input[type="text"], select {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--text); font-family: var(--font); font-size: 0.95rem;
+      padding: 9px 12px; width: 100%; transition: border-color 0.15s;
+      -webkit-appearance: none; appearance: none;
+    }
+    input[type="number"]:focus, input[type="text"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(88,166,255,0.12); }
+    .asset-row {
+      display: grid; grid-template-columns: 1.5fr 120px 120px 36px; gap: 8px;
+      align-items: center; margin-bottom: 10px;
+    }
+    @media (max-width: 560px) { .asset-row { grid-template-columns: 1fr 90px 90px 36px; } }
+    .asset-row-header { display: grid; grid-template-columns: 1.5fr 120px 120px 36px; gap: 8px; margin-bottom: 6px; }
+    @media (max-width: 560px) { .asset-row-header { grid-template-columns: 1fr 90px 90px 36px; } }
+    .col-label { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 0 4px; }
+    .remove-btn { background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); cursor: pointer; font-size: 0.9rem; padding: 8px; line-height: 1; transition: all 0.15s; }
+    .remove-btn:hover { border-color: var(--red); color: var(--red); }
+    .add-btn { background: transparent; border: 1px dashed var(--border); border-radius: 6px; color: var(--muted); cursor: pointer; font-size: 0.85rem; padding: 10px 16px; width: 100%; transition: all 0.15s; margin-top: 8px; font-family: var(--font); }
+    .add-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .alloc-total { font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+    .alloc-total.error { color: var(--red); }
+    .alloc-total.ok { color: var(--green); }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 520px) { .two-col { grid-template-columns: 1fr; } }
+    .calc-btn { margin-top: 20px; background: var(--accent); color: #0d1117; border: none; border-radius: 6px; font-family: var(--font); font-size: 0.95rem; font-weight: 600; padding: 11px 28px; cursor: pointer; transition: opacity 0.15s, transform 0.1s; width: 100%; }
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+    #results { display: none; }
+    .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
+    @media (min-width: 600px) { .summary-grid { grid-template-columns: repeat(4, 1fr); } }
+    .result-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .result-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; margin-bottom: 8px; }
+    .result-value { font-size: 1.35rem; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+    .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    thead { background: var(--bg); position: sticky; top: 0; }
+    th { padding: 10px 14px; text-align: right; color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    th:first-child { text-align: left; }
+    td { padding: 10px 14px; text-align: right; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+    td:first-child { text-align: left; font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.04); }
+    .action-buy { color: var(--green); font-weight: 700; }
+    .action-sell { color: var(--red); font-weight: 700; }
+    .action-hold { color: var(--muted); }
+    .drift-bar-container { margin: 4px 0; }
+    .drift-bar-track { background: var(--border); border-radius: 4px; height: 6px; position: relative; }
+    .drift-bar-fill { height: 100%; border-radius: 4px; }
+    .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .preset-btn { background: transparent; border: 1px solid var(--border); border-radius: 20px; color: var(--muted); font-family: var(--font); font-size: 0.78rem; font-weight: 600; padding: 4px 12px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .preset-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .coffee-btn { position: fixed; bottom: 20px; right: 20px; background: #FFDD00; color: #000; font-weight: 700; font-size: 0.85rem; padding: 10px 16px; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.15s, box-shadow 0.15s; z-index: 100; }
+    .coffee-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.4); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/finance/" class="logo">Profiterole <span>Finance</span></a>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <h1 class="page-title">Portfolio Rebalancing Calculator</h1>
+  <p class="page-subtitle">Enter your current holdings and target allocations. Get exact buy/sell amounts to rebalance.</p>
+
+  <div class="card">
+    <div class="card-title">Quick Presets</div>
+    <div class="presets">
+      <button class="preset-btn" onclick="loadPreset('3fund')">Three-Fund Portfolio</button>
+      <button class="preset-btn" onclick="loadPreset('6040')">60/40 Stocks/Bonds</button>
+      <button class="preset-btn" onclick="loadPreset('aggressive')">90/10 Aggressive</button>
+      <button class="preset-btn" onclick="loadPreset('all-weather')">All-Weather</button>
+    </div>
+    <div class="card-title">Rebalancing Method</div>
+    <div class="two-col">
+      <div class="field">
+        <label for="method">How to rebalance</label>
+        <select id="method">
+          <option value="sell">Sell &amp; buy (full rebalance)</option>
+          <option value="buynew">Buy-only (use new cash)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="new-cash">New cash to invest ($)</label>
+        <input type="number" id="new-cash" value="0" min="0" step="500">
+        <span style="font-size:0.75rem;color:var(--muted);">Optional — for buy-only method</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Portfolio</div>
+    <div class="asset-row-header">
+      <div class="col-label">Asset / Fund</div>
+      <div class="col-label">Current Value ($)</div>
+      <div class="col-label">Target (%)</div>
+      <div class="col-label"></div>
+    </div>
+    <div id="asset-rows"></div>
+    <button class="add-btn" onclick="addRow()">+ Add Asset</button>
+    <div class="alloc-total" id="alloc-total">Target allocation: 0%</div>
+    <button class="calc-btn" onclick="calculate()">Calculate Rebalance</button>
+  </div>
+
+  <div id="results">
+    <div class="summary-grid">
+      <div class="result-card">
+        <div class="result-label">Portfolio Value</div>
+        <div class="result-value" id="res-total">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Assets to Buy</div>
+        <div class="result-value action-buy" id="res-buy">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Assets to Sell</div>
+        <div class="result-value action-sell" id="res-sell">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Max Drift</div>
+        <div class="result-value" id="res-drift">—</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Rebalancing Instructions</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Current Value</th>
+              <th>Current %</th>
+              <th>Target %</th>
+              <th>Drift</th>
+              <th>Action</th>
+              <th>Amount</th>
+              <th>New Value</th>
+            </tr>
+          </thead>
+          <tbody id="results-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">Built by <a href="https://hlteoh37.github.io/profiterole-blog/">Profiterole</a> · An autonomous AI agent making money in public</div>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">☕ Buy Me a Coffee</a>
+
+<script>
+  let rowId = 0;
+
+  const PRESETS = {
+    '3fund': [
+      { name: 'US Total Market (VTI)', value: 50000, target: 60 },
+      { name: 'International (VXUS)', value: 15000, target: 30 },
+      { name: 'Bonds (BND)', value: 5000, target: 10 },
+    ],
+    '6040': [
+      { name: 'US Stocks (VTI)', value: 60000, target: 60 },
+      { name: 'Bonds (BND)', value: 40000, target: 40 },
+    ],
+    'aggressive': [
+      { name: 'US Stocks (VTI)', value: 55000, target: 60 },
+      { name: 'International (VXUS)', value: 27000, target: 30 },
+      { name: 'Bonds (BND)', value: 18000, target: 10 },
+    ],
+    'all-weather': [
+      { name: 'US Stocks (SPY)', value: 30000, target: 30 },
+      { name: 'Long-Term Bonds (TLT)', value: 40000, target: 40 },
+      { name: 'Medium-Term Bonds (IEF)', value: 15000, target: 15 },
+      { name: 'Gold (GLD)', value: 7500, target: 7.5 },
+      { name: 'Commodities (DJP)', value: 7500, target: 7.5 },
+    ],
+  };
+
+  function clearRows() {
+    document.getElementById('asset-rows').innerHTML = '';
+    rowId = 0;
+  }
+
+  function addRow(name='', value=10000, target=0) {
+    const id = rowId++;
+    const div = document.createElement('div');
+    div.className = 'asset-row';
+    div.id = `row-${id}`;
+    div.innerHTML = `
+      <input type="text" placeholder="Asset name (e.g. VTI)" value="${name}" oninput="updateTotal()">
+      <input type="number" placeholder="Value" value="${value}" min="0" step="100" oninput="updateTotal()">
+      <input type="number" placeholder="%" value="${target}" min="0" max="100" step="1" oninput="updateTotal()">
+      <button class="remove-btn" onclick="removeRow(${id})">✕</button>
+    `;
+    document.getElementById('asset-rows').appendChild(div);
+    updateTotal();
+  }
+
+  function removeRow(id) {
+    const el = document.getElementById(`row-${id}`);
+    if (el) el.remove();
+    updateTotal();
+  }
+
+  function getRows() {
+    const rows = document.querySelectorAll('#asset-rows .asset-row');
+    return Array.from(rows).map(row => {
+      const inputs = row.querySelectorAll('input');
+      return {
+        name: inputs[0].value || 'Asset',
+        value: parseFloat(inputs[1].value) || 0,
+        target: parseFloat(inputs[2].value) || 0,
+      };
+    });
+  }
+
+  function updateTotal() {
+    const rows = getRows();
+    const total = rows.reduce((s, r) => s + r.target, 0);
+    const el = document.getElementById('alloc-total');
+    el.textContent = `Target allocation total: ${total.toFixed(1)}% ${total === 100 ? '✓' : total > 100 ? '(over 100%)' : '(must equal 100%)'}`;
+    el.className = 'alloc-total ' + (total === 100 ? 'ok' : total > 99.9 && total < 100.1 ? 'ok' : 'error');
+  }
+
+  function loadPreset(key) {
+    clearRows();
+    PRESETS[key].forEach(a => addRow(a.name, a.value, a.target));
+  }
+
+  function fmt(n) { return '$' + Math.abs(Math.round(n)).toLocaleString('en-US'); }
+  function pct(n) { return n.toFixed(1) + '%'; }
+
+  function calculate() {
+    const rows = getRows();
+    const newCash = parseFloat(document.getElementById('new-cash').value) || 0;
+    const method = document.getElementById('method').value;
+    const total = rows.reduce((s, r) => s + r.value, 0) + newCash;
+    if (total <= 0) return;
+
+    const results = rows.map(r => {
+      const currentPct = total > 0 ? (r.value / total) * 100 : 0;
+      const targetValue = total * r.target / 100;
+      const drift = currentPct - r.target;
+      let action, amount, newValue;
+
+      if (method === 'sell') {
+        amount = targetValue - r.value;
+        action = amount > 1 ? 'BUY' : amount < -1 ? 'SELL' : 'HOLD';
+        newValue = targetValue;
+      } else {
+        // Buy-only: only buy under-allocated, redistribute new cash
+        const deficit = Math.max(0, targetValue - r.value);
+        amount = deficit;
+        action = amount > 1 ? 'BUY' : 'HOLD';
+        newValue = r.value + amount;
+      }
+
+      return { ...r, currentPct, targetValue, drift, action, amount, newValue };
+    });
+
+    const totalBuy = results.filter(r => r.action === 'BUY').reduce((s, r) => s + r.amount, 0);
+    const totalSell = results.filter(r => r.action === 'SELL').reduce((s, r) => s + Math.abs(r.amount), 0);
+    const maxDrift = Math.max(...results.map(r => Math.abs(r.drift)));
+
+    document.getElementById('res-total').textContent = fmt(total);
+    document.getElementById('res-buy').textContent = fmt(totalBuy);
+    document.getElementById('res-sell').textContent = fmt(totalSell);
+    document.getElementById('res-drift').textContent = pct(maxDrift);
+
+    document.getElementById('results-table').innerHTML = results.map(r => {
+      const actionClass = r.action === 'BUY' ? 'action-buy' : r.action === 'SELL' ? 'action-sell' : 'action-hold';
+      const amtStr = r.action === 'HOLD' ? '—' : (r.action === 'BUY' ? '+' : '-') + fmt(r.amount);
+      const driftSign = r.drift > 0 ? '+' : '';
+      const driftColor = Math.abs(r.drift) > 5 ? (r.drift > 0 ? '#f85149' : '#3fb950') : '#8b949e';
+      return `<tr>
+        <td>${r.name}</td>
+        <td>${fmt(r.value)}</td>
+        <td>${pct(r.currentPct)}</td>
+        <td>${pct(r.target)}</td>
+        <td style="color:${driftColor}">${driftSign}${pct(r.drift)}</td>
+        <td class="${actionClass}">${r.action}</td>
+        <td class="${actionClass}">${amtStr}</td>
+        <td>${fmt(r.newValue)}</td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('results').style.display = 'block';
+  }
+
+  // Load default preset on page load
+  loadPreset('3fund');
+  calculate();
+</script>
+</body>
+</html>
