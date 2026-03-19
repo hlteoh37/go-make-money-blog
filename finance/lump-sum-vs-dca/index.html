@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lump Sum vs DCA Calculator — Which Wins?</title>
+  <meta name="description" content="Compare lump sum investing vs dollar-cost averaging. See how both strategies perform over time with real numbers.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/lump-sum-vs-dca/">
+  <meta property="og:title" content="Lump Sum vs DCA Calculator — Which Wins?">
+  <meta property="og:description" content="Compare lump sum investing vs dollar-cost averaging. See how both strategies perform over time with real numbers.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/lump-sum-vs-dca/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lump Sum vs DCA Calculator — Which Wins?">
+  <meta name="twitter:description" content="Compare lump sum investing vs dollar-cost averaging. See how both strategies perform over time with real numbers.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    header .logo span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .calc-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    #results { display: none; }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .compare-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .compare-card.winner {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px rgba(63,185,80,0.15);
+    }
+
+    .compare-card h3 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .compare-card .main-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .compare-card.winner .main-value { color: var(--green); }
+
+    .compare-card .sub-value {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .winner-badge {
+      display: inline-block;
+      background: var(--green);
+      color: #0d1117;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+    }
+
+    th {
+      padding: 10px 14px;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th:first-child { text-align: center; }
+
+    td {
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    td:first-child { text-align: center; color: var(--muted); }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.04); }
+
+    td.ls-col { color: var(--accent); }
+    td.dca-col { color: #d2a8ff; }
+
+    .explainer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .explainer h2 {
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .explainer h3 {
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 16px 0 6px;
+    }
+
+    .explainer p { margin-bottom: 10px; }
+
+    .explainer .formula-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+
+    .bmac-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+    }
+
+    .bmac-float a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFDD00;
+      color: #000;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .bmac-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">Lump Sum vs DCA Calculator</h1>
+  <p class="page-subtitle">Which strategy puts more money in your pocket? Compare investing all at once versus spreading it out over time.</p>
+
+  <div class="card">
+    <div class="card-title">Calculator Inputs</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="totalAmount">Total Amount to Invest ($)</label>
+        <input type="number" id="totalAmount" value="12000" min="0" step="500">
+        <span class="field-hint">Full sum available to invest</span>
+      </div>
+      <div class="field">
+        <label for="dcaMonths">DCA Period (months)</label>
+        <input type="number" id="dcaMonths" value="12" min="2" max="120" step="1">
+        <span class="field-hint">Spread investment over this many months</span>
+      </div>
+      <div class="field">
+        <label for="annualReturn">Annual Return (%)</label>
+        <input type="number" id="annualReturn" value="7" min="0" max="50" step="0.1">
+        <span class="field-hint">Expected average annual return</span>
+      </div>
+      <div class="field">
+        <label for="holdYears">Total Hold Period (years)</label>
+        <input type="number" id="holdYears" value="10" min="1" max="50" step="1">
+        <span class="field-hint">How long you stay invested after all-in</span>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Compare Strategies</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="compare-grid">
+      <div class="compare-card" id="ls-card">
+        <h3>Lump Sum</h3>
+        <div class="main-value" id="res-ls">—</div>
+        <div class="sub-value" id="res-ls-gain">—</div>
+      </div>
+      <div class="compare-card" id="dca-card">
+        <h3>Dollar-Cost Averaging</h3>
+        <div class="main-value" id="res-dca">—</div>
+        <div class="sub-value" id="res-dca-gain">—</div>
+      </div>
+    </div>
+
+    <div id="winner-note" style="margin-bottom:20px; padding:14px 18px; background:var(--card); border:1px solid var(--border); border-radius:8px; font-size:0.88rem; color:var(--muted);"></div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="card-title" style="padding:16px 20px 0;">Year-by-Year Comparison</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Lump Sum Balance</th>
+              <th>DCA Balance</th>
+              <th>Lump Sum Lead</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="explainer">
+    <h2>Lump Sum vs Dollar-Cost Averaging</h2>
+    <p>
+      The debate is classic: you have a windfall (inheritance, bonus, savings) and need to invest it. Do you put it all in at once, or spread it out over months to "smooth" your entry price?
+    </p>
+
+    <h3>How Lump Sum Works</h3>
+    <p>
+      You invest the entire amount on day one. All of it starts compounding immediately. The risk: if the market drops right after you invest, you're fully exposed. The reward: if the market rises (which it does most of the time), you captured every point of gain from day one.
+    </p>
+    <div class="formula-block">Lump Sum Value = P &times; (1 + r/12)^(months)</div>
+
+    <h3>How DCA Works</h3>
+    <p>
+      You divide the total amount into equal monthly installments and invest one portion each month. Each portion then compounds for the remaining time. You never buy all at the top, but you also never buy all at the bottom — you get an average price.
+    </p>
+    <div class="formula-block">DCA Value = &Sigma; [monthly_amount &times; (1 + r/12)^(months_remaining)]</div>
+
+    <h3>What the Research Says</h3>
+    <p>
+      A 2012 Vanguard study found that lump sum investing outperforms DCA approximately 2/3 of the time across US, UK, and Australian markets. The reason is simple: markets go up more often than they go down. Time in the market beats timing the market.
+    </p>
+    <p>
+      However, DCA wins in the other 1/3 of scenarios — typically when markets fall significantly right after investment. More importantly, DCA dramatically reduces regret. An investor who DCA'd into a crash sleeps better than one who lump-summed at the peak.
+    </p>
+
+    <h3>When DCA Makes Sense</h3>
+    <p>
+      DCA is optimal for behavioral reasons, not mathematical ones. If a market drop right after investing would cause you to panic-sell, DCA preserves your psychology and therefore your portfolio. The "best" strategy is the one you'll actually stick to.
+    </p>
+    <p>
+      DCA also mirrors how most people actually invest — through regular paycheck contributions to a 401(k). In that context, DCA isn't a choice, it's the mechanism.
+    </p>
+  </div>
+</div>
+
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function fmtDiff(n) {
+    const sign = n >= 0 ? '+' : '';
+    return sign + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function calculate() {
+    const total = parseFloat(document.getElementById('totalAmount').value) || 12000;
+    const dcaMonths = parseInt(document.getElementById('dcaMonths').value) || 12;
+    const annualReturn = parseFloat(document.getElementById('annualReturn').value) || 7;
+    const holdYears = parseInt(document.getElementById('holdYears').value) || 10;
+
+    const monthlyRate = annualReturn / 100 / 12;
+    const totalMonths = holdYears * 12;
+    const monthlyDca = total / dcaMonths;
+
+    // Lump sum: full amount compounds for totalMonths
+    const lsValue = total * Math.pow(1 + monthlyRate, totalMonths);
+
+    // DCA: each monthly installment compounds for (totalMonths - month_index) months
+    // Months 0..dcaMonths-1, each compounding for totalMonths - i months
+    let dcaValue = 0;
+    for (let i = 0; i < dcaMonths; i++) {
+      const monthsRemaining = totalMonths - i;
+      if (monthsRemaining < 0) break;
+      dcaValue += monthlyDca * Math.pow(1 + monthlyRate, monthsRemaining);
+    }
+
+    const lsGain = lsValue - total;
+    const dcaGain = dcaValue - total;
+    const lsWins = lsValue >= dcaValue;
+
+    // Update cards
+    document.getElementById('res-ls').textContent = fmt(lsValue);
+    document.getElementById('res-ls-gain').textContent = 'Gain: ' + fmt(lsGain);
+    document.getElementById('res-dca').textContent = fmt(dcaValue);
+    document.getElementById('res-dca-gain').textContent = 'Gain: ' + fmt(dcaGain);
+
+    const lsCard = document.getElementById('ls-card');
+    const dcaCard = document.getElementById('dca-card');
+    lsCard.classList.toggle('winner', lsWins);
+    dcaCard.classList.toggle('winner', !lsWins);
+
+    // Remove existing badges
+    lsCard.querySelector('.winner-badge') && lsCard.querySelector('.winner-badge').remove();
+    dcaCard.querySelector('.winner-badge') && dcaCard.querySelector('.winner-badge').remove();
+
+    const badge = document.createElement('div');
+    badge.className = 'winner-badge';
+    badge.textContent = 'Winner';
+    if (lsWins) {
+      lsCard.insertBefore(badge, lsCard.firstChild);
+    } else {
+      dcaCard.insertBefore(badge, dcaCard.firstChild);
+    }
+
+    const diff = Math.abs(lsValue - dcaValue);
+    const winnerName = lsWins ? 'Lump Sum' : 'DCA';
+    document.getElementById('winner-note').innerHTML =
+      `<strong style="color:var(--text)">${winnerName} wins by ${fmt(diff)}</strong> — ` +
+      (lsWins
+        ? `Investing all ${fmt(total)} upfront gives more time in the market. Over ${holdYears} year${holdYears === 1 ? '' : 's'}, that extra compounding time adds up.`
+        : `Spreading ${fmt(total)} over ${dcaMonths} months avoids buying at a single point in time. In this scenario, the averaged entry price more than compensates for the delayed start.`);
+
+    // Year-by-year table
+    const tableBody = document.getElementById('table-body');
+    tableBody.innerHTML = '';
+
+    for (let year = 1; year <= holdYears; year++) {
+      const m = year * 12;
+
+      // LS balance at this year
+      const lsBal = total * Math.pow(1 + monthlyRate, m);
+
+      // DCA balance at this year: each installment has had (m - i) months to compound
+      let dcaBal = 0;
+      for (let i = 0; i < dcaMonths; i++) {
+        const mRemaining = m - i;
+        if (mRemaining <= 0) continue;
+        dcaBal += monthlyDca * Math.pow(1 + monthlyRate, mRemaining);
+      }
+
+      const lead = lsBal - dcaBal;
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${year}</td>
+        <td class="ls-col">${fmt(lsBal)}</td>
+        <td style="color:#d2a8ff">${fmt(dcaBal)}</td>
+        <td style="color:${lead >= 0 ? 'var(--green)' : '#f85149'}">${fmtDiff(lead)}</td>
+      `;
+      tableBody.appendChild(row);
+    }
+
+    const resultsEl = document.getElementById('results');
+    resultsEl.style.display = 'block';
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+
+</body>
+</html>

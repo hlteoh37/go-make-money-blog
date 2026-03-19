@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coast FIRE Calculator — Free, No Login</title>
+  <meta name="description" content="Calculate your Coast FIRE number. Find out when you can stop saving and let compound interest carry you to retirement. Free, instant.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/coast-fire/">
+  <meta property="og:title" content="Coast FIRE Calculator — Free, No Login">
+  <meta property="og:description" content="Calculate your Coast FIRE number. Find out when you can stop saving and let compound interest carry you to retirement. Free, instant.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/coast-fire/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Coast FIRE Calculator — Free, No Login">
+  <meta name="twitter:description" content="Calculate your Coast FIRE number. Find out when you can stop saving and let compound interest carry you to retirement. Free, instant.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    header .logo span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .calc-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    #results { display: none; }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 520px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+
+    .result-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .result-card.primary {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px rgba(63,185,80,0.15);
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .result-card.primary .result-value {
+      font-size: 1.9rem;
+      color: var(--green);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+    }
+
+    th {
+      padding: 10px 14px;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th:first-child { text-align: center; }
+
+    td {
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    td:first-child { text-align: center; color: var(--muted); }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.04); }
+
+    td.highlight { color: var(--green); font-weight: 600; }
+
+    .coasted-row td { background: rgba(63,185,80,0.06); }
+    .coasted-row td:first-child { color: var(--green); }
+
+    .explainer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .explainer h2 {
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .explainer h3 {
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 16px 0 6px;
+    }
+
+    .explainer p { margin-bottom: 10px; }
+
+    .explainer .formula-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+
+    .bmac-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+    }
+
+    .bmac-float a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFDD00;
+      color: #000;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .bmac-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(63,185,80,0.15);
+      color: var(--green);
+      border: 1px solid rgba(63,185,80,0.3);
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">Coast FIRE Calculator</h1>
+  <p class="page-subtitle">Find out how much you need saved today to stop contributing and let compounding carry you to retirement.</p>
+
+  <div class="card">
+    <div class="card-title">Calculator Inputs</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="currentSavings">Current Savings ($)</label>
+        <input type="number" id="currentSavings" value="50000" min="0" step="1000">
+        <span class="field-hint">Your current invested assets</span>
+      </div>
+      <div class="field">
+        <label for="annualContrib">Annual Contribution ($)</label>
+        <input type="number" id="annualContrib" value="12000" min="0" step="500">
+        <span class="field-hint">Amount you add each year</span>
+      </div>
+      <div class="field">
+        <label for="returnRate">Expected Return (%)</label>
+        <input type="number" id="returnRate" value="7" min="0" max="30" step="0.1">
+        <span class="field-hint">Nominal annual return (e.g. 7)</span>
+      </div>
+      <div class="field">
+        <label for="inflationRate">Inflation Rate (%)</label>
+        <input type="number" id="inflationRate" value="3" min="0" max="20" step="0.1">
+        <span class="field-hint">Used for real return calc</span>
+      </div>
+      <div class="field">
+        <label for="currentAge">Current Age</label>
+        <input type="number" id="currentAge" value="30" min="18" max="80" step="1">
+      </div>
+      <div class="field">
+        <label for="retirementAge">Retirement Age</label>
+        <input type="number" id="retirementAge" value="65" min="30" max="90" step="1">
+      </div>
+      <div class="field">
+        <label for="annualExpenses">Annual Expenses in Retirement ($)</label>
+        <input type="number" id="annualExpenses" value="60000" min="0" step="1000">
+        <span class="field-hint">In today's dollars</span>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-grid">
+      <div class="result-card primary">
+        <div class="result-label">Coast FIRE Number</div>
+        <div class="result-value" id="res-coast">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Years Until Coast</div>
+        <div class="result-value" id="res-years">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Coast Date</div>
+        <div class="result-value" id="res-date">—</div>
+      </div>
+    </div>
+    <div style="margin-bottom: 12px; color: var(--muted); font-size: 0.85rem;" id="res-fi-number-note"></div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="card-title" style="padding:16px 20px 0;">Year-by-Year Projection</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Age</th>
+              <th>Balance</th>
+              <th>Coast FIRE Number</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="explainer">
+    <h2>What is Coast FIRE?</h2>
+    <p>
+      Coast FIRE is a milestone within the FIRE (Financial Independence, Retire Early) movement. Instead of grinding until you hit your full FI number, you identify a point where your current savings — left alone — will grow to your full retirement number by the time you reach retirement age. Once you hit that Coast number, you can stop saving and let compounding do the rest.
+    </p>
+    <p>
+      The word "coast" is the key: you've climbed the hill, now you can coast downhill without pedaling. You still need income to cover living expenses, but that income doesn't need to go toward retirement anymore.
+    </p>
+
+    <h3>The Formulas</h3>
+    <div class="formula-block">FI Number = Annual Expenses / 0.04 (4% safe withdrawal rate)</div>
+    <div class="formula-block">Coast FIRE Number = FI Number / (1 + r)^years_to_retirement</div>
+    <p>
+      The FI Number is how much you need at retirement to safely withdraw 4% per year indefinitely (the "4% Rule" from the Trinity Study). The Coast number is simply the present value of that FI number — how much you need today so it grows into your FI number by retirement.
+    </p>
+
+    <h3>What "Coasting" Actually Means</h3>
+    <p>
+      After hitting your Coast number, you can shift your entire income toward lifestyle rather than savings. You might work a lower-stress job, go part-time, pursue passion projects, or move to a lower cost-of-living area — anything that covers your current expenses without needing to save a dollar more. The market does the retirement saving for you.
+    </p>
+
+    <h3>The Power of Starting Early</h3>
+    <p>
+      The earlier you start, the lower your Coast number. A 25-year-old with 40 years of compounding needs far less saved than a 45-year-old with only 20 years to go. This is why Coast FIRE is particularly powerful for young savers who front-load their contributions and then pivot to more flexible work.
+    </p>
+
+    <h3>A Note on Inflation</h3>
+    <p>
+      This calculator uses your nominal return for projections. The "Annual Expenses in Retirement" figure you enter should be in today's dollars — the 4% rule historically accounts for inflation over time, so you don't need to manually inflate the FI number.
+    </p>
+  </div>
+</div>
+
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function calculate() {
+    const savings = parseFloat(document.getElementById('currentSavings').value) || 0;
+    const annualContrib = parseFloat(document.getElementById('annualContrib').value) || 0;
+    const returnPct = parseFloat(document.getElementById('returnRate').value) || 7;
+    const currentAge = parseInt(document.getElementById('currentAge').value) || 30;
+    const retirementAge = parseInt(document.getElementById('retirementAge').value) || 65;
+    const annualExpenses = parseFloat(document.getElementById('annualExpenses').value) || 60000;
+
+    const r = returnPct / 100;
+    const yearsToRetirement = retirementAge - currentAge;
+
+    if (yearsToRetirement <= 0) return;
+
+    // FI Number using 4% rule
+    const fiNumber = annualExpenses / 0.04;
+
+    // Coast FIRE Number = FI Number / (1+r)^years
+    const coastNumber = fiNumber / Math.pow(1 + r, yearsToRetirement);
+
+    // Find when balance will reach coast number
+    let balance = savings;
+    let coastYear = null;
+    const tableBody = document.getElementById('table-body');
+    tableBody.innerHTML = '';
+
+    const maxYears = Math.min(yearsToRetirement, 40);
+
+    for (let y = 1; y <= maxYears; y++) {
+      const age = currentAge + y;
+      const yearsLeft = retirementAge - age;
+      if (yearsLeft < 0) break;
+
+      // Balance grows with return + annual contribution (added at end of year)
+      balance = balance * (1 + r) + annualContrib;
+
+      // Coast number at this age
+      const coastAtAge = yearsLeft > 0 ? fiNumber / Math.pow(1 + r, yearsLeft) : fiNumber;
+
+      const hasCoasted = balance >= coastAtAge;
+      if (hasCoasted && coastYear === null) coastYear = y;
+
+      const row = document.createElement('tr');
+      if (hasCoasted && coastYear === y) row.classList.add('coasted-row');
+
+      const statusText = hasCoasted ? (coastYear === y ? '&#127775; Coast achieved!' : 'Coasting') : 'Saving';
+      const statusColor = hasCoasted ? 'var(--green)' : 'var(--muted)';
+
+      row.innerHTML = `
+        <td>${age}</td>
+        <td>${fmt(balance)}</td>
+        <td>${fmt(coastAtAge)}</td>
+        <td style="color:${statusColor};font-weight:${hasCoasted ? '600' : '400'}">${statusText}</td>
+      `;
+      tableBody.appendChild(row);
+    }
+
+    // Display results
+    document.getElementById('res-coast').textContent = fmt(coastNumber);
+    document.getElementById('res-fi-number-note').textContent =
+      `Full FI Number (4% rule): ${fmt(fiNumber)} — the amount you need at retirement.`;
+
+    if (coastYear !== null) {
+      document.getElementById('res-years').textContent = coastYear + ' yr' + (coastYear === 1 ? '' : 's');
+      document.getElementById('res-date').textContent = (new Date().getFullYear() + coastYear).toString();
+    } else if (savings >= coastNumber) {
+      document.getElementById('res-years').textContent = 'Already there!';
+      document.getElementById('res-date').textContent = 'Now';
+    } else {
+      document.getElementById('res-years').textContent = '> 40 yrs';
+      document.getElementById('res-date').textContent = '—';
+    }
+
+    const resultsEl = document.getElementById('results');
+    resultsEl.style.display = 'block';
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Return Calculator — Inflation-Adjusted Investment Returns</title>
+  <meta name="description" content="Calculate your real (inflation-adjusted) investment return. See what your investments are actually worth in today's dollars.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/real-return/">
+  <meta property="og:title" content="Real Return Calculator — Inflation-Adjusted Investment Returns">
+  <meta property="og:description" content="Calculate your real (inflation-adjusted) investment return. See what your investments are actually worth in today's dollars.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/real-return/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Real Return Calculator — Inflation-Adjusted Investment Returns">
+  <meta name="twitter:description" content="Calculate your real (inflation-adjusted) investment return. See what your investments are actually worth in today's dollars.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    header .logo span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .calc-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    #results { display: none; }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .results-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .results-grid { grid-template-columns: 1fr 1fr; }
+      .results-grid-4 { grid-template-columns: 1fr 1fr; }
+    }
+
+    .result-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .result-card.primary {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px rgba(63,185,80,0.15);
+    }
+
+    .result-card.nominal {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(88,166,255,0.12);
+    }
+
+    .result-card.warning {
+      border-color: #d29922;
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .result-card.primary .result-value { color: var(--green); font-size: 1.7rem; }
+    .result-card.nominal .result-value { color: var(--accent); }
+    .result-card.warning .result-value { color: #d29922; }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead { background: var(--bg); position: sticky; top: 0; }
+
+    th {
+      padding: 10px 14px;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th:first-child { text-align: center; }
+
+    td {
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    td:first-child { text-align: center; color: var(--muted); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.04); }
+
+    td.nominal-col { color: var(--accent); }
+    td.real-col { color: var(--green); }
+    td.ppi-col { color: var(--muted); }
+
+    .inflation-gap {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .inflation-gap-fill {
+      height: 100%;
+      background: #d29922;
+      border-radius: 3px;
+      transition: width 0.4s;
+    }
+
+    .explainer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .explainer h2 { color: var(--text); font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; }
+    .explainer h3 { color: var(--text); font-size: 0.92rem; font-weight: 600; margin: 16px 0 6px; }
+    .explainer p { margin-bottom: 10px; }
+
+    .explainer .formula-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+
+    .bmac-float { position: fixed; bottom: 24px; right: 24px; z-index: 100; }
+
+    .bmac-float a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFDD00;
+      color: #000;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .bmac-float a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">Real Return Calculator</h1>
+  <p class="page-subtitle">Inflation erodes your purchasing power silently. See what your investments are actually worth in today's dollars.</p>
+
+  <div class="card">
+    <div class="card-title">Investment Parameters</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="initialInvestment">Initial Investment ($)</label>
+        <input type="number" id="initialInvestment" value="10000" min="100" step="500">
+        <span class="field-hint">Starting amount invested</span>
+      </div>
+      <div class="field">
+        <label for="nominalReturn">Nominal Annual Return (%)</label>
+        <input type="number" id="nominalReturn" value="9" min="0" max="50" step="0.1">
+        <span class="field-hint">S&amp;P 500 historical avg ~10%</span>
+      </div>
+      <div class="field">
+        <label for="inflationRate">Inflation Rate (%)</label>
+        <input type="number" id="inflationRate" value="3" min="0" max="20" step="0.1">
+        <span class="field-hint">US avg ~3% historically</span>
+      </div>
+      <div class="field">
+        <label for="years">Investment Period (Years)</label>
+        <input type="number" id="years" value="20" min="1" max="60" step="1">
+        <span class="field-hint">Time horizon</span>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Real Returns</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-grid-4">
+      <div class="result-card nominal">
+        <div class="result-label">Nominal Value</div>
+        <div class="result-value" id="res-nominal">—</div>
+      </div>
+      <div class="result-card primary">
+        <div class="result-label">Real Value</div>
+        <div class="result-value" id="res-real">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Real Annual Return</div>
+        <div class="result-value" id="res-real-rate">—</div>
+      </div>
+      <div class="result-card warning">
+        <div class="result-label">Lost to Inflation</div>
+        <div class="result-value" id="res-lost">—</div>
+      </div>
+    </div>
+
+    <div id="inflation-bar-wrapper" style="margin-bottom:24px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:18px 24px;">
+      <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:8px;">
+        <span>Purchasing Power Retained</span>
+        <span id="ppi-pct-label">—</span>
+      </div>
+      <div style="height:10px; background:var(--border); border-radius:5px; overflow:hidden;">
+        <div id="ppi-bar" style="height:100%; background:var(--green); border-radius:5px; transition:width 0.5s; width:0%;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--muted); margin-top:6px;">
+        <span style="color:var(--green)">Real (inflation-adjusted)</span>
+        <span style="color:#d29922">Lost to inflation</span>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="card-title" style="padding:16px 20px 0;">Year-by-Year: Nominal vs Real</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Nominal Balance</th>
+              <th>Real Balance (today's $)</th>
+              <th>Purchasing Power Index</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="explainer">
+    <h2>Real vs Nominal Returns</h2>
+    <p>
+      Nominal return is what your brokerage statement shows. Real return is what that money can actually buy. If your portfolio grew 9% but inflation was 3%, you didn't really get richer by 9% — you got richer by about 5.8%. The difference is the silent tax that inflation levies on every investor.
+    </p>
+
+    <h3>The Fisher Equation</h3>
+    <p>
+      The precise relationship between nominal return, real return, and inflation is given by the Fisher equation (named after economist Irving Fisher):
+    </p>
+    <div class="formula-block">(1 + nominal) = (1 + real) &times; (1 + inflation)
+
+Rearranged:
+real = (1 + nominal) / (1 + inflation) - 1</div>
+    <p>
+      Many people approximate this as: real ≈ nominal - inflation. That's close enough for back-of-envelope math but slightly inaccurate at higher rates. This calculator uses the exact Fisher equation.
+    </p>
+
+    <h3>Historical Context</h3>
+    <p>
+      The S&amp;P 500 has returned approximately <strong>10% nominally</strong> per year over the long run (1926–present). After inflation averaging roughly 3%, that translates to about <strong>7% real</strong>. This 7% real return is the bedrock assumption behind most long-term financial planning.
+    </p>
+    <p>
+      During the 1970s stagflation era, inflation hit 13.5% — meaning a 10% nominal return was actually a <em>loss</em> in real terms. Understanding real returns helps you avoid the illusion that a rising account balance means growing wealth.
+    </p>
+
+    <h3>Why This Matters for Retirement</h3>
+    <p>
+      Retirement planning must be done in real terms, not nominal. A $1 million target in 30 years sounds like a lot — but at 3% inflation, that's only worth about $412,000 in today's purchasing power. Plan using today's dollars and real returns; otherwise you're building a false sense of security.
+    </p>
+
+    <h3>The Purchasing Power Index</h3>
+    <p>
+      The Purchasing Power Index (PPI) in the table above shows, for each year, how much of the nominal balance retains genuine purchasing power in today's dollars. A PPI of 1.00 means purchasing power is unchanged. Every year, inflation erodes this ratio — which is why holding cash long-term is a guaranteed losing strategy.
+    </p>
+  </div>
+</div>
+
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function fmtPct(n, decimals) {
+    return n.toFixed(decimals !== undefined ? decimals : 2) + '%';
+  }
+
+  function calculate() {
+    const P = parseFloat(document.getElementById('initialInvestment').value) || 10000;
+    const nominalPct = parseFloat(document.getElementById('nominalReturn').value) || 9;
+    const inflationPct = parseFloat(document.getElementById('inflationRate').value) || 3;
+    const years = parseInt(document.getElementById('years').value) || 20;
+
+    const nominal = nominalPct / 100;
+    const inflation = inflationPct / 100;
+
+    // Fisher equation: real return
+    const realReturn = (1 + nominal) / (1 + inflation) - 1;
+
+    // Final values
+    const nominalFinal = P * Math.pow(1 + nominal, years);
+    const realFinal = P * Math.pow(1 + realReturn, years);
+    const lostToInflation = nominalFinal - realFinal;
+
+    // Purchasing power retained %
+    const ppiRetained = (realFinal / nominalFinal) * 100;
+
+    // Update summary
+    document.getElementById('res-nominal').textContent = fmt(nominalFinal);
+    document.getElementById('res-real').textContent = fmt(realFinal);
+    document.getElementById('res-real-rate').textContent = fmtPct(realReturn * 100);
+    document.getElementById('res-lost').textContent = fmt(lostToInflation);
+
+    // Update bar
+    document.getElementById('ppi-bar').style.width = ppiRetained.toFixed(1) + '%';
+    document.getElementById('ppi-pct-label').textContent = ppiRetained.toFixed(1) + '% retained';
+
+    // Year-by-year table
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+
+    for (let y = 1; y <= years; y++) {
+      const nomBal = P * Math.pow(1 + nominal, y);
+      const realBal = P * Math.pow(1 + realReturn, y);
+      // Purchasing power index: real/P (how many times initial purchasing power)
+      const ppi = realBal / P;
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${y}</td>
+        <td class="nominal-col">${fmt(nomBal)}</td>
+        <td class="real-col">${fmt(realBal)}</td>
+        <td class="ppi-col">${ppi.toFixed(3)}×</td>
+      `;
+      tbody.appendChild(row);
+    }
+
+    const resultsEl = document.getElementById('results');
+    resultsEl.style.display = 'block';
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+
+</body>
+</html>

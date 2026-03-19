@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self-Employment Tax Calculator 2024 — Freelancer Tax Estimator</title>
+  <meta name="description" content="Calculate your self-employment tax (SE tax), quarterly estimated tax, and take-home pay as a freelancer or 1099 contractor. Free, instant.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/self-employed-tax/">
+  <meta property="og:title" content="Self-Employment Tax Calculator 2024 — Freelancer Tax Estimator">
+  <meta property="og:description" content="Calculate your self-employment tax (SE tax), quarterly estimated tax, and take-home pay as a freelancer or 1099 contractor. Free, instant.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/self-employed-tax/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Self-Employment Tax Calculator 2024 — Freelancer Tax Estimator">
+  <meta name="twitter:description" content="Calculate your self-employment tax (SE tax), quarterly estimated tax, and take-home pay as a freelancer or 1099 contractor. Free, instant.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    header .logo span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+      .results-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .calc-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    #results { display: none; }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .result-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .result-card.primary {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px rgba(63,185,80,0.15);
+    }
+
+    .result-card.warning {
+      border-color: #d29922;
+      box-shadow: 0 0 0 1px rgba(210,153,34,0.15);
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .result-card.primary .result-value { font-size: 1.9rem; color: var(--green); }
+    .result-card.warning .result-value { color: #d29922; }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead { background: var(--bg); position: sticky; top: 0; }
+
+    th {
+      padding: 10px 14px;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th:first-child { text-align: left; }
+
+    td {
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    td:first-child { text-align: left; color: var(--muted); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.04); }
+    td.amount-col { color: var(--text); font-weight: 500; }
+    td.total-row { color: var(--green); font-weight: 700; }
+    tr.total-tr td { border-top: 1px solid var(--border); }
+
+    .explainer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .explainer h2 { color: var(--text); font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; }
+    .explainer h3 { color: var(--text); font-size: 0.92rem; font-weight: 600; margin: 16px 0 6px; }
+    .explainer p { margin-bottom: 10px; }
+
+    .explainer .formula-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+
+    .disclaimer {
+      background: rgba(210,153,34,0.08);
+      border: 1px solid rgba(210,153,34,0.25);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .bmac-float { position: fixed; bottom: 24px; right: 24px; z-index: 100; }
+
+    .bmac-float a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFDD00;
+      color: #000;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .bmac-float a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">Self-Employment Tax Calculator 2024</h1>
+  <p class="page-subtitle">Estimate your SE tax, federal income tax, and quarterly payments as a freelancer or 1099 contractor.</p>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This calculator provides estimates for educational purposes only. Tax laws are complex and change frequently. Consult a qualified tax professional for advice specific to your situation.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Tax Information</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="grossIncome">Gross Self-Employment Income ($)</label>
+        <input type="number" id="grossIncome" value="80000" min="0" step="1000">
+        <span class="field-hint">Total 1099 / freelance income</span>
+      </div>
+      <div class="field">
+        <label for="businessExpenses">Business Expenses ($)</label>
+        <input type="number" id="businessExpenses" value="8000" min="0" step="500">
+        <span class="field-hint">Deductible business costs</span>
+      </div>
+      <div class="field">
+        <label for="otherIncome">Other Income ($)</label>
+        <input type="number" id="otherIncome" value="0" min="0" step="500">
+        <span class="field-hint">W-2 wages, interest, etc.</span>
+      </div>
+      <div class="field">
+        <label for="filingStatus">Filing Status</label>
+        <select id="filingStatus">
+          <option value="single">Single</option>
+          <option value="mfj">Married Filing Jointly</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="state">State</label>
+        <select id="state">
+          <option value="0">No State Income Tax</option>
+          <option value="0" data-state="WY">Wyoming (0%)</option>
+          <option value="0" data-state="TX">Texas (0%)</option>
+          <option value="0" data-state="FL">Florida (0%)</option>
+          <option value="0" data-state="NV">Nevada (0%)</option>
+          <option value="3.07" data-state="PA">Pennsylvania (~3.1%)</option>
+          <option value="4.5" data-state="AZ">Arizona (~4.5%)</option>
+          <option value="5.0" data-state="GA">Georgia (~5.0%)</option>
+          <option value="5.0" data-state="NC">North Carolina (~5.0%)</option>
+          <option value="5.75" data-state="VA">Virginia (~5.75%)</option>
+          <option value="6.0" data-state="WI">Wisconsin (~6.0%)</option>
+          <option value="9.3" data-state="CA">California (~9.3%)</option>
+          <option value="9.85" data-state="MN">Minnesota (~9.85%)</option>
+          <option value="10.75" data-state="NJ">New Jersey (~10.75%)</option>
+          <option value="13.3" data-state="CA-top">California top bracket (~13.3%)</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate My Taxes</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-grid">
+      <div class="result-card primary">
+        <div class="result-label">Est. Take-Home</div>
+        <div class="result-value" id="res-takehome">—</div>
+      </div>
+      <div class="result-card warning">
+        <div class="result-label">Quarterly Payment</div>
+        <div class="result-value" id="res-quarterly">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Effective Tax Rate</div>
+        <div class="result-value" id="res-effective-rate">—</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="card-title" style="padding:16px 20px 0;">Tax Breakdown</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Amount</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="explainer">
+    <h2>What is Self-Employment Tax?</h2>
+    <p>
+      When you work for an employer, Social Security and Medicare taxes (FICA) are split 50/50 — you pay 7.65% and your employer matches it. As a self-employed person, you pay both halves: the full 15.3%. This is what's called the Self-Employment (SE) tax.
+    </p>
+
+    <h3>The SE Tax Calculation</h3>
+    <div class="formula-block">Net SE Income = Gross Income - Business Expenses
+SE Tax Base = Net SE Income × 0.9235  (you get a 7.65% reduction)
+SE Tax = SE Tax Base × 15.3%  (up to $168,600 SS wage base for 2024)
+         + SE Tax Base × 2.9%  (Medicare, on amounts above $168,600)</div>
+
+    <h3>The SE Tax Deduction</h3>
+    <p>
+      The IRS allows you to deduct <strong>half of your SE tax</strong> from your gross income before calculating federal income tax. This mirrors the employer-side deduction that W-2 employees benefit from indirectly. It's one of the few consolations of self-employment.
+    </p>
+
+    <h3>Why Quarterly Payments Matter</h3>
+    <p>
+      W-2 employees have taxes withheld automatically each paycheck. Self-employed people don't — but the IRS still expects payment throughout the year. If you owe more than $1,000 at filing time, you may face an underpayment penalty. Quarterly estimated payments (due April, June, September, January) prevent this.
+    </p>
+    <p>
+      The safe harbor rule: pay at least 100% of last year's tax liability (110% if your income exceeded $150,000) and you avoid penalties regardless of what you actually owe.
+    </p>
+
+    <h3>Common Deductions Freelancers Miss</h3>
+    <p>
+      Home office, health insurance premiums (100% deductible if you're not eligible for employer coverage), half of SE tax, retirement contributions (Solo 401k up to $69,000 in 2024), professional subscriptions, software, and vehicle mileage for business use. These reduce both federal income tax and, in some cases, SE tax.
+    </p>
+  </div>
+</div>
+
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  // 2024 Federal Tax Brackets
+  const BRACKETS = {
+    single: [
+      [11600, 0.10],
+      [47150, 0.12],
+      [100525, 0.22],
+      [191950, 0.24],
+      [243725, 0.32],
+      [609350, 0.35],
+      [Infinity, 0.37]
+    ],
+    mfj: [
+      [23200, 0.10],
+      [94300, 0.12],
+      [201050, 0.22],
+      [383900, 0.24],
+      [487450, 0.32],
+      [731200, 0.35],
+      [Infinity, 0.37]
+    ]
+  };
+
+  const STANDARD_DEDUCTION = { single: 14600, mfj: 29200 };
+  const SS_WAGE_BASE = 168600;
+
+  function calcFederalTax(taxableIncome, status) {
+    const brackets = BRACKETS[status];
+    let tax = 0;
+    let prev = 0;
+    for (const [limit, rate] of brackets) {
+      if (taxableIncome <= prev) break;
+      const taxable = Math.min(taxableIncome, limit) - prev;
+      tax += taxable * rate;
+      prev = limit;
+    }
+    return Math.max(0, tax);
+  }
+
+  function fmt(n) {
+    return '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function fmtPct(n) {
+    return n.toFixed(1) + '%';
+  }
+
+  function addRow(tbody, label, amount, note, cls) {
+    const row = document.createElement('tr');
+    if (cls) row.classList.add(cls);
+    row.innerHTML = `<td>${label}</td><td class="amount-col ${cls === 'total-tr' ? 'total-row' : ''}">${fmt(amount)}</td><td style="color:var(--muted);font-size:0.82rem">${note}</td>`;
+    tbody.appendChild(row);
+  }
+
+  function calculate() {
+    const gross = parseFloat(document.getElementById('grossIncome').value) || 0;
+    const expenses = parseFloat(document.getElementById('businessExpenses').value) || 0;
+    const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
+    const status = document.getElementById('filingStatus').value;
+    const stateRate = parseFloat(document.getElementById('state').value) || 0;
+
+    // Net SE income
+    const netSE = Math.max(0, gross - expenses);
+
+    // SE tax base (92.35% of net SE)
+    const seTaxBase = netSE * 0.9235;
+
+    // SE tax: 15.3% up to SS wage base, then 2.9% Medicare only
+    let seTax = 0;
+    if (seTaxBase <= SS_WAGE_BASE) {
+      seTax = seTaxBase * 0.153;
+    } else {
+      seTax = SS_WAGE_BASE * 0.153 + (seTaxBase - SS_WAGE_BASE) * 0.029;
+    }
+
+    // SE tax deduction = half of SE tax
+    const seTaxDeduction = seTax / 2;
+
+    // Federal taxable income
+    const stdDed = STANDARD_DEDUCTION[status];
+    const grossIncomeFederal = netSE + otherIncome - seTaxDeduction;
+    const federalTaxableIncome = Math.max(0, grossIncomeFederal - stdDed);
+
+    // Federal income tax
+    const federalTax = calcFederalTax(federalTaxableIncome, status);
+
+    // State tax (simplified flat rate on federal taxable income)
+    const stateTax = federalTaxableIncome * (stateRate / 100);
+
+    // Total tax & take-home
+    const totalTax = seTax + federalTax + stateTax;
+    const netIncome = netSE + otherIncome;
+    const takeHome = netIncome - totalTax;
+    const quarterlyPayment = totalTax / 4;
+    const effectiveRate = netIncome > 0 ? (totalTax / netIncome) * 100 : 0;
+
+    // Update summary cards
+    document.getElementById('res-takehome').textContent = fmt(takeHome);
+    document.getElementById('res-quarterly').textContent = fmt(quarterlyPayment);
+    document.getElementById('res-effective-rate').textContent = fmtPct(effectiveRate);
+
+    // Build breakdown table
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+
+    addRow(tbody, 'Gross SE Income', gross, 'Total 1099/freelance revenue');
+    addRow(tbody, 'Business Expenses', expenses, 'Deductible costs');
+    addRow(tbody, 'Net SE Income', netSE, 'Gross minus expenses');
+    addRow(tbody, 'SE Tax Base', seTaxBase, 'Net SE × 92.35%');
+    addRow(tbody, 'SE Tax (SS + Medicare)', seTax, '15.3% on base (up to SS wage base)');
+    addRow(tbody, 'SE Tax Deduction', seTaxDeduction, 'Half of SE tax (above-the-line deduction)');
+    addRow(tbody, 'Standard Deduction', stdDed, status === 'single' ? 'Single 2024' : 'MFJ 2024');
+    addRow(tbody, 'Federal Taxable Income', federalTaxableIncome, 'After SE deduction + standard deduction');
+    addRow(tbody, 'Federal Income Tax', federalTax, '2024 tax brackets');
+    if (stateRate > 0) {
+      addRow(tbody, 'Estimated State Tax', stateTax, fmtPct(stateRate) + ' effective rate');
+    }
+    addRow(tbody, 'Total Tax Burden', totalTax, 'SE + Federal + State', 'total-tr');
+    addRow(tbody, 'Estimated Take-Home', takeHome, 'Net income after all taxes', 'total-tr');
+
+    const resultsEl = document.getElementById('results');
+    resultsEl.style.display = 'block';
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+
+</body>
+</html>
