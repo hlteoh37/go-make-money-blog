@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 Encoder / Decoder — Free Online Tool</title>
+  <meta name="description" content="Free online Base64 encoder and decoder. Instantly encode text or files to Base64, or decode Base64 strings back to plain text. No signup, no tracking, works offline.">
+  <meta name="keywords" content="base64 encoder, base64 decoder, base64 encode, base64 decode, base64 online, base64 converter, encode to base64, decode base64 string">
+  <meta property="og:title" content="Base64 Encoder / Decoder — Free Online Tool">
+  <meta property="og:description" content="Encode text to Base64 or decode Base64 strings instantly. Free, client-side, no data sent anywhere.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/base64/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/base64/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='70'>64</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    .back-link { display: inline-block; color: #58a6ff; text-decoration: none; font-size: 0.85rem; margin-bottom: 20px; }
+    .back-link:hover { text-decoration: underline; }
+    h1 { font-size: 2rem; font-weight: 700; color: #f0f6fc; margin-bottom: 6px; }
+    .tagline { color: #8b949e; margin-bottom: 28px; font-size: 1rem; }
+
+    .tab-bar {
+      display: flex; gap: 0; margin-bottom: 24px;
+      background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+      overflow: hidden;
+    }
+    .tab-btn {
+      flex: 1; padding: 12px 20px; background: none; border: none;
+      color: #8b949e; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: all 0.15s; border-right: 1px solid #30363d;
+    }
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: #21262d; color: #58a6ff; }
+    .tab-btn:hover:not(.active) { background: #1c2128; color: #c9d1d9; }
+
+    .panel {
+      background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px;
+      margin-bottom: 20px;
+    }
+    .panel-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #8b949e; font-weight: 600; margin-bottom: 10px; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    textarea {
+      width: 100%; min-height: 160px; background: #0d1117; border: 1px solid #30363d;
+      border-radius: 8px; color: #e6edf3; font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.88rem; padding: 12px 14px; resize: vertical; outline: none;
+      transition: border-color 0.2s; line-height: 1.6;
+    }
+    textarea:focus { border-color: #58a6ff; }
+    textarea.error { border-color: #f85149; }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn {
+      padding: 9px 20px; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 0.88rem; font-weight: 600; transition: all 0.15s;
+    }
+    .btn-primary { background: #238636; color: #fff; }
+    .btn-primary:hover { background: #2ea043; }
+    .btn-secondary { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+    .btn-secondary:hover { background: #30363d; }
+    .btn-copy { background: #1f6feb; color: #fff; }
+    .btn-copy:hover { background: #388bfd; }
+    .btn-copy.copied { background: #238636; }
+
+    .output-area {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+      min-height: 100px; padding: 12px 14px;
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.88rem;
+      color: #e6edf3; word-break: break-all; line-height: 1.6; white-space: pre-wrap;
+    }
+    .output-area.error { color: #f85149; border-color: #f85149; }
+
+    .stat-row {
+      display: flex; gap: 24px; margin-top: 14px; flex-wrap: wrap;
+    }
+    .stat { font-size: 0.82rem; color: #8b949e; }
+    .stat span { color: #58a6ff; font-weight: 600; font-family: monospace; }
+
+    .options-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+    .option-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.88rem; color: #c9d1d9; }
+    .option-check input { accent-color: #58a6ff; width: 14px; height: 14px; }
+
+    .info-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;
+      margin-top: 20px;
+    }
+    .info-card {
+      background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 16px;
+    }
+    .info-card h3 { font-size: 0.85rem; color: #58a6ff; margin-bottom: 8px; }
+    .info-card p { font-size: 0.82rem; color: #8b949e; line-height: 1.5; }
+    .info-card code { background: rgba(88,166,255,0.12); padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.85em; color: #79c0ff; }
+
+    .coffee-float {
+      position: fixed; bottom: 20px; right: 20px;
+      background: #ffdd00; color: #000; border-radius: 50px;
+      padding: 10px 18px; font-weight: 700; font-size: 0.85rem;
+      text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.15s; z-index: 100;
+    }
+    .coffee-float:hover { transform: scale(1.05); text-decoration: none; }
+
+    footer { margin-top: 40px; text-align: center; font-size: 0.8rem; color: #8b949e; }
+    footer a { color: #58a6ff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a class="back-link" href="/profiterole-blog/">&larr; Profiterole</a>
+  <h1>Base64 Encoder / Decoder</h1>
+  <p class="tagline">Encode text to Base64 or decode Base64 back to text &mdash; instantly, client-side, no server.</p>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-encode" onclick="switchTab('encode')">Encode &rarr; Base64</button>
+    <button class="tab-btn" id="tab-decode" onclick="switchTab('decode')">Decode &larr; Base64</button>
+  </div>
+
+  <!-- ENCODE PANEL -->
+  <div id="pane-encode">
+    <div class="panel">
+      <div class="panel-label">Input text (plain text to encode)</div>
+      <div class="options-row">
+        <label class="option-check"><input type="checkbox" id="enc-urlsafe"> URL-safe (use <code>-_</code> instead of <code>+/</code>)</label>
+        <label class="option-check"><input type="checkbox" id="enc-nopad"> No padding (strip trailing <code>=</code>)</label>
+      </div>
+      <textarea id="enc-input" placeholder="Type or paste text here..." oninput="doEncode()"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="clearEnc()">Clear</button>
+        <button class="btn btn-secondary" onclick="loadSampleEnc()">Load sample</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">
+        <span>Base64 output</span>
+        <button class="btn btn-copy" id="copy-enc" onclick="copyEnc()">Copy</button>
+      </div>
+      <div class="output-area" id="enc-output">&mdash;</div>
+      <div class="stat-row" id="enc-stats"></div>
+    </div>
+  </div>
+
+  <!-- DECODE PANEL -->
+  <div id="pane-decode" style="display:none">
+    <div class="panel">
+      <div class="panel-label">Input Base64 string</div>
+      <textarea id="dec-input" placeholder="Paste Base64 string here..." oninput="doDecode()"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="clearDec()">Clear</button>
+        <button class="btn btn-secondary" onclick="loadSampleDec()">Load sample</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">
+        <span>Decoded output</span>
+        <button class="btn btn-copy" id="copy-dec" onclick="copyDec()">Copy</button>
+      </div>
+      <div class="output-area" id="dec-output">&mdash;</div>
+      <div class="stat-row" id="dec-stats"></div>
+    </div>
+  </div>
+
+  <!-- Info cards -->
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>What is Base64?</h3>
+      <p>Base64 encodes binary data as ASCII text using 64 printable characters. 3 input bytes become 4 output characters, inflating size by ~33%.</p>
+    </div>
+    <div class="info-card">
+      <h3>Common uses</h3>
+      <p>Embedding images in CSS/HTML (<code>data:image/png;base64,...</code>), encoding binary in JSON, HTTP Basic Auth headers, JWT tokens.</p>
+    </div>
+    <div class="info-card">
+      <h3>URL-safe variant</h3>
+      <p>Standard Base64 uses <code>+</code> and <code>/</code> which break URLs. URL-safe Base64 replaces them with <code>-</code> and <code>_</code>. Used in JWTs.</p>
+    </div>
+    <div class="info-card">
+      <h3>No padding</h3>
+      <p>The trailing <code>=</code> padding aligns output to 4-byte blocks. It's optional for decoding and omitted in many APIs (e.g. JWT).</p>
+    </div>
+  </div>
+
+  <footer style="margin-top:40px;">
+    Built by <a href="https://hlteoh37.github.io/profiterole-blog/">Profiterole</a> &mdash;
+    <a href="/profiterole-blog/regex/">Regex Tester</a> &bull;
+    <a href="/profiterole-blog/timestamp/">Timestamp Converter</a> &bull;
+    <a href="/profiterole-blog/json/">JSON Formatter</a>
+  </footer>
+</div>
+
+<a class="coffee-float" href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+let currentTab = 'encode';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('pane-encode').style.display = tab === 'encode' ? '' : 'none';
+  document.getElementById('pane-decode').style.display = tab === 'decode' ? '' : 'none';
+  document.getElementById('tab-encode').className = 'tab-btn' + (tab === 'encode' ? ' active' : '');
+  document.getElementById('tab-decode').className = 'tab-btn' + (tab === 'decode' ? ' active' : '');
+}
+
+function doEncode() {
+  const raw = document.getElementById('enc-input').value;
+  const urlsafe = document.getElementById('enc-urlsafe').checked;
+  const nopad = document.getElementById('enc-nopad').checked;
+  const out = document.getElementById('enc-output');
+  const stats = document.getElementById('enc-stats');
+
+  if (!raw) {
+    out.className = 'output-area';
+    out.textContent = '—';
+    stats.innerHTML = '';
+    return;
+  }
+
+  try {
+    let encoded = btoa(unescape(encodeURIComponent(raw)));
+    if (urlsafe) encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_');
+    if (nopad) encoded = encoded.replace(/=+$/, '');
+    out.className = 'output-area';
+    out.textContent = encoded;
+    const ratio = ((encoded.length / raw.length) * 100).toFixed(0);
+    stats.innerHTML = `<span class="stat">Input: <span>${raw.length} chars</span></span><span class="stat">Output: <span>${encoded.length} chars</span></span><span class="stat">Size ratio: <span>${ratio}%</span></span>`;
+  } catch(e) {
+    out.className = 'output-area error';
+    out.textContent = 'Error: ' + e.message;
+    stats.innerHTML = '';
+  }
+}
+
+function doDecode() {
+  const raw = document.getElementById('dec-input').value.trim();
+  const out = document.getElementById('dec-output');
+  const stats = document.getElementById('dec-stats');
+
+  if (!raw) {
+    out.className = 'output-area';
+    out.textContent = '—';
+    stats.innerHTML = '';
+    return;
+  }
+
+  try {
+    // Handle URL-safe Base64 and missing padding
+    let b64 = raw.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const decoded = decodeURIComponent(escape(atob(b64)));
+    out.className = 'output-area';
+    out.textContent = decoded;
+    stats.innerHTML = `<span class="stat">Input: <span>${raw.length} chars</span></span><span class="stat">Output: <span>${decoded.length} chars</span></span>`;
+  } catch(e) {
+    out.className = 'output-area error';
+    out.textContent = 'Error: invalid Base64 — ' + e.message;
+    stats.innerHTML = '';
+  }
+}
+
+function clearEnc() {
+  document.getElementById('enc-input').value = '';
+  document.getElementById('enc-output').textContent = '—';
+  document.getElementById('enc-output').className = 'output-area';
+  document.getElementById('enc-stats').innerHTML = '';
+}
+function clearDec() {
+  document.getElementById('dec-input').value = '';
+  document.getElementById('dec-output').textContent = '—';
+  document.getElementById('dec-output').className = 'output-area';
+  document.getElementById('dec-stats').innerHTML = '';
+}
+
+function loadSampleEnc() {
+  document.getElementById('enc-input').value = 'Hello, World! This is a Base64 encoding example. 🎉';
+  doEncode();
+}
+function loadSampleDec() {
+  document.getElementById('dec-input').value = 'SGVsbG8sIFdvcmxkISBUaGlzIGlzIGEgQmFzZTY0IGVuY29kaW5nIGV4YW1wbGUuIPCfjok=';
+  doDecode();
+}
+
+async function copyEnc() {
+  const text = document.getElementById('enc-output').textContent;
+  if (!text || text === '—') return;
+  await navigator.clipboard.writeText(text);
+  const btn = document.getElementById('copy-enc');
+  btn.textContent = 'Copied!';
+  btn.className = 'btn btn-copy copied';
+  setTimeout(() => { btn.textContent = 'Copy'; btn.className = 'btn btn-copy'; }, 1500);
+}
+async function copyDec() {
+  const text = document.getElementById('dec-output').textContent;
+  if (!text || text === '—') return;
+  await navigator.clipboard.writeText(text);
+  const btn = document.getElementById('copy-dec');
+  btn.textContent = 'Copied!';
+  btn.className = 'btn btn-copy copied';
+  setTimeout(() => { btn.textContent = 'Copy'; btn.className = 'btn btn-copy'; }, 1500);
+}
+
+// Update when checkboxes change
+document.getElementById('enc-urlsafe').addEventListener('change', doEncode);
+document.getElementById('enc-nopad').addEventListener('change', doEncode);
+</script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Formatter & Validator — Free Online Tool</title>
+  <meta name="description" content="Free online JSON formatter, validator, and minifier. Paste any JSON to pretty-print it, validate syntax, minify, and explore the structure. No signup, works offline.">
+  <meta name="keywords" content="json formatter, json validator, json pretty print, json beautifier, json minifier, format json online, validate json, json viewer, json parser online">
+  <meta property="og:title" content="JSON Formatter & Validator — Free Online Tool">
+  <meta property="og:description" content="Paste JSON to instantly format, validate, and explore it. Pretty-print, minify, or validate syntax. Free, client-side, no data sent anywhere.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/json/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/json/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='60'>{}</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117; color: #e6edf3;
+      min-height: 100vh; padding: 40px 20px 80px;
+    }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .back-link { display: inline-block; color: #58a6ff; text-decoration: none; font-size: 0.85rem; margin-bottom: 20px; }
+    .back-link:hover { text-decoration: underline; }
+    h1 { font-size: 2rem; font-weight: 700; color: #f0f6fc; margin-bottom: 6px; }
+    .tagline { color: #8b949e; margin-bottom: 28px; font-size: 1rem; }
+
+    .toolbar {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center;
+    }
+    .btn {
+      padding: 8px 18px; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 0.85rem; font-weight: 600; transition: all 0.15s;
+    }
+    .btn-primary { background: #238636; color: #fff; }
+    .btn-primary:hover { background: #2ea043; }
+    .btn-secondary { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+    .btn-secondary:hover { background: #30363d; }
+    .btn-danger { background: #da3633; color: #fff; }
+    .btn-danger:hover { background: #f85149; }
+    .btn-copy { background: #1f6feb; color: #fff; }
+    .btn-copy:hover { background: #388bfd; }
+    .btn-copy.copied { background: #238636; }
+
+    .indent-label { font-size: 0.82rem; color: #8b949e; }
+    .indent-sel {
+      background: #21262d; color: #c9d1d9; border: 1px solid #30363d;
+      border-radius: 6px; padding: 6px 10px; font-size: 0.85rem; cursor: pointer;
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px;
+    }
+    .panel-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #8b949e; font-weight: 600; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    textarea {
+      width: 100%; height: 380px; background: #0d1117; border: 1px solid #30363d;
+      border-radius: 8px; color: #e6edf3;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.83rem; padding: 12px 14px; resize: none; outline: none;
+      transition: border-color 0.2s; line-height: 1.6; tab-size: 2;
+    }
+    textarea:focus { border-color: #58a6ff; }
+
+    .output-wrap {
+      height: 380px; overflow: auto; background: #0d1117;
+      border: 1px solid #30363d; border-radius: 8px; padding: 12px 14px;
+    }
+    .output-wrap.error { border-color: #f85149; }
+    pre {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.83rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+    }
+    .json-key { color: #79c0ff; }
+    .json-str { color: #a5d6ff; }
+    .json-num { color: #f78166; }
+    .json-bool { color: #ff7b72; }
+    .json-null { color: #8b949e; font-style: italic; }
+    .json-punc { color: #e6edf3; }
+
+    .status-bar {
+      display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; align-items: center;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+    }
+    .badge-ok { background: rgba(46,160,67,0.15); color: #3fb950; border: 1px solid rgba(46,160,67,0.3); }
+    .badge-err { background: rgba(248,81,73,0.15); color: #f85149; border: 1px solid rgba(248,81,73,0.3); }
+    .badge-info { background: rgba(88,166,255,0.12); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
+    .stat { font-size: 0.8rem; color: #8b949e; }
+    .stat span { color: #58a6ff; font-weight: 600; }
+
+    .error-msg {
+      color: #f85149; font-size: 0.85rem; font-family: 'SF Mono', monospace;
+      padding: 12px; background: rgba(248,81,73,0.08); border-radius: 6px;
+    }
+
+    .info-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px; margin-top: 24px;
+    }
+    .info-card {
+      background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 16px;
+    }
+    .info-card h3 { font-size: 0.85rem; color: #58a6ff; margin-bottom: 8px; }
+    .info-card p { font-size: 0.82rem; color: #8b949e; line-height: 1.5; }
+    .info-card code { background: rgba(88,166,255,0.12); padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.85em; color: #79c0ff; }
+
+    .coffee-float {
+      position: fixed; bottom: 20px; right: 20px;
+      background: #ffdd00; color: #000; border-radius: 50px;
+      padding: 10px 18px; font-weight: 700; font-size: 0.85rem;
+      text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.15s; z-index: 100;
+    }
+    .coffee-float:hover { transform: scale(1.05); text-decoration: none; }
+    footer { margin-top: 40px; text-align: center; font-size: 0.8rem; color: #8b949e; }
+    footer a { color: #58a6ff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a class="back-link" href="/profiterole-blog/">&larr; Profiterole</a>
+  <h1>JSON Formatter &amp; Validator</h1>
+  <p class="tagline">Paste JSON to pretty-print, validate, minify, or explore it &mdash; instantly, client-side, no server.</p>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="format()">Format / Pretty-print</button>
+    <button class="btn btn-secondary" onclick="minify()">Minify</button>
+    <button class="btn btn-secondary" onclick="validate()">Validate only</button>
+    <button class="btn btn-secondary" onclick="loadSample()">Sample JSON</button>
+    <button class="btn btn-danger" onclick="clearAll()">Clear</button>
+    <span class="indent-label">Indent:</span>
+    <select class="indent-sel" id="indent-sel">
+      <option value="2" selected>2 spaces</option>
+      <option value="4">4 spaces</option>
+      <option value="	">Tab</option>
+    </select>
+    <button class="btn btn-copy" id="copy-btn" onclick="copyOutput()">Copy output</button>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-label">Input JSON</div>
+      <textarea id="input" placeholder='Paste your JSON here...&#10;&#10;{"name":"Profiterole","version":1,"alive":true}' oninput="onInput()"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-label"><span>Output</span></div>
+      <div class="output-wrap" id="output-wrap">
+        <pre id="output" style="color:#8b949e;">Output will appear here after formatting.</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar" id="status-bar"></div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Keyboard shortcut</h3>
+      <p>Press <code>Ctrl+Enter</code> (or <code>Cmd+Enter</code> on Mac) to format JSON after pasting.</p>
+    </div>
+    <div class="info-card">
+      <h3>Common JSON errors</h3>
+      <p>Trailing commas, single quotes, unquoted keys, and comments are NOT valid JSON. Use <code>"double quotes"</code> only.</p>
+    </div>
+    <div class="info-card">
+      <h3>Minifying JSON</h3>
+      <p>Removes all whitespace to reduce size for API payloads, config files, or storage. Functionally identical to pretty-printed.</p>
+    </div>
+    <div class="info-card">
+      <h3>Privacy</h3>
+      <p>Your JSON never leaves your browser. This tool is 100% client-side with no analytics or tracking.</p>
+    </div>
+  </div>
+
+  <footer>
+    Built by <a href="https://hlteoh37.github.io/profiterole-blog/">Profiterole</a> &mdash;
+    <a href="/profiterole-blog/base64/">Base64 Tool</a> &bull;
+    <a href="/profiterole-blog/regex/">Regex Tester</a> &bull;
+    <a href="/profiterole-blog/timestamp/">Timestamp Converter</a>
+  </footer>
+</div>
+
+<a class="coffee-float" href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+let lastParsed = null;
+let lastMode = 'format'; // 'format' | 'minify' | 'raw'
+
+function getIndent() {
+  const v = document.getElementById('indent-sel').value;
+  if (v === '\t') return '\t';
+  return parseInt(v, 10);
+}
+
+function syntaxHighlight(json) {
+  json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return json.replace(
+    /("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    function (match) {
+      let cls = 'json-num';
+      if (/^"/.test(match)) {
+        cls = /:$/.test(match) ? 'json-key' : 'json-str';
+      } else if (/true|false/.test(match)) {
+        cls = 'json-bool';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      }
+      return '<span class="' + cls + '">' + match + '</span>';
+    }
+  );
+}
+
+function setOutput(text, isError) {
+  const wrap = document.getElementById('output-wrap');
+  const pre = document.getElementById('output');
+  if (isError) {
+    wrap.className = 'output-wrap error';
+    pre.innerHTML = '<span class="error-msg">' + text.replace(/</g,'&lt;') + '</span>';
+  } else {
+    wrap.className = 'output-wrap';
+    pre.innerHTML = syntaxHighlight(text);
+  }
+}
+
+function setStatus(valid, stats) {
+  const bar = document.getElementById('status-bar');
+  let html = '';
+  if (valid === true) {
+    html += '<span class="badge badge-ok">&#10003; Valid JSON</span>';
+  } else if (valid === false) {
+    html += '<span class="badge badge-err">&#10007; Invalid JSON</span>';
+  }
+  if (stats) html += stats;
+  bar.innerHTML = html;
+}
+
+function countStats(obj) {
+  let keys = 0, depth = 0;
+  function walk(o, d) {
+    if (d > depth) depth = d;
+    if (Array.isArray(o)) { o.forEach(v => walk(v, d+1)); }
+    else if (o !== null && typeof o === 'object') {
+      keys += Object.keys(o).length;
+      Object.values(o).forEach(v => walk(v, d+1));
+    }
+  }
+  walk(obj, 0);
+  return `<span class="stat">Keys: <span>${keys}</span></span><span class="stat">Max depth: <span>${depth}</span></span>`;
+}
+
+function format() {
+  lastMode = 'format';
+  const raw = document.getElementById('input').value.trim();
+  if (!raw) { setStatus(null, ''); setOutput('', false); return; }
+  try {
+    const parsed = JSON.parse(raw);
+    lastParsed = parsed;
+    const out = JSON.stringify(parsed, null, getIndent());
+    setOutput(out, false);
+    setStatus(true, countStats(parsed));
+  } catch(e) {
+    lastParsed = null;
+    setOutput('JSON Error: ' + e.message, true);
+    setStatus(false, '');
+  }
+}
+
+function minify() {
+  lastMode = 'minify';
+  const raw = document.getElementById('input').value.trim();
+  if (!raw) { setStatus(null, ''); return; }
+  try {
+    const parsed = JSON.parse(raw);
+    lastParsed = parsed;
+    const out = JSON.stringify(parsed);
+    setOutput(out, false);
+    const saving = (((raw.length - out.length) / raw.length) * 100).toFixed(1);
+    setStatus(true, `<span class="stat">Original: <span>${raw.length} chars</span></span><span class="stat">Minified: <span>${out.length} chars</span></span><span class="stat">Saved: <span>${saving}%</span></span>`);
+  } catch(e) {
+    lastParsed = null;
+    setOutput('JSON Error: ' + e.message, true);
+    setStatus(false, '');
+  }
+}
+
+function validate() {
+  const raw = document.getElementById('input').value.trim();
+  if (!raw) { setStatus(null, ''); return; }
+  try {
+    const parsed = JSON.parse(raw);
+    lastParsed = parsed;
+    setStatus(true, countStats(parsed));
+    setOutput(document.getElementById('output').textContent || '', false);
+  } catch(e) {
+    lastParsed = null;
+    setOutput('JSON Error: ' + e.message, true);
+    setStatus(false, '');
+  }
+}
+
+function onInput() {
+  // Auto-format small JSON, just validate large
+  const raw = document.getElementById('input').value.trim();
+  if (!raw) { setStatus(null, ''); document.getElementById('output-wrap').className = 'output-wrap'; return; }
+  if (raw.length < 50000) format();
+  else validate();
+}
+
+function clearAll() {
+  document.getElementById('input').value = '';
+  setOutput('', false);
+  setStatus(null, '');
+  document.getElementById('output-wrap').className = 'output-wrap';
+  document.getElementById('output').innerHTML = '<span style="color:#8b949e;">Output will appear here after formatting.</span>';
+  lastParsed = null;
+}
+
+function loadSample() {
+  document.getElementById('input').value = JSON.stringify({
+    "name": "Profiterole",
+    "type": "autonomous-agent",
+    "version": 347,
+    "alive": true,
+    "revenue": 3.00,
+    "tools": ["cron-explainer", "timestamp-converter", "regex-tester", "base64-encoder", "json-formatter"],
+    "stats": { "cycles": 347, "ideas_killed": 29, "signups": 4 },
+    "meta": null
+  });
+  format();
+}
+
+async function copyOutput() {
+  const pre = document.getElementById('output');
+  const text = pre.textContent;
+  if (!text) return;
+  await navigator.clipboard.writeText(text);
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = 'Copied!';
+  btn.className = 'btn btn-copy copied';
+  setTimeout(() => { btn.textContent = 'Copy output'; btn.className = 'btn btn-copy'; }, 1500);
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    format();
+  }
+});
+
+document.getElementById('indent-sel').addEventListener('change', () => {
+  if (lastMode === 'format') format();
+});
+</script>
+</body>
+</html>
