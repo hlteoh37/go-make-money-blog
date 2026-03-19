@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Base64 Encoder / Decoder — Free Online Tool</title>
-  <meta name="description" content="Free online Base64 encoder and decoder. Instantly encode text or files to Base64, or decode Base64 strings back to plain text. No signup, no tracking, works offline.">
-  <meta name="keywords" content="base64 encoder, base64 decoder, base64 encode, base64 decode, base64 online, base64 converter, encode to base64, decode base64 string">
-  <meta property="og:title" content="Base64 Encoder / Decoder — Free Online Tool">
-  <meta property="og:description" content="Encode text to Base64 or decode Base64 strings instantly. Free, client-side, no data sent anywhere.">
+  <title>URL Encoder / Decoder — Free Online Tool</title>
+  <meta name="description" content="Free online URL encoder and decoder. Encode special characters in URLs (percent-encoding) or decode URL-encoded strings back to plain text. No signup, no tracking, works offline.">
+  <meta name="keywords" content="url encoder, url decoder, url encode, url decode, percent encoding, urlencode, urldecode, url encoding online, encode url online, decode url online">
+  <meta property="og:title" content="URL Encoder / Decoder — Free Online Tool">
+  <meta property="og:description" content="Encode or decode URLs instantly. Supports both encodeURIComponent and encodeURI. Free, client-side, no data sent anywhere.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/base64/">
-  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/base64/">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='70'>64</text></svg>">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/url/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/url/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='55'>URL</text></svg>">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -86,9 +86,20 @@
     .stat { font-size: 0.82rem; color: #8b949e; }
     .stat span { color: #58a6ff; font-weight: 600; font-family: monospace; }
 
-    .options-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+    .options-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
     .option-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.88rem; color: #c9d1d9; }
     .option-check input { accent-color: #58a6ff; width: 14px; height: 14px; }
+
+    .mode-select {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .mode-btn {
+      padding: 6px 14px; border-radius: 6px; border: 1px solid #30363d;
+      background: #21262d; color: #8b949e; font-size: 0.82rem; cursor: pointer;
+      font-weight: 600; transition: all 0.15s;
+    }
+    .mode-btn.active { background: #1f6feb22; color: #58a6ff; border-color: #58a6ff; }
+    .mode-btn:hover:not(.active) { background: #30363d; color: #c9d1d9; }
 
     .info-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;
@@ -118,24 +129,28 @@
 <body>
 <div class="container">
   <a class="back-link" href="/profiterole-blog/">&larr; Profiterole</a>
-  <h1>Base64 Encoder / Decoder</h1>
-  <p class="tagline">Encode text to Base64 or decode Base64 back to text &mdash; instantly, client-side, no server.</p>
+  <h1>URL Encoder / Decoder</h1>
+  <p class="tagline">Percent-encode URLs or decode them back to plain text &mdash; instantly, client-side, no server.</p>
 
   <!-- Tab Bar -->
   <div class="tab-bar">
-    <button class="tab-btn active" id="tab-encode" onclick="switchTab('encode')">Encode &rarr; Base64</button>
-    <button class="tab-btn" id="tab-decode" onclick="switchTab('decode')">Decode &larr; Base64</button>
+    <button class="tab-btn active" id="tab-encode" onclick="switchTab('encode')">Encode &rarr; URL</button>
+    <button class="tab-btn" id="tab-decode" onclick="switchTab('decode')">Decode &larr; URL</button>
   </div>
 
   <!-- ENCODE PANEL -->
   <div id="pane-encode">
     <div class="panel">
-      <div class="panel-label">Input text (plain text to encode)</div>
+      <div class="panel-label">Input text (to encode)</div>
       <div class="options-row">
-        <label class="option-check"><input type="checkbox" id="enc-urlsafe"> URL-safe (use <code>-_</code> instead of <code>+/</code>)</label>
-        <label class="option-check"><input type="checkbox" id="enc-nopad"> No padding (strip trailing <code>=</code>)</label>
+        <span style="color:#8b949e;font-size:0.82rem;font-weight:600;">Mode:</span>
+        <div class="mode-select">
+          <button class="mode-btn active" id="mode-component" onclick="setMode('component')">encodeURIComponent</button>
+          <button class="mode-btn" id="mode-full" onclick="setMode('full')">encodeURI</button>
+          <button class="mode-btn" id="mode-form" onclick="setMode('form')">form-data (+spaces)</button>
+        </div>
       </div>
-      <textarea id="enc-input" placeholder="Type or paste text here..." oninput="doEncode()"></textarea>
+      <textarea id="enc-input" placeholder="Type or paste text/URL here..." oninput="doEncode()"></textarea>
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="clearEnc()">Clear</button>
         <button class="btn btn-secondary" onclick="loadSampleEnc()">Load sample</button>
@@ -144,7 +159,7 @@
 
     <div class="panel">
       <div class="panel-label">
-        <span>Base64 output</span>
+        <span>Encoded output</span>
         <button class="btn btn-copy" id="copy-enc" onclick="copyEnc()">Copy</button>
       </div>
       <div class="output-area" id="enc-output">&mdash;</div>
@@ -155,8 +170,8 @@
   <!-- DECODE PANEL -->
   <div id="pane-decode" style="display:none">
     <div class="panel">
-      <div class="panel-label">Input Base64 string</div>
-      <textarea id="dec-input" placeholder="Paste Base64 string here..." oninput="doDecode()"></textarea>
+      <div class="panel-label">Input encoded URL or string</div>
+      <textarea id="dec-input" placeholder="Paste URL-encoded string here... e.g. Hello%20World%21" oninput="doDecode()"></textarea>
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="clearDec()">Clear</button>
         <button class="btn btn-secondary" onclick="loadSampleDec()">Load sample</button>
@@ -176,26 +191,26 @@
   <!-- Info cards -->
   <div class="info-grid">
     <div class="info-card">
-      <h3>What is Base64?</h3>
-      <p>Base64 encodes binary data as ASCII text using 64 printable characters. 3 input bytes become 4 output characters, inflating size by ~33%.</p>
+      <h3>What is URL encoding?</h3>
+      <p>URL encoding (percent-encoding) replaces unsafe characters with <code>%XX</code> hex sequences. Spaces become <code>%20</code>, <code>&</code> becomes <code>%26</code>, etc.</p>
     </div>
     <div class="info-card">
-      <h3>Common uses</h3>
-      <p>Embedding images in CSS/HTML (<code>data:image/png;base64,...</code>), encoding binary in JSON, HTTP Basic Auth headers, JWT tokens.</p>
+      <h3>encodeURIComponent</h3>
+      <p>Encodes everything except <code>A-Z a-z 0-9 - _ . ! ~ * ' ( )</code>. Use this for query parameters and form values. Most common choice.</p>
     </div>
     <div class="info-card">
-      <h3>URL-safe variant</h3>
-      <p>Standard Base64 uses <code>+</code> and <code>/</code> which break URLs. URL-safe Base64 replaces them with <code>-</code> and <code>_</code>. Used in JWTs.</p>
+      <h3>encodeURI</h3>
+      <p>Encodes everything except characters allowed in a full URI: leaves <code>: / ? # [ ] @ ! $ & ' ( ) * + , ; = -</code> intact. Use for full URLs.</p>
     </div>
     <div class="info-card">
-      <h3>No padding</h3>
-      <p>The trailing <code>=</code> padding aligns output to 4-byte blocks. It's optional for decoding and omitted in many APIs (e.g. JWT).</p>
+      <h3>Form data (+ spaces)</h3>
+      <p>HTML forms encode spaces as <code>+</code> instead of <code>%20</code>. This is the <code>application/x-www-form-urlencoded</code> format used by GET/POST forms.</p>
     </div>
   </div>
 
   <footer style="margin-top:40px;">
     Built by <a href="https://hlteoh37.github.io/profiterole-blog/">Profiterole</a> &mdash;
-    <a href="/profiterole-blog/url/">URL Encoder</a> &bull;
+    <a href="/profiterole-blog/base64/">Base64 Encoder</a> &bull;
     <a href="/profiterole-blog/jwt/">JWT Decoder</a> &bull;
     <a href="/profiterole-blog/regex/">Regex Tester</a> &bull;
     <a href="/profiterole-blog/timestamp/">Timestamp Converter</a> &bull;
@@ -207,6 +222,7 @@
 
 <script>
 let currentTab = 'encode';
+let currentMode = 'component';
 
 function switchTab(tab) {
   currentTab = tab;
@@ -216,10 +232,27 @@ function switchTab(tab) {
   document.getElementById('tab-decode').className = 'tab-btn' + (tab === 'decode' ? ' active' : '');
 }
 
+function setMode(mode) {
+  currentMode = mode;
+  ['component', 'full', 'form'].forEach(m => {
+    document.getElementById('mode-' + m).className = 'mode-btn' + (m === mode ? ' active' : '');
+  });
+  doEncode();
+}
+
+function encodeByMode(str) {
+  switch (currentMode) {
+    case 'component': return encodeURIComponent(str);
+    case 'full': return encodeURI(str);
+    case 'form':
+      // application/x-www-form-urlencoded: spaces as +
+      return encodeURIComponent(str).replace(/%20/g, '+');
+    default: return encodeURIComponent(str);
+  }
+}
+
 function doEncode() {
   const raw = document.getElementById('enc-input').value;
-  const urlsafe = document.getElementById('enc-urlsafe').checked;
-  const nopad = document.getElementById('enc-nopad').checked;
   const out = document.getElementById('enc-output');
   const stats = document.getElementById('enc-stats');
 
@@ -231,13 +264,11 @@ function doEncode() {
   }
 
   try {
-    let encoded = btoa(unescape(encodeURIComponent(raw)));
-    if (urlsafe) encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_');
-    if (nopad) encoded = encoded.replace(/=+$/, '');
+    const encoded = encodeByMode(raw);
     out.className = 'output-area';
     out.textContent = encoded;
-    const ratio = ((encoded.length / raw.length) * 100).toFixed(0);
-    stats.innerHTML = `<span class="stat">Input: <span>${raw.length} chars</span></span><span class="stat">Output: <span>${encoded.length} chars</span></span><span class="stat">Size ratio: <span>${ratio}%</span></span>`;
+    const encodedChars = (encoded.match(/%[0-9A-F]{2}/g) || []).length;
+    stats.innerHTML = `<span class="stat">Input: <span>${raw.length} chars</span></span><span class="stat">Output: <span>${encoded.length} chars</span></span><span class="stat">Encoded: <span>${encodedChars} sequences</span></span>`;
   } catch(e) {
     out.className = 'output-area error';
     out.textContent = 'Error: ' + e.message;
@@ -258,16 +289,20 @@ function doDecode() {
   }
 
   try {
-    // Handle URL-safe Base64 and missing padding
-    let b64 = raw.replace(/-/g, '+').replace(/_/g, '/');
-    while (b64.length % 4) b64 += '=';
-    const decoded = decodeURIComponent(escape(atob(b64)));
+    // Handle both %20 and + as space (covers both encodeURIComponent and form encoding)
+    let decoded;
+    try {
+      decoded = decodeURIComponent(raw.replace(/\+/g, ' '));
+    } catch(e1) {
+      // If that fails, try without the + replacement
+      decoded = decodeURIComponent(raw);
+    }
     out.className = 'output-area';
     out.textContent = decoded;
     stats.innerHTML = `<span class="stat">Input: <span>${raw.length} chars</span></span><span class="stat">Output: <span>${decoded.length} chars</span></span>`;
   } catch(e) {
     out.className = 'output-area error';
-    out.textContent = 'Error: invalid Base64 — ' + e.message;
+    out.textContent = 'Error: invalid percent-encoding — ' + e.message;
     stats.innerHTML = '';
   }
 }
@@ -286,11 +321,11 @@ function clearDec() {
 }
 
 function loadSampleEnc() {
-  document.getElementById('enc-input').value = 'Hello, World! This is a Base64 encoding example. 🎉';
+  document.getElementById('enc-input').value = 'https://example.com/search?q=hello world&lang=en&tag=C++ programming';
   doEncode();
 }
 function loadSampleDec() {
-  document.getElementById('dec-input').value = 'SGVsbG8sIFdvcmxkISBUaGlzIGlzIGEgQmFzZTY0IGVuY29kaW5nIGV4YW1wbGUuIPCfjok=';
+  document.getElementById('dec-input').value = 'https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dhello%20world%26lang%3Den%26tag%3DC%2B%2B%20programming';
   doDecode();
 }
 
@@ -312,10 +347,6 @@ async function copyDec() {
   btn.className = 'btn btn-copy copied';
   setTimeout(() => { btn.textContent = 'Copy'; btn.className = 'btn btn-copy'; }, 1500);
 }
-
-// Update when checkboxes change
-document.getElementById('enc-urlsafe').addEventListener('change', doEncode);
-document.getElementById('enc-nopad').addEventListener('change', doEncode);
 </script>
 </body>
 </html>
