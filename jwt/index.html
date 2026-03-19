@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JWT Decoder — Inspect JSON Web Tokens Online (Free)</title>
+  <meta name="description" content="Free online JWT decoder. Instantly decode and inspect JSON Web Token headers, payloads, and claims. See expiry, issuer, subject. No data sent to any server.">
+  <meta name="keywords" content="jwt decoder, json web token decoder, jwt inspector, decode jwt online, jwt parser, jwt claims, jwt expiry, jwt header decoder, jwt payload decoder">
+  <meta property="og:title" content="JWT Decoder — Inspect JSON Web Tokens Online">
+  <meta property="og:description" content="Decode any JWT instantly. See header algorithm, payload claims, expiry time, and signature info. Free, client-side, private.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/jwt/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/jwt/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='60'>JWT</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    .back-link { display: inline-block; color: #58a6ff; text-decoration: none; font-size: 0.85rem; margin-bottom: 20px; }
+    .back-link:hover { text-decoration: underline; }
+    h1 { font-size: 2rem; font-weight: 700; color: #f0f6fc; margin-bottom: 6px; }
+    .tagline { color: #8b949e; margin-bottom: 28px; font-size: 1rem; }
+
+    .panel {
+      background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px;
+      margin-bottom: 20px;
+    }
+    .panel-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #8b949e; font-weight: 600; margin-bottom: 10px; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    textarea {
+      width: 100%; min-height: 100px; background: #0d1117; border: 1px solid #30363d;
+      border-radius: 8px; color: #e6edf3;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem; padding: 12px 14px; resize: vertical; outline: none;
+      transition: border-color 0.2s; line-height: 1.6;
+    }
+    textarea:focus { border-color: #58a6ff; }
+    textarea.error { border-color: #f85149; }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .btn {
+      padding: 8px 18px; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 0.85rem; font-weight: 600; transition: all 0.15s;
+    }
+    .btn-secondary { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+    .btn-secondary:hover { background: #30363d; }
+    .btn-copy { background: #1f6feb; color: #fff; }
+    .btn-copy:hover { background: #388bfd; }
+    .btn-copy.copied { background: #238636; }
+
+    /* JWT token display with colored parts */
+    .jwt-visual {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.83rem;
+      background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+      padding: 14px; word-break: break-all; line-height: 1.7;
+      margin-bottom: 18px; min-height: 60px;
+    }
+    .jwt-header { color: #ff7b72; }
+    .jwt-dot { color: #8b949e; }
+    .jwt-payload { color: #79c0ff; }
+    .jwt-sig { color: #56d364; }
+
+    /* Section grid */
+    .decoded-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 700px) { .decoded-grid { grid-template-columns: 1fr; } }
+
+    .section-card {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 10px;
+      overflow: hidden;
+    }
+    .section-card-title {
+      padding: 8px 14px; font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em; border-bottom: 1px solid #30363d;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .section-card-title.header-title { color: #ff7b72; background: rgba(255,123,114,0.07); }
+    .section-card-title.payload-title { color: #79c0ff; background: rgba(121,192,255,0.07); }
+    .section-card pre {
+      padding: 12px 14px; font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.83rem; line-height: 1.6; white-space: pre-wrap;
+      overflow: auto; max-height: 320px; margin: 0;
+    }
+
+    /* Claims table */
+    .claims-panel {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 10px;
+      margin-bottom: 18px; overflow: hidden;
+    }
+    .claims-title {
+      padding: 8px 14px; font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      border-bottom: 1px solid #30363d; color: #f0f6fc; background: #161b22;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .claim-row {
+      display: flex; align-items: flex-start; gap: 0;
+      border-bottom: 1px solid #21262d;
+    }
+    .claim-row:last-child { border-bottom: none; }
+    .claim-key {
+      width: 120px; min-width: 120px; padding: 8px 12px;
+      font-family: monospace; font-size: 0.8rem; color: #8b949e;
+      background: rgba(255,255,255,0.02); border-right: 1px solid #21262d;
+      font-weight: 600;
+    }
+    .claim-val { padding: 8px 12px; font-size: 0.82rem; color: #c9d1d9; word-break: break-all; flex: 1; }
+    .claim-badge {
+      display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.1rem 0.45rem;
+      border-radius: 4px; margin-left: 8px; vertical-align: middle;
+    }
+    .badge-ok { background: rgba(86,211,100,0.15); color: #56d364; }
+    .badge-expired { background: rgba(248,81,73,0.15); color: #f85149; }
+    .badge-soon { background: rgba(230,162,60,0.15); color: #e6a23c; }
+
+    /* Signature section */
+    .sig-panel {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 18px;
+    }
+    .sig-title {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #56d364; margin-bottom: 10px;
+    }
+    .sig-note { font-size: 0.83rem; color: #8b949e; line-height: 1.6; }
+    .sig-value {
+      font-family: monospace; font-size: 0.8rem; color: #56d364;
+      word-break: break-all; margin-top: 8px; opacity: 0.8;
+    }
+
+    /* Error */
+    .error-box {
+      background: rgba(248,81,73,0.08); border: 1px solid rgba(248,81,73,0.3);
+      border-radius: 8px; padding: 12px 16px; color: #f85149;
+      font-size: 0.88rem; margin-bottom: 18px; display: none;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 40px 20px; color: #8b949e; font-size: 0.88rem;
+    }
+    .empty-state .big { font-size: 2rem; margin-bottom: 8px; }
+
+    .info-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;
+      margin-top: 20px;
+    }
+    .info-card {
+      background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 16px;
+    }
+    .info-card h3 { font-size: 0.85rem; color: #58a6ff; margin-bottom: 8px; }
+    .info-card p { font-size: 0.82rem; color: #8b949e; line-height: 1.5; }
+    .info-card code { background: rgba(88,166,255,0.12); padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.85em; color: #79c0ff; }
+
+    .coffee-float {
+      position: fixed; bottom: 20px; right: 20px;
+      background: #ffdd00; color: #000; border-radius: 50px;
+      padding: 10px 18px; font-weight: 700; font-size: 0.85rem;
+      text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.15s; z-index: 100;
+    }
+    .coffee-float:hover { transform: scale(1.05); text-decoration: none; }
+
+    footer { margin-top: 40px; text-align: center; font-size: 0.8rem; color: #8b949e; }
+    footer a { color: #58a6ff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a class="back-link" href="/profiterole-blog/">&larr; Profiterole</a>
+  <h1>JWT Decoder</h1>
+  <p class="tagline">Paste a JSON Web Token to decode the header, payload, and claims instantly &mdash; all client-side, nothing sent anywhere.</p>
+
+  <!-- Input panel -->
+  <div class="panel">
+    <div class="panel-label">Paste your JWT token</div>
+    <textarea id="jwt-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0..." oninput="decodeJwt()" spellcheck="false"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+      <button class="btn btn-secondary" onclick="loadSample()">Load sample</button>
+    </div>
+  </div>
+
+  <!-- JWT visual -->
+  <div id="jwt-visual" class="jwt-visual" style="display:none"></div>
+
+  <!-- Error -->
+  <div id="error-box" class="error-box"></div>
+
+  <!-- Empty state -->
+  <div id="empty-state" class="empty-state">
+    <div class="big">JWT</div>
+    <div>Paste a JWT token above to decode it</div>
+  </div>
+
+  <!-- Decoded output -->
+  <div id="decoded-output" style="display:none">
+
+    <!-- Claims summary -->
+    <div id="claims-panel" class="claims-panel" style="display:none">
+      <div class="claims-title">
+        <span>Standard Claims</span>
+        <span id="expiry-badge"></span>
+      </div>
+      <div id="claims-rows"></div>
+    </div>
+
+    <!-- Header + Payload grid -->
+    <div class="decoded-grid">
+      <div class="section-card">
+        <div class="section-card-title header-title">
+          <span>Header</span>
+          <button class="btn btn-copy" id="copy-header" onclick="copySection('header')">Copy</button>
+        </div>
+        <pre id="header-output" style="color:#ff7b72"></pre>
+      </div>
+      <div class="section-card">
+        <div class="section-card-title payload-title">
+          <span>Payload</span>
+          <button class="btn btn-copy" id="copy-payload" onclick="copySection('payload')">Copy</button>
+        </div>
+        <pre id="payload-output" style="color:#79c0ff"></pre>
+      </div>
+    </div>
+
+    <!-- Signature -->
+    <div class="sig-panel">
+      <div class="sig-title">Signature</div>
+      <div class="sig-note">The signature cannot be verified client-side without the secret key. To verify: use your backend with the shared secret (HS256/384/512) or public key (RS256/ES256).</div>
+      <div class="sig-value" id="sig-value"></div>
+    </div>
+
+  </div>
+
+  <!-- Info cards -->
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>What is a JWT?</h3>
+      <p>A JSON Web Token is a compact, URL-safe way to represent claims between two parties. Format: <code>header.payload.signature</code>, each Base64url-encoded.</p>
+    </div>
+    <div class="info-card">
+      <h3>Standard claims</h3>
+      <p><code>sub</code> (subject), <code>iss</code> (issuer), <code>aud</code> (audience), <code>exp</code> (expires), <code>iat</code> (issued at), <code>nbf</code> (not before), <code>jti</code> (JWT ID).</p>
+    </div>
+    <div class="info-card">
+      <h3>Common algorithms</h3>
+      <p><code>HS256/384/512</code> — HMAC with shared secret. <code>RS256/384/512</code> — RSA with public/private key. <code>ES256</code> — ECDSA. Algorithm is in the header.</p>
+    </div>
+    <div class="info-card">
+      <h3>Security note</h3>
+      <p>Never paste production tokens with sensitive data into online tools. This decoder runs entirely in your browser — no data leaves your machine. But it's still good hygiene.</p>
+    </div>
+  </div>
+
+  <footer style="margin-top:40px;">
+    Built by <a href="https://hlteoh37.github.io/profiterole-blog/">Profiterole</a> &mdash;
+    <a href="/profiterole-blog/base64/">Base64 Encoder</a> &bull;
+    <a href="/profiterole-blog/json/">JSON Formatter</a> &bull;
+    <a href="/profiterole-blog/regex/">Regex Tester</a> &bull;
+    <a href="/profiterole-blog/timestamp/">Timestamp Converter</a> &bull;
+    <a href="/profiterole-blog/cron/">Cron Explainer</a>
+  </footer>
+</div>
+
+<a class="coffee-float" href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+let lastHeader = '', lastPayload = '';
+
+function b64urlDecode(str) {
+  // Convert URL-safe Base64 to standard Base64
+  str = str.replace(/-/g, '+').replace(/_/g, '/');
+  // Pad to multiple of 4
+  while (str.length % 4) str += '=';
+  try {
+    return decodeURIComponent(escape(atob(str)));
+  } catch(e) {
+    throw new Error('Invalid Base64url encoding');
+  }
+}
+
+function formatJson(obj) {
+  return JSON.stringify(obj, null, 2);
+}
+
+function syntaxHighlight(json) {
+  // Simple syntax coloring
+  return json
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+      let cls = 'color:#c9d1d9'; // number
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'color:#79c0ff'; // key
+        } else {
+          cls = 'color:#a5d6ff'; // string value
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'color:#ff7b72';
+      } else if (/null/.test(match)) {
+        cls = 'color:#8b949e';
+      }
+      return `<span style="${cls}">${match}</span>`;
+    });
+}
+
+function timeAgo(unix) {
+  const now = Math.floor(Date.now() / 1000);
+  const diff = unix - now;
+  const abs = Math.abs(diff);
+  const past = diff < 0;
+  if (abs < 60) return past ? `${abs}s ago` : `in ${abs}s`;
+  if (abs < 3600) return past ? `${Math.floor(abs/60)}m ago` : `in ${Math.floor(abs/60)}m`;
+  if (abs < 86400) return past ? `${Math.floor(abs/3600)}h ago` : `in ${Math.floor(abs/3600)}h`;
+  return past ? `${Math.floor(abs/86400)}d ago` : `in ${Math.floor(abs/86400)}d`;
+}
+
+function formatUnixTime(unix) {
+  const d = new Date(unix * 1000);
+  return d.toISOString().replace('T', ' ').replace(/\.\d+Z$/, ' UTC');
+}
+
+function decodeJwt() {
+  const raw = document.getElementById('jwt-input').value.trim();
+  const errorBox = document.getElementById('error-box');
+  const decoded = document.getElementById('decoded-output');
+  const empty = document.getElementById('empty-state');
+  const visual = document.getElementById('jwt-visual');
+
+  errorBox.style.display = 'none';
+  errorBox.textContent = '';
+
+  if (!raw) {
+    decoded.style.display = 'none';
+    visual.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+
+  const parts = raw.split('.');
+  if (parts.length !== 3) {
+    errorBox.textContent = 'Invalid JWT: must have exactly 3 parts separated by dots (header.payload.signature)';
+    errorBox.style.display = 'block';
+    decoded.style.display = 'none';
+    visual.style.display = 'none';
+    return;
+  }
+
+  let header, payload;
+  try {
+    header = JSON.parse(b64urlDecode(parts[0]));
+  } catch(e) {
+    errorBox.textContent = 'Error decoding header: ' + e.message;
+    errorBox.style.display = 'block';
+    decoded.style.display = 'none';
+    visual.style.display = 'none';
+    return;
+  }
+
+  try {
+    payload = JSON.parse(b64urlDecode(parts[1]));
+  } catch(e) {
+    errorBox.textContent = 'Error decoding payload: ' + e.message;
+    errorBox.style.display = 'block';
+    decoded.style.display = 'none';
+    visual.style.display = 'none';
+    return;
+  }
+
+  // Store for copy
+  lastHeader = formatJson(header);
+  lastPayload = formatJson(payload);
+
+  // JWT visual (colored parts)
+  const truncSig = parts[2].length > 40 ? parts[2].slice(0, 40) + '…' : parts[2];
+  visual.innerHTML = `<span class="jwt-header">${parts[0]}</span><span class="jwt-dot">.</span><span class="jwt-payload">${parts[1]}</span><span class="jwt-dot">.</span><span class="jwt-sig">${truncSig}</span>`;
+  visual.style.display = 'block';
+
+  // Header output
+  document.getElementById('header-output').innerHTML = syntaxHighlight(lastHeader);
+  // Payload output
+  document.getElementById('payload-output').innerHTML = syntaxHighlight(lastPayload);
+  // Signature
+  document.getElementById('sig-value').textContent = parts[2];
+
+  // Claims summary
+  const claimsPanel = document.getElementById('claims-panel');
+  const claimsRows = document.getElementById('claims-rows');
+  const stdClaims = {
+    sub: 'Subject',
+    iss: 'Issuer',
+    aud: 'Audience',
+    exp: 'Expires',
+    iat: 'Issued At',
+    nbf: 'Not Before',
+    jti: 'JWT ID',
+    alg: 'Algorithm (hdr)',
+    typ: 'Type (hdr)',
+  };
+
+  const combined = { ...header, ...payload };
+  const rows = [];
+  // Algorithm from header
+  if (header.alg) rows.push({ key: 'alg', label: 'Algorithm', val: header.alg, source: 'header' });
+  if (header.typ) rows.push({ key: 'typ', label: 'Type', val: header.typ, source: 'header' });
+  // Standard payload claims
+  const payloadStd = ['sub', 'iss', 'aud', 'exp', 'iat', 'nbf', 'jti'];
+  for (const k of payloadStd) {
+    if (payload[k] !== undefined) {
+      rows.push({ key: k, label: stdClaims[k] || k, val: payload[k], source: 'payload' });
+    }
+  }
+
+  if (rows.length > 0) {
+    const now = Math.floor(Date.now() / 1000);
+    let expiryBadgeHtml = '';
+    claimsRows.innerHTML = rows.map(r => {
+      let valHtml = '';
+      if ((r.key === 'exp' || r.key === 'iat' || r.key === 'nbf') && typeof r.val === 'number') {
+        const relative = timeAgo(r.val);
+        const abs = formatUnixTime(r.val);
+        let badge = '';
+        if (r.key === 'exp') {
+          if (r.val < now) {
+            badge = '<span class="claim-badge badge-expired">EXPIRED</span>';
+            expiryBadgeHtml = '<span class="claim-badge badge-expired">EXPIRED</span>';
+          } else if (r.val - now < 300) {
+            badge = '<span class="claim-badge badge-soon">EXPIRES SOON</span>';
+            expiryBadgeHtml = '<span class="claim-badge badge-soon">EXPIRES SOON</span>';
+          } else {
+            badge = '<span class="claim-badge badge-ok">VALID</span>';
+            expiryBadgeHtml = '<span class="claim-badge badge-ok">VALID</span>';
+          }
+        }
+        valHtml = `${abs} <span style="color:#8b949e;font-size:0.8rem;">(${relative})</span>${badge}`;
+      } else if (Array.isArray(r.val)) {
+        valHtml = r.val.join(', ');
+      } else {
+        valHtml = String(r.val);
+      }
+      return `<div class="claim-row"><div class="claim-key">${r.key}</div><div class="claim-val">${valHtml}</div></div>`;
+    }).join('');
+    document.getElementById('expiry-badge').innerHTML = expiryBadgeHtml;
+    claimsPanel.style.display = 'block';
+  } else {
+    claimsPanel.style.display = 'none';
+  }
+
+  decoded.style.display = 'block';
+}
+
+function clearAll() {
+  document.getElementById('jwt-input').value = '';
+  decodeJwt();
+}
+
+function loadSample() {
+  // A sample JWT (HS256, non-sensitive example)
+  document.getElementById('jwt-input').value = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsImlzcyI6ImF1dGgubXlhcHAuY29tIiwiYXVkIjoibXlhcHAuY29tIiwiaWF0IjoxNzQyMzQ1NjAwLCJleHAiOjE3NzM4ODE2MDAsIm5hbWUiOiJBbGljZSBTbWl0aCIsImVtYWlsIjoiYWxpY2VAZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4ifQ.HMAC_SIGNATURE_NOT_VERIFIED';
+  decodeJwt();
+}
+
+async function copySection(which) {
+  const text = which === 'header' ? lastHeader : lastPayload;
+  if (!text) return;
+  await navigator.clipboard.writeText(text);
+  const btn = document.getElementById('copy-' + which);
+  btn.textContent = 'Copied!';
+  btn.className = 'btn btn-copy copied';
+  setTimeout(() => { btn.textContent = 'Copy'; btn.className = 'btn btn-copy'; }, 1500);
+}
+</script>
+</body>
+</html>
