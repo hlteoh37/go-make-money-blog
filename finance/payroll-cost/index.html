@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payroll Cost Calculator — True Cost of an Employee (2024)</title>
+  <meta name="description" content="Calculate the true cost of hiring an employee. Employer payroll taxes, FICA, FUTA, SUTA, benefits, and overhead. See total cost beyond base salary.">
+  <meta name="keywords" content="payroll cost calculator, true cost of an employee, employer payroll tax calculator, FICA employer calculator, cost per employee, labor cost calculator, employer taxes calculator, hiring cost calculator">
+  <meta property="og:title" content="Payroll Cost Calculator — True Cost of an Employee">
+  <meta property="og:description" content="See the real cost of hiring. Employer FICA, FUTA, SUTA, benefits, overhead — beyond just salary.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/payroll-cost/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/payroll-cost/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🏢</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 40px 20px 100px;
+    }
+    .container { max-width: 760px; margin: 0 auto; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: #58a6ff; text-decoration: none; font-size: 0.85rem; margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .hero { margin-bottom: 32px; }
+    .hero h1 { font-size: 2rem; font-weight: 700; color: #f0f6fc; margin-bottom: 8px; line-height: 1.25; }
+    .hero p { color: #8b949e; font-size: 1rem; line-height: 1.6; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; margin-bottom: 20px; }
+    .card-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b949e; font-weight: 600; margin-bottom: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 0.85rem; font-weight: 500; color: #c9d1d9; }
+    .field .hint { font-size: 0.75rem; color: #8b949e; }
+    .field input[type="number"], .field select {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+      color: #e6edf3; font-size: 1rem; padding: 10px 14px; width: 100%;
+      outline: none; transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus { border-color: #58a6ff; }
+    .field select option { background: #161b22; }
+    .calc-btn {
+      margin-top: 24px; width: 100%;
+      background: #238636; border: 1px solid #2ea043; border-radius: 8px;
+      color: #fff; font-size: 1rem; font-weight: 600; padding: 13px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .calc-btn:hover { background: #2ea043; }
+    .results { display: none; }
+    .results.show { display: block; }
+    .big-number { text-align: center; padding: 24px; background: #0d1117; border: 1px solid #30363d; border-radius: 12px; margin-bottom: 20px; }
+    .big-number .label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b949e; margin-bottom: 8px; }
+    .big-number .value { font-size: 2.8rem; font-weight: 700; color: #f85149; }
+    .big-number .sub { font-size: 0.9rem; color: #8b949e; margin-top: 6px; }
+    .breakdown-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .breakdown-table th { text-align: left; padding: 9px 14px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8b949e; border-bottom: 1px solid #21262d; }
+    .breakdown-table td { padding: 10px 14px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+    .breakdown-table tr:last-child td { border-bottom: none; }
+    .breakdown-table td.amount { text-align: right; font-variant-numeric: tabular-nums; }
+    .breakdown-table td.pct { text-align: right; color: #8b949e; font-size: 0.82rem; }
+    .breakdown-table tr.subtotal td { background: #0d1117; font-weight: 600; color: #e6edf3; }
+    .breakdown-table tr.total-row td { background: rgba(248,81,73,0.1); border-top: 2px solid #f85149; font-weight: 700; color: #f85149; font-size: 1rem; }
+    .bar-wrap { margin-bottom: 8px; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px; color: #c9d1d9; }
+    .bar-bg { background: #21262d; border-radius: 4px; height: 10px; overflow: hidden; }
+    .bar-fill { height: 10px; border-radius: 4px; }
+    .multiplier-box { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 20px; }
+    .mult-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #21262d; font-size: 0.88rem; }
+    .mult-row:last-child { border-bottom: none; }
+    .mult-label { color: #c9d1d9; }
+    .mult-value { font-weight: 600; color: #f0f6fc; }
+    .info-box { background: #1c2230; border: 1px solid #30363d; border-radius: 10px; padding: 20px; font-size: 0.85rem; color: #8b949e; line-height: 1.7; }
+    .info-box h3 { color: #c9d1d9; font-size: 0.9rem; margin-bottom: 10px; }
+    .footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #21262d; font-size: 0.8rem; color: #6e7681; text-align: center; }
+    .footer a { color: #58a6ff; text-decoration: none; }
+    .coffee-btn {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      background: #ffdd00; color: #000;
+      font-size: 0.8rem; font-weight: 700;
+      padding: 10px 16px; border-radius: 24px;
+      text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .coffee-btn:hover { opacity: 0.9; transform: scale(1.04); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+
+    <div class="hero">
+      <h1>Payroll Cost Calculator</h1>
+      <p>The true cost of an employee is always higher than their salary. Employer payroll taxes, benefits, and overhead can add 20–40% on top. Find out the real number before you hire.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Employee Compensation</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="salary">Annual Base Salary ($)</label>
+          <input type="number" id="salary" value="75000" min="1" step="1000">
+        </div>
+        <div class="field">
+          <label for="bonus">Annual Bonus ($)</label>
+          <input type="number" id="bonus" value="0" min="0" step="500">
+          <span class="hint">Cash bonus (subject to payroll taxes)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mandatory Employer Taxes (2024)</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="ssRate">Social Security Rate (%)</label>
+          <input type="number" id="ssRate" value="6.2" min="0" max="20" step="0.1">
+          <span class="hint">Capped at $168,600 wages. 6.2% standard.</span>
+        </div>
+        <div class="field">
+          <label for="medicareRate">Medicare Rate (%)</label>
+          <input type="number" id="medicareRate" value="1.45" min="0" max="10" step="0.01">
+          <span class="hint">No cap. 1.45% standard.</span>
+        </div>
+        <div class="field">
+          <label for="futaRate">FUTA Rate (%)</label>
+          <input type="number" id="futaRate" value="0.6" min="0" max="6" step="0.1">
+          <span class="hint">Federal unemployment. 0.6% on first $7,000.</span>
+        </div>
+        <div class="field">
+          <label for="sutaRate">SUTA Rate (%) + Wage Base ($)</label>
+          <input type="number" id="sutaRate" value="2.7" min="0" max="20" step="0.1">
+          <span class="hint">State unemployment. Varies by state (avg ~2.7%).</span>
+        </div>
+        <div class="field">
+          <label for="sutaWageBase">SUTA Wage Base ($)</label>
+          <input type="number" id="sutaWageBase" value="14000" min="7000" max="60000" step="1000">
+          <span class="hint">Varies by state ($7K–$56K). Default ~$14K.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Optional Benefits (Annual Cost to Employer)</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="health">Health Insurance ($)</label>
+          <input type="number" id="health" value="7000" min="0" step="100">
+          <span class="hint">Employer contribution. US avg ~$7,000/year.</span>
+        </div>
+        <div class="field">
+          <label for="dental">Dental & Vision ($)</label>
+          <input type="number" id="dental" value="600" min="0" step="100">
+          <span class="hint">Avg ~$500–$800/year.</span>
+        </div>
+        <div class="field">
+          <label for="retirement">Retirement Match ($)</label>
+          <input type="number" id="retirement" value="2250" min="0" step="100">
+          <span class="hint">E.g. 3% match on $75K = $2,250.</span>
+        </div>
+        <div class="field">
+          <label for="pto">PTO Cost ($)</label>
+          <input type="number" id="pto" value="2885" min="0" step="100">
+          <span class="hint">15 days PTO on $75K = ~$2,885.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Optional Overhead</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="equipment">Equipment & Software ($)</label>
+          <input type="number" id="equipment" value="2000" min="0" step="100">
+          <span class="hint">Laptop, tools, SaaS licenses.</span>
+        </div>
+        <div class="field">
+          <label for="training">Training & Development ($)</label>
+          <input type="number" id="training" value="500" min="0" step="100">
+        </div>
+        <div class="field">
+          <label for="recruiting">Recruiting Cost (one-time, $)</label>
+          <input type="number" id="recruiting" value="0" min="0" step="100">
+          <span class="hint">Agency fee, job boards. Often 15–20% of salary.</span>
+        </div>
+        <div class="field">
+          <label for="workercomp">Workers' Comp Insurance ($)</label>
+          <input type="number" id="workercomp" value="500" min="0" step="50">
+          <span class="hint">~0.5–2% of payroll. Varies by industry.</span>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calculate()">Calculate Total Cost</button>
+    </div>
+
+    <div class="results" id="results">
+      <div class="big-number">
+        <div class="label">Total Annual Cost to Employer</div>
+        <div class="value" id="totalCost">—</div>
+        <div class="sub" id="totalSub">—</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Cost Breakdown</div>
+        <div style="overflow-x:auto;">
+          <table class="breakdown-table">
+            <thead>
+              <tr>
+                <th>Cost Item</th>
+                <th style="text-align:right;">Annual Amount</th>
+                <th style="text-align:right;">% of Base</th>
+              </tr>
+            </thead>
+            <tbody id="breakdownBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Cost Composition</div>
+        <div id="bars"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Quick Reference</div>
+        <div class="multiplier-box" id="quickRef"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">What This Means</div>
+        <div class="info-box">
+          <h3>The True Cost of Employment</h3>
+          <p>For every dollar you pay an employee in salary, you typically spend an additional $0.20–$0.40 on taxes and benefits. The "employee multiplier" — total cost divided by base salary — usually falls between 1.25 and 1.45 for US employers. Larger companies with richer benefits often run 1.5–1.8x. This calculator reflects mandatory federal taxes (FICA + FUTA) plus optional state unemployment (SUTA), benefits, and overhead you configure. Workers' compensation and state-specific taxes vary widely — check your state's requirements for precision. The recruiting one-time cost should be amortized over expected tenure when comparing options.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Built by <a href="https://hlteoh37.github.io/profiterole-blog/">Profiterole</a> ·
+      <a href="/profiterole-blog/finance/">All Finance Calculators</a>
+    </div>
+  </div>
+
+  <a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">☕ Buy Me a Coffee</a>
+
+  <script>
+    function fmt(n) {
+      return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+    function fmtDec(n, d = 2) {
+      return '$' + n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+    }
+    function pct(n, base) {
+      return (n / base * 100).toFixed(1) + '%';
+    }
+
+    function calculate() {
+      const salary = parseFloat(document.getElementById('salary').value) || 0;
+      const bonus = parseFloat(document.getElementById('bonus').value) || 0;
+      const totalWages = salary + bonus;
+
+      const ssRate = parseFloat(document.getElementById('ssRate').value) / 100;
+      const medicareRate = parseFloat(document.getElementById('medicareRate').value) / 100;
+      const futaRate = parseFloat(document.getElementById('futaRate').value) / 100;
+      const sutaRate = parseFloat(document.getElementById('sutaRate').value) / 100;
+      const sutaWageBase = parseFloat(document.getElementById('sutaWageBase').value) || 14000;
+
+      const health = parseFloat(document.getElementById('health').value) || 0;
+      const dental = parseFloat(document.getElementById('dental').value) || 0;
+      const retirement = parseFloat(document.getElementById('retirement').value) || 0;
+      const pto = parseFloat(document.getElementById('pto').value) || 0;
+
+      const equipment = parseFloat(document.getElementById('equipment').value) || 0;
+      const training = parseFloat(document.getElementById('training').value) || 0;
+      const recruiting = parseFloat(document.getElementById('recruiting').value) || 0;
+      const workercomp = parseFloat(document.getElementById('workercomp').value) || 0;
+
+      // SS is capped at $168,600 (2024 SS wage base)
+      const SS_WAGE_BASE_2024 = 168600;
+      const ssCost = Math.min(totalWages, SS_WAGE_BASE_2024) * ssRate;
+      const medicareCost = totalWages * medicareRate;
+      const futaCost = Math.min(totalWages, 7000) * futaRate;
+      const sutaCost = Math.min(totalWages, sutaWageBase) * sutaRate;
+
+      const mandatoryTaxes = ssCost + medicareCost + futaCost + sutaCost;
+      const benefits = health + dental + retirement + pto;
+      const overhead = equipment + training + recruiting + workercomp;
+
+      const total = totalWages + mandatoryTaxes + benefits + overhead;
+      const multiplier = total / salary;
+
+      // Big number
+      document.getElementById('totalCost').textContent = fmt(total);
+      document.getElementById('totalSub').textContent =
+        `${fmtDec(total / 12)} per month · ${multiplier.toFixed(2)}x salary multiplier`;
+
+      // Breakdown table
+      const items = [
+        { label: 'Base Salary', amount: salary, category: 'wages' },
+        ...(bonus > 0 ? [{ label: 'Annual Bonus', amount: bonus, category: 'wages' }] : []),
+        { label: '— SUBTOTAL: Wages', amount: totalWages, category: 'subtotal' },
+        { label: 'Social Security (6.2%, capped $168.6K)', amount: ssCost, category: 'tax' },
+        { label: 'Medicare (1.45%)', amount: medicareCost, category: 'tax' },
+        { label: 'FUTA (on first $7,000)', amount: futaCost, category: 'tax' },
+        { label: `SUTA (on first ${fmt(sutaWageBase)})`, amount: sutaCost, category: 'tax' },
+        { label: '— SUBTOTAL: Mandatory Taxes', amount: mandatoryTaxes, category: 'subtotal' },
+        ...(health > 0 ? [{ label: 'Health Insurance', amount: health, category: 'benefit' }] : []),
+        ...(dental > 0 ? [{ label: 'Dental & Vision', amount: dental, category: 'benefit' }] : []),
+        ...(retirement > 0 ? [{ label: 'Retirement Match', amount: retirement, category: 'benefit' }] : []),
+        ...(pto > 0 ? [{ label: 'PTO Cost', amount: pto, category: 'benefit' }] : []),
+        ...(benefits > 0 ? [{ label: '— SUBTOTAL: Benefits', amount: benefits, category: 'subtotal' }] : []),
+        ...(equipment > 0 ? [{ label: 'Equipment & Software', amount: equipment, category: 'overhead' }] : []),
+        ...(training > 0 ? [{ label: 'Training & Development', amount: training, category: 'overhead' }] : []),
+        ...(recruiting > 0 ? [{ label: 'Recruiting (one-time)', amount: recruiting, category: 'overhead' }] : []),
+        ...(workercomp > 0 ? [{ label: "Workers' Comp Insurance", amount: workercomp, category: 'overhead' }] : []),
+        ...(overhead > 0 ? [{ label: '— SUBTOTAL: Overhead', amount: overhead, category: 'subtotal' }] : []),
+        { label: 'TOTAL ANNUAL EMPLOYER COST', amount: total, category: 'total' },
+      ];
+
+      const tbody = document.getElementById('breakdownBody');
+      tbody.innerHTML = '';
+      items.forEach(item => {
+        const isSub = item.category === 'subtotal';
+        const isTotal = item.category === 'total';
+        const cls = isSub ? 'subtotal' : (isTotal ? 'total-row' : '');
+        tbody.innerHTML += `<tr class="${cls}">
+          <td>${item.label}</td>
+          <td class="amount">${fmt(item.amount)}</td>
+          <td class="pct">${isSub || isTotal ? '' : pct(item.amount, salary)}</td>
+        </tr>`;
+      });
+
+      // Bars
+      const categories = [
+        { label: 'Base Wages', amount: totalWages, color: '#58a6ff' },
+        { label: 'Mandatory Taxes', amount: mandatoryTaxes, color: '#f85149' },
+        { label: 'Benefits', amount: benefits, color: '#e3b341' },
+        { label: 'Overhead', amount: overhead, color: '#8b949e' },
+      ].filter(c => c.amount > 0);
+
+      const barsEl = document.getElementById('bars');
+      barsEl.innerHTML = '';
+      categories.forEach(c => {
+        const fillPct = (c.amount / total * 100).toFixed(1);
+        barsEl.innerHTML += `<div class="bar-wrap">
+          <div class="bar-label">
+            <span>${c.label}</span>
+            <span>${fmt(c.amount)} (${fillPct}%)</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${fillPct}%;background:${c.color};"></div></div>
+        </div>`;
+      });
+
+      // Quick ref
+      document.getElementById('quickRef').innerHTML = `
+        <div class="mult-row"><span class="mult-label">Employee's annual salary</span><span class="mult-value">${fmt(salary)}</span></div>
+        <div class="mult-row"><span class="mult-label">Total annual cost to you</span><span class="mult-value">${fmt(total)}</span></div>
+        <div class="mult-row"><span class="mult-label">Cost above salary</span><span class="mult-value">+${fmt(total - salary)} (+${pct(total - salary, salary)})</span></div>
+        <div class="mult-row"><span class="mult-label">Monthly cost</span><span class="mult-value">${fmtDec(total / 12)}</span></div>
+        <div class="mult-row"><span class="mult-label">Daily cost (260 work days)</span><span class="mult-value">${fmtDec(total / 260)}</span></div>
+        <div class="mult-row"><span class="mult-label">Hourly cost (2,080 hrs/yr)</span><span class="mult-value">${fmtDec(total / 2080)}/hr</span></div>
+        <div class="mult-row"><span class="mult-label">Employee cost multiplier</span><span class="mult-value">${multiplier.toFixed(2)}x salary</span></div>
+      `;
+
+      document.getElementById('results').classList.add('show');
+    }
+
+    window.addEventListener('load', calculate);
+  </script>
+</body>
+</html>

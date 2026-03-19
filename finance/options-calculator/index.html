@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Options Break-Even Calculator — Call & Put Profit/Loss</title>
+  <meta name="description" content="Calculate the break-even price for call and put options. See your maximum loss, profit potential, and a full P&L diagram. Free options profit calculator.">
+  <meta name="keywords" content="options break even calculator, call option break even, put option break even, options profit loss calculator, options trading calculator, options premium calculator, call put break even price">
+  <meta property="og:title" content="Options Break-Even Calculator — Call & Put P&L">
+  <meta property="og:description" content="Find the exact break-even price for any call or put option. Visualize profit and loss across all price scenarios.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/options-calculator/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/options-calculator/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>📊</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 40px 20px 100px;
+    }
+    .container { max-width: 760px; margin: 0 auto; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: #58a6ff; text-decoration: none; font-size: 0.85rem; margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .hero { margin-bottom: 32px; }
+    .hero h1 { font-size: 2rem; font-weight: 700; color: #f0f6fc; margin-bottom: 8px; line-height: 1.25; }
+    .hero p { color: #8b949e; font-size: 1rem; line-height: 1.6; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 28px; margin-bottom: 20px; }
+    .card-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8b949e; font-weight: 600; margin-bottom: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 0.85rem; font-weight: 500; color: #c9d1d9; }
+    .field .hint { font-size: 0.75rem; color: #8b949e; }
+    .field input[type="number"], .field select {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+      color: #e6edf3; font-size: 1rem; padding: 10px 14px; width: 100%;
+      outline: none; transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus { border-color: #58a6ff; }
+    .field select option { background: #161b22; }
+    .type-toggle { display: flex; gap: 0; margin-bottom: 24px; }
+    .type-btn {
+      flex: 1; padding: 10px; font-size: 0.9rem; font-weight: 600;
+      background: #0d1117; border: 1px solid #30363d; color: #8b949e;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .type-btn:first-child { border-radius: 8px 0 0 8px; }
+    .type-btn:last-child { border-radius: 0 8px 8px 0; border-left: none; }
+    .type-btn.active-call { background: rgba(35,134,54,0.2); border-color: #2ea043; color: #3fb950; }
+    .type-btn.active-put { background: rgba(248,81,73,0.15); border-color: #f85149; color: #f85149; }
+    .calc-btn {
+      margin-top: 24px; width: 100%;
+      background: #238636; border: 1px solid #2ea043; border-radius: 8px;
+      color: #fff; font-size: 1rem; font-weight: 600; padding: 13px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .calc-btn:hover { background: #2ea043; }
+    .results { display: none; }
+    .results.show { display: block; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+    @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+    .stat { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 16px; text-align: center; }
+    .stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8b949e; margin-bottom: 6px; }
+    .stat-value { font-size: 1.4rem; font-weight: 700; color: #f0f6fc; }
+    .stat-value.green { color: #3fb950; }
+    .stat-value.red { color: #f85149; }
+    .stat-value.yellow { color: #e3b341; }
+    .chart-wrap { overflow-x: auto; margin-bottom: 16px; }
+    canvas { display: block; max-width: 100%; height: 220px !important; }
+    .scenario-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .scenario-table th { text-align: left; padding: 8px 12px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8b949e; border-bottom: 1px solid #21262d; }
+    .scenario-table td { padding: 9px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+    .scenario-table tr:last-child td { border-bottom: none; }
+    .scenario-table td.profit { color: #3fb950; }
+    .scenario-table td.loss { color: #f85149; }
+    .scenario-table td.breakeven { color: #e3b341; font-weight: 600; }
+    .info-box { background: #1c2230; border: 1px solid #30363d; border-radius: 10px; padding: 20px; font-size: 0.85rem; color: #8b949e; line-height: 1.7; }
+    .info-box h3 { color: #c9d1d9; font-size: 0.9rem; margin-bottom: 10px; }
+    .footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #21262d; font-size: 0.8rem; color: #6e7681; text-align: center; }
+    .footer a { color: #58a6ff; text-decoration: none; }
+    .coffee-btn {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      background: #ffdd00; color: #000;
+      font-size: 0.8rem; font-weight: 700;
+      padding: 10px 16px; border-radius: 24px;
+      text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .coffee-btn:hover { opacity: 0.9; transform: scale(1.04); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+
+    <div class="hero">
+      <h1>Options Break-Even Calculator</h1>
+      <p>Find the exact break-even price for any call or put option. Visualize your profit and loss across all price scenarios before you trade.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Option Type</div>
+      <div class="type-toggle">
+        <button class="type-btn active-call" id="btnCall" onclick="setType('call')">Call Option (Bullish)</button>
+        <button class="type-btn" id="btnPut" onclick="setType('put')">Put Option (Bearish)</button>
+      </div>
+
+      <div class="card-title">Option Details</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="strike">Strike Price ($)</label>
+          <input type="number" id="strike" value="150" min="0" step="0.01">
+          <span class="hint">The price at which you can buy/sell the stock</span>
+        </div>
+        <div class="field">
+          <label for="premium">Premium Paid ($ per share)</label>
+          <input type="number" id="premium" value="5.50" min="0" step="0.01">
+          <span class="hint">Cost of one option contract share</span>
+        </div>
+        <div class="field">
+          <label for="contracts">Number of Contracts</label>
+          <input type="number" id="contracts" value="1" min="1" step="1">
+          <span class="hint">1 contract = 100 shares</span>
+        </div>
+        <div class="field">
+          <label for="currentPrice">Current Stock Price ($)</label>
+          <input type="number" id="currentPrice" value="148" min="0" step="0.01">
+          <span class="hint">Where the stock trades today</span>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calculate()">Calculate Break-Even</button>
+    </div>
+
+    <div class="results" id="results">
+      <div class="card">
+        <div class="card-title">Key Numbers</div>
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-label">Break-Even Price</div>
+            <div class="stat-value yellow" id="statBreakeven">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Max Loss</div>
+            <div class="stat-value red" id="statMaxLoss">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Max Profit</div>
+            <div class="stat-value green" id="statMaxProfit">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">P&L at Current Price</div>
+            <div class="stat-value" id="statCurrentPL">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">% Move to Break-Even</div>
+            <div class="stat-value" id="statMoveNeeded">—</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Total Cost Paid</div>
+            <div class="stat-value" id="statTotalCost">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">P&L Chart</div>
+        <div class="chart-wrap">
+          <canvas id="plChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Price Scenarios</div>
+        <div style="overflow-x:auto;">
+          <table class="scenario-table">
+            <thead>
+              <tr>
+                <th>Stock Price at Expiry</th>
+                <th>Intrinsic Value</th>
+                <th>P&L per Contract</th>
+                <th>Return on Investment</th>
+              </tr>
+            </thead>
+            <tbody id="scenarioBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">How It Works</div>
+        <div class="info-box">
+          <h3 id="infoTitle">Call Option Break-Even</h3>
+          <p id="infoText"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Built by <a href="https://hlteoh37.github.io/profiterole-blog/">Profiterole</a> ·
+      <a href="/profiterole-blog/finance/">All Finance Calculators</a>
+    </div>
+  </div>
+
+  <a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">☕ Buy Me a Coffee</a>
+
+  <script>
+    let optionType = 'call';
+    let chartInstance = null;
+
+    function setType(type) {
+      optionType = type;
+      document.getElementById('btnCall').className = 'type-btn' + (type === 'call' ? ' active-call' : '');
+      document.getElementById('btnPut').className = 'type-btn' + (type === 'put' ? ' active-put' : '');
+    }
+
+    function fmt(n, decimals = 2) {
+      return '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+    function pct(n) {
+      return (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
+    }
+
+    function pnl(stockPrice, strike, premium, type) {
+      if (type === 'call') {
+        return Math.max(stockPrice - strike, 0) - premium;
+      } else {
+        return Math.max(strike - stockPrice, 0) - premium;
+      }
+    }
+
+    function calculate() {
+      const strike = parseFloat(document.getElementById('strike').value);
+      const premium = parseFloat(document.getElementById('premium').value);
+      const contracts = parseInt(document.getElementById('contracts').value);
+      const currentPrice = parseFloat(document.getElementById('currentPrice').value);
+
+      if (isNaN(strike) || isNaN(premium) || isNaN(contracts) || isNaN(currentPrice) || premium <= 0 || strike <= 0) {
+        alert('Please fill in all fields with valid numbers.');
+        return;
+      }
+
+      const breakeven = optionType === 'call' ? strike + premium : strike - premium;
+      const maxLossPerShare = premium;
+      const maxLossTotal = maxLossPerShare * 100 * contracts;
+      const totalCostPaid = premium * 100 * contracts;
+      const currentPL = pnl(currentPrice, strike, premium, optionType) * 100 * contracts;
+      const moveNeeded = ((breakeven - currentPrice) / currentPrice) * 100;
+
+      // Update stats
+      document.getElementById('statBreakeven').textContent = fmt(breakeven);
+      document.getElementById('statMaxLoss').textContent = '-' + fmt(maxLossTotal);
+      document.getElementById('statMaxProfit').textContent = optionType === 'call' ? 'Unlimited' : fmt((strike - premium) * 100 * contracts);
+
+      const plEl = document.getElementById('statCurrentPL');
+      plEl.textContent = (currentPL >= 0 ? '+' : '-') + fmt(Math.abs(currentPL));
+      plEl.className = 'stat-value ' + (currentPL >= 0 ? 'green' : 'red');
+
+      const moveEl = document.getElementById('statMoveNeeded');
+      moveEl.textContent = pct(moveNeeded);
+      moveEl.className = 'stat-value ' + (moveNeeded > 0 ? 'yellow' : 'green');
+
+      document.getElementById('statTotalCost').textContent = fmt(totalCostPaid);
+
+      // Chart
+      const low = Math.max(0.1, Math.min(currentPrice, strike) * 0.6);
+      const high = Math.max(currentPrice, strike) * 1.4;
+      const step = (high - low) / 100;
+      const prices = Array.from({length: 101}, (_, i) => low + i * step);
+      const pls = prices.map(p => pnl(p, strike, premium, optionType) * 100 * contracts);
+
+      const ctx = document.getElementById('plChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      // Simple canvas chart
+      const canvas = document.getElementById('plChart');
+      const W = canvas.parentElement.clientWidth || 700;
+      canvas.width = W;
+      canvas.height = 220;
+      const cx = canvas.getContext('2d');
+
+      const pad = { top: 20, right: 20, bottom: 40, left: 70 };
+      const cw = W - pad.left - pad.right;
+      const ch = 220 - pad.top - pad.bottom;
+
+      const minPL = Math.min(...pls);
+      const maxPL = Math.max(...pls);
+      const plRange = maxPL - minPL || 1;
+
+      function xPos(p) { return pad.left + ((p - low) / (high - low)) * cw; }
+      function yPos(pl) { return pad.top + ch - ((pl - minPL) / plRange) * ch; }
+      function yZero() { return yPos(0); }
+
+      cx.clearRect(0, 0, W, 220);
+
+      // Grid
+      cx.strokeStyle = '#21262d';
+      cx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = pad.top + (ch / 4) * i;
+        cx.beginPath(); cx.moveTo(pad.left, y); cx.lineTo(pad.left + cw, y); cx.stroke();
+        const val = maxPL - (plRange / 4) * i;
+        cx.fillStyle = '#8b949e'; cx.font = '11px sans-serif'; cx.textAlign = 'right';
+        cx.fillText((val >= 0 ? '+' : '') + fmt(val, 0), pad.left - 6, y + 4);
+      }
+
+      // Zero line
+      const zy = yZero();
+      cx.strokeStyle = '#30363d'; cx.lineWidth = 1.5;
+      cx.beginPath(); cx.moveTo(pad.left, zy); cx.lineTo(pad.left + cw, zy); cx.stroke();
+
+      // P&L curve (filled)
+      cx.beginPath();
+      cx.moveTo(xPos(prices[0]), zy);
+      cx.lineTo(xPos(prices[0]), yPos(pls[0]));
+      for (let i = 1; i < prices.length; i++) cx.lineTo(xPos(prices[i]), yPos(pls[i]));
+      cx.lineTo(xPos(prices[prices.length-1]), zy);
+      cx.closePath();
+      const grad = cx.createLinearGradient(0, pad.top, 0, pad.top + ch);
+      if (optionType === 'call') {
+        grad.addColorStop(0, 'rgba(63,185,80,0.3)');
+        grad.addColorStop(1, 'rgba(248,81,73,0.3)');
+      } else {
+        grad.addColorStop(0, 'rgba(63,185,80,0.3)');
+        grad.addColorStop(1, 'rgba(248,81,73,0.3)');
+      }
+      cx.fillStyle = grad;
+      cx.fill();
+
+      // P&L line
+      cx.beginPath();
+      cx.moveTo(xPos(prices[0]), yPos(pls[0]));
+      for (let i = 1; i < prices.length; i++) cx.lineTo(xPos(prices[i]), yPos(pls[i]));
+      cx.strokeStyle = '#58a6ff'; cx.lineWidth = 2;
+      cx.stroke();
+
+      // Break-even marker
+      const bx = xPos(breakeven);
+      cx.strokeStyle = '#e3b341'; cx.lineWidth = 1.5; cx.setLineDash([4, 3]);
+      cx.beginPath(); cx.moveTo(bx, pad.top); cx.lineTo(bx, pad.top + ch); cx.stroke();
+      cx.setLineDash([]);
+      cx.fillStyle = '#e3b341'; cx.font = 'bold 11px sans-serif'; cx.textAlign = 'center';
+      cx.fillText('BE ' + fmt(breakeven), bx, pad.top + 14);
+
+      // X axis labels
+      cx.fillStyle = '#8b949e'; cx.font = '11px sans-serif'; cx.textAlign = 'center';
+      for (let i = 0; i <= 4; i++) {
+        const p = low + (high - low) / 4 * i;
+        cx.fillText('$' + p.toFixed(0), xPos(p), pad.top + ch + 18);
+      }
+
+      // Scenario table
+      const scenarios = [];
+      const points = [0.7, 0.8, 0.9, 0.95, 1.0, 1.05, 1.1, 1.2, 1.3, 1.5];
+      points.forEach(mult => {
+        const price = Math.max(0.01, parseFloat((strike * mult).toFixed(2)));
+        const pl = pnl(price, strike, premium, optionType) * 100 * contracts;
+        const roi = (pl / totalCostPaid) * 100;
+        scenarios.push({ price, pl, roi });
+      });
+
+      const tbody = document.getElementById('scenarioBody');
+      tbody.innerHTML = '';
+      scenarios.forEach(s => {
+        const intrinsic = optionType === 'call' ? Math.max(s.price - strike, 0) : Math.max(strike - s.price, 0);
+        const isBreakeven = Math.abs(s.price - breakeven) < breakeven * 0.005;
+        const cls = isBreakeven ? 'breakeven' : (s.pl >= 0 ? 'profit' : 'loss');
+        tbody.innerHTML += `<tr>
+          <td class="${cls}">$${s.price.toFixed(2)}</td>
+          <td>$${intrinsic.toFixed(2)}</td>
+          <td class="${cls}">${s.pl >= 0 ? '+' : '-'}${fmt(Math.abs(s.pl))}</td>
+          <td class="${cls}">${s.roi >= 0 ? '+' : ''}${s.roi.toFixed(0)}%</td>
+        </tr>`;
+      });
+
+      // Info text
+      if (optionType === 'call') {
+        document.getElementById('infoTitle').textContent = 'How Call Option Break-Even Works';
+        document.getElementById('infoText').textContent = `You paid a premium of $${premium.toFixed(2)} per share to buy the right to purchase the stock at $${strike.toFixed(2)} (the strike price). For this to be profitable at expiration, the stock must rise above $${breakeven.toFixed(2)} — your break-even price (strike + premium). Above that, every $1 move in the stock equals $${(100 * contracts).toLocaleString()} profit. Below $${strike.toFixed(2)}, the option expires worthless and your maximum loss is $${fmt(maxLossTotal)} — the entire premium paid.`;
+      } else {
+        document.getElementById('infoTitle').textContent = 'How Put Option Break-Even Works';
+        document.getElementById('infoText').textContent = `You paid a premium of $${premium.toFixed(2)} per share to buy the right to sell the stock at $${strike.toFixed(2)} (the strike price). For this to be profitable at expiration, the stock must fall below $${breakeven.toFixed(2)} — your break-even price (strike − premium). Below that, every $1 drop in the stock equals $${(100 * contracts).toLocaleString()} profit. Above $${strike.toFixed(2)}, the option expires worthless and your maximum loss is $${fmt(maxLossTotal)} — the entire premium paid.`;
+      }
+
+      document.getElementById('results').classList.add('show');
+    }
+
+    // Auto-calculate on load
+    window.addEventListener('load', calculate);
+  </script>
+</body>
+</html>
