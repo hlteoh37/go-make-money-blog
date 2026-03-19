@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moving Cost Calculator — Budget Your Relocation</title>
+  <meta name="description" content="Estimate the total cost of moving to a new home or city. Covers moving company, packing, travel, deposits, and hidden costs most people forget.">
+  <meta name="keywords" content="moving cost calculator, relocation budget calculator, how much does it cost to move, moving expense estimator, cost of moving calculator">
+  <meta property="og:title" content="Moving Cost Calculator — Budget Your Relocation">
+  <meta property="og:description" content="Estimate the total cost of moving to a new home or city. Covers moving company, packing, travel, deposits, and hidden costs.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/moving-cost-calculator/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/moving-cost-calculator/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>💰</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--muted:#8b949e;--green:#3fb950;--text:#e6edf3;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+    body { background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;padding:0 0 80px; }
+    a { color:var(--accent);text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px; }
+    header .logo { font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:-0.3px; }
+    header .logo span { color:var(--accent); }
+    .back-link { color:var(--muted);font-size:0.85rem; }
+    .container { max-width:680px;margin:0 auto;padding:32px 20px; }
+    .page-title { font-size:1.75rem;font-weight:700;margin:12px 0 6px;letter-spacing:-0.5px; }
+    .page-subtitle { color:var(--muted);font-size:0.95rem;margin-bottom:28px; }
+    .card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px; }
+    .card-title { font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:18px; }
+    .fields-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    @media (max-width:520px) { .fields-grid { grid-template-columns:1fr; } .page-title { font-size:1.4rem; } }
+    .field { display:flex;flex-direction:column;gap:6px; }
+    label { font-size:0.85rem;color:var(--muted);font-weight:500; }
+    input[type="number"],select { background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font);font-size:0.95rem;padding:9px 12px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
+    input:focus,select:focus { outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12); }
+    .calc-btn { margin-top:20px;background:var(--accent);color:#0d1117;border:none;border-radius:6px;font-family:var(--font);font-size:0.95rem;font-weight:600;padding:11px 28px;cursor:pointer;transition:opacity 0.15s;width:100%; }
+    .calc-btn:hover { opacity:0.88; }
+    #results { display:none; }
+    .results-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px; }
+    .result-card { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center; }
+    .result-card.primary { border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,0.15); }
+    .result-label { font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:8px; }
+    .result-value { font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.5px; }
+    .result-card.primary .result-value { font-size:1.9rem;color:var(--green); }
+    .cost-breakdown { margin-top:4px; }
+    .cost-line { display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #21262d;font-size:0.88rem; }
+    .cost-line:last-child { border-bottom:none; }
+    .cost-name { color:var(--muted); }
+    .cost-amt { font-weight:600; }
+    .cost-total-line { display:flex;justify-content:space-between;padding:12px 0;font-size:0.95rem;font-weight:700;border-top:2px solid var(--border);margin-top:4px; }
+    .explainer { color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px; }
+    .explainer h2 { color:var(--text);font-size:1.1rem;font-weight:600;margin:24px 0 10px; }
+    .footer { margin-top:40px;padding-top:20px;border-top:1px solid #21262d;font-size:0.8rem;color:#6e7681;text-align:center; }
+    .footer a { color:var(--accent); }
+    .coffee-btn { position:fixed;bottom:24px;right:24px;z-index:100;background:#ffdd00;color:#000;font-size:0.8rem;font-weight:700;padding:10px 16px;border-radius:24px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.15s; }
+    .coffee-btn:hover { opacity:0.9;text-decoration:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Profiterole <span>Finance</span></div>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <div class="page-title">Moving Cost Calculator</div>
+  <div class="page-subtitle">Estimate your total relocation budget — including the costs most people forget until it's too late.</div>
+
+  <div class="card">
+    <div class="card-title">Your Move</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="moveType">Move Type</label>
+        <select id="moveType" onchange="calculate()">
+          <option value="local">Local (same city)</option>
+          <option value="instate">In-State (different city)</option>
+          <option value="longdistance" selected>Long Distance (different state)</option>
+          <option value="international">International</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="homeSize">Home Size</label>
+        <select id="homeSize" onchange="calculate()">
+          <option value="studio">Studio / 1BR</option>
+          <option value="2br" selected>2-3 BR</option>
+          <option value="4br">4+ BR</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="movingCompany">Moving Method</label>
+        <select id="movingCompany" onchange="calculate()">
+          <option value="fullservice" selected>Full-Service Movers</option>
+          <option value="selfservice">Self-Service (you pack/load)</option>
+          <option value="diy">DIY (rent truck)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="travelDays">Travel Days</label>
+        <input type="number" id="travelDays" value="2" min="0" max="14" step="1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="peopleMoving">People Moving</label>
+        <input type="number" id="peopleMoving" value="2" min="1" max="10" step="1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="newDeposit">New Security Deposit ($)</label>
+        <input type="number" id="newDeposit" value="2500" min="0" step="100" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="storageMonths">Storage Months Needed</label>
+        <input type="number" id="storageMonths" value="0" min="0" max="24" step="1" oninput="calculate()">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Total Cost</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="card-title">Cost Estimate</div>
+      <div class="results-grid">
+        <div class="result-card primary" style="grid-column:1/-1">
+          <div class="result-label">Total Estimated Cost</div>
+          <div class="result-value" id="totalCost">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Moving & Transport</div>
+          <div class="result-value" id="movingCost">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Travel & Hotels</div>
+          <div class="result-value" id="travelCost">—</div>
+        </div>
+      </div>
+      <div class="cost-breakdown">
+        <div class="cost-line"><span class="cost-name">Moving company / truck rental</span><span class="cost-amt" id="bMoving">—</span></div>
+        <div class="cost-line"><span class="cost-name">Packing materials & supplies</span><span class="cost-amt" id="bPacking">—</span></div>
+        <div class="cost-line"><span class="cost-name">Hotel stays during move</span><span class="cost-amt" id="bHotel">—</span></div>
+        <div class="cost-line"><span class="cost-name">Gas / flights</span><span class="cost-amt" id="bTravel">—</span></div>
+        <div class="cost-line"><span class="cost-name">Meals on the road</span><span class="cost-amt" id="bMeals">—</span></div>
+        <div class="cost-line"><span class="cost-name">Security deposit (new place)</span><span class="cost-amt" id="bDeposit">—</span></div>
+        <div class="cost-line"><span class="cost-name">Storage unit</span><span class="cost-amt" id="bStorage">—</span></div>
+        <div class="cost-line"><span class="cost-name">Cleaning / repairs (old place)</span><span class="cost-amt" id="bCleaning">—</span></div>
+        <div class="cost-line"><span class="cost-name">Address changes & utilities setup</span><span class="cost-amt" id="bAdmin">—</span></div>
+        <div class="cost-line"><span class="cost-name">Contingency buffer (10%)</span><span class="cost-amt" id="bBuffer">—</span></div>
+        <div class="cost-total-line"><span>Total</span><span id="bTotal">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>Hidden Costs People Miss</h2>
+    <p>Most people underestimate moving costs by 30-50%. The big surprises: cleaning your old place (landlords charge $200-500+), replacing items you donated instead of moving, eating out every night during the move, and the cost of getting your new place functional (shower curtain, lightbulbs, cleaning supplies — all add up fast).</p>
+
+    <h2>How to Save</h2>
+    <p>Book movers 4-6 weeks ahead. Move on a weekday — weekend rates are 20-30% higher. Declutter before packing (less volume = lower cost). Get three quotes and negotiate. Disassemble furniture yourself before movers arrive. Check if your employer offers relocation assistance — many companies cover some or all moving costs.</p>
+
+    <h2>Tax Deductibility</h2>
+    <p>Moving expenses are generally no longer deductible for most people under current US tax law (suspended through 2025). The exception: active-duty military members moving under orders. Always check current IRS rules.</p>
+  </div>
+
+  <div class="footer">
+    <p>Part of <a href="/profiterole-blog/finance/">Profiterole Finance Hub</a> — Free financial calculators.</p>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+  const fmt = (n) => '$' + Math.round(n).toLocaleString('en-US');
+
+  // Base moving costs [studio, 2br, 4br]
+  const movingBaseCosts = {
+    local:         { fullservice: [800,1500,2500],   selfservice: [400,700,1200],   diy: [200,350,600] },
+    instate:       { fullservice: [1500,3000,5000],  selfservice: [700,1500,2500],  diy: [400,800,1500] },
+    longdistance:  { fullservice: [3000,6000,10000], selfservice: [1500,3500,6000], diy: [1000,2000,3500] },
+    international: { fullservice: [5000,10000,18000],selfservice: [3000,6000,12000],diy: [2000,4000,8000] }
+  };
+
+  const sizeIndex = { studio:0, '2br':1, '4br':2 };
+  const packingCosts = { studio:100, '2br':200, '4br':400 };
+
+  function calculate() {
+    const moveType = document.getElementById('moveType').value;
+    const homeSize = document.getElementById('homeSize').value;
+    const method = document.getElementById('movingCompany').value;
+    const travelDays = parseInt(document.getElementById('travelDays').value) || 0;
+    const people = parseInt(document.getElementById('peopleMoving').value) || 1;
+    const deposit = parseFloat(document.getElementById('newDeposit').value) || 0;
+    const storageMonths = parseInt(document.getElementById('storageMonths').value) || 0;
+
+    const si = sizeIndex[homeSize];
+    const moving = movingBaseCosts[moveType][method][si];
+    const packing = method === 'fullservice' ? 0 : packingCosts[homeSize];
+    const hotel = travelDays * 120;
+    const travel = moveType === 'local' ? 50 : moveType === 'instate' ? 150 : moveType === 'longdistance' ? 400 : 1200;
+    const meals = travelDays * people * 40;
+    const cleaning = homeSize === 'studio' ? 200 : homeSize === '2br' ? 350 : 500;
+    const storage = storageMonths * 150;
+    const admin = 200;
+
+    const subtotal = moving + packing + hotel + travel + meals + deposit + storage + cleaning + admin;
+    const buffer = subtotal * 0.10;
+    const total = subtotal + buffer;
+
+    document.getElementById('totalCost').textContent = fmt(total);
+    document.getElementById('movingCost').textContent = fmt(moving + packing);
+    document.getElementById('travelCost').textContent = fmt(hotel + travel + meals);
+
+    document.getElementById('bMoving').textContent = fmt(moving);
+    document.getElementById('bPacking').textContent = fmt(packing);
+    document.getElementById('bHotel').textContent = fmt(hotel);
+    document.getElementById('bTravel').textContent = fmt(travel);
+    document.getElementById('bMeals').textContent = fmt(meals);
+    document.getElementById('bDeposit').textContent = fmt(deposit);
+    document.getElementById('bStorage').textContent = fmt(storage);
+    document.getElementById('bCleaning').textContent = fmt(cleaning);
+    document.getElementById('bAdmin').textContent = fmt(admin);
+    document.getElementById('bBuffer').textContent = fmt(buffer);
+    document.getElementById('bTotal').textContent = fmt(total);
+
+    document.getElementById('results').style.display = 'block';
+  }
+
+  calculate();
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charitable Donation Tax Deduction Calculator</title>
+  <meta name="description" content="Calculate your tax savings from charitable donations. See how much you can deduct and what your after-tax cost really is. 2024 standard deduction included.">
+  <meta name="keywords" content="charitable donation tax deduction calculator, how much can I deduct for donations, tax savings from charity, itemized deduction calculator">
+  <meta property="og:title" content="Charitable Donation Tax Deduction Calculator">
+  <meta property="og:description" content="Calculate your tax savings from charitable donations. See how much you can deduct and what your after-tax cost really is.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/charitable-donation-calculator/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/charitable-donation-calculator/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>💰</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--muted:#8b949e;--green:#3fb950;--text:#e6edf3;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+    body { background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;padding:0 0 80px; }
+    a { color:var(--accent);text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px; }
+    header .logo { font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:-0.3px; }
+    header .logo span { color:var(--accent); }
+    .back-link { color:var(--muted);font-size:0.85rem; }
+    .container { max-width:680px;margin:0 auto;padding:32px 20px; }
+    .page-title { font-size:1.75rem;font-weight:700;margin:12px 0 6px;letter-spacing:-0.5px; }
+    .page-subtitle { color:var(--muted);font-size:0.95rem;margin-bottom:28px; }
+    .card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px; }
+    .card-title { font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:18px; }
+    .fields-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    @media (max-width:520px) { .fields-grid { grid-template-columns:1fr; } .page-title { font-size:1.4rem; } }
+    .field { display:flex;flex-direction:column;gap:6px; }
+    label { font-size:0.85rem;color:var(--muted);font-weight:500; }
+    input[type="number"],select { background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font);font-size:0.95rem;padding:9px 12px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
+    input:focus,select:focus { outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12); }
+    .calc-btn { margin-top:20px;background:var(--accent);color:#0d1117;border:none;border-radius:6px;font-family:var(--font);font-size:0.95rem;font-weight:600;padding:11px 28px;cursor:pointer;transition:opacity 0.15s;width:100%; }
+    .calc-btn:hover { opacity:0.88; }
+    #results { display:none; }
+    .results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+    @media (max-width:520px) { .results-grid { grid-template-columns:1fr 1fr; } }
+    .result-card { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center; }
+    .result-card.primary { border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,0.15); }
+    .result-label { font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:8px; }
+    .result-value { font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.5px; }
+    .result-card.primary .result-value { font-size:1.9rem;color:var(--green); }
+    .notice { background:rgba(88,166,255,0.08);border:1px solid rgba(88,166,255,0.25);border-radius:8px;padding:14px 16px;font-size:0.85rem;color:var(--muted);margin-bottom:20px; }
+    .notice strong { color:var(--accent); }
+    .explainer { color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px; }
+    .explainer h2 { color:var(--text);font-size:1.1rem;font-weight:600;margin:24px 0 10px; }
+    .footer { margin-top:40px;padding-top:20px;border-top:1px solid #21262d;font-size:0.8rem;color:#6e7681;text-align:center; }
+    .footer a { color:var(--accent); }
+    .coffee-btn { position:fixed;bottom:24px;right:24px;z-index:100;background:#ffdd00;color:#000;font-size:0.8rem;font-weight:700;padding:10px 16px;border-radius:24px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.15s; }
+    .coffee-btn:hover { opacity:0.9;text-decoration:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Profiterole <span>Finance</span></div>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <div class="page-title">Charitable Donation Tax Calculator</div>
+  <div class="page-subtitle">See your real tax savings from charitable giving. Compares standard vs itemized deductions automatically.</div>
+
+  <div class="card">
+    <div class="card-title">Your Situation</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="income">Gross Income ($)</label>
+        <input type="number" id="income" value="90000" min="0" step="1000" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="donation">Charitable Donation ($)</label>
+        <input type="number" id="donation" value="5000" min="0" step="100" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="otherDeductions">Other Itemized Deductions ($)</label>
+        <input type="number" id="otherDeductions" value="8000" min="0" step="500" oninput="calculate()">
+        <span style="font-size:0.78rem;color:var(--muted)">Mortgage interest, state taxes, etc.</span>
+      </div>
+      <div class="field">
+        <label for="filingStatus">Filing Status</label>
+        <select id="filingStatus" onchange="calculate()">
+          <option value="single">Single</option>
+          <option value="married" selected>Married Filing Jointly</option>
+          <option value="hoh">Head of Household</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Savings</button>
+  </div>
+
+  <div id="results">
+    <div id="noticeBox" class="notice"></div>
+    <div class="card">
+      <div class="card-title">Tax Impact</div>
+      <div class="results-grid">
+        <div class="result-card primary">
+          <div class="result-label">Tax Savings</div>
+          <div class="result-value" id="taxSavings">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">After-Tax Cost</div>
+          <div class="result-value" id="afterTaxCost">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Effective Cost</div>
+          <div class="result-value" id="effectiveCost">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Marginal Tax Rate</div>
+          <div class="result-value" id="marginalRate">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Deduction Used</div>
+          <div class="result-value" id="deductionUsed">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Standard Deduction</div>
+          <div class="result-value" id="standardDeduction">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>How Charitable Deductions Work</h2>
+    <p>You can only deduct charitable donations if you itemize deductions instead of taking the standard deduction. The standard deduction in 2024 is $14,600 (single), $29,200 (married filing jointly), or $21,900 (head of household). If your total itemized deductions don't exceed the standard deduction, you effectively get no tax benefit from donations.</p>
+
+    <h2>Maximizing Your Deduction</h2>
+    <p>If you're near the standard deduction threshold, consider <strong>bunching</strong> — donating two years' worth of gifts in one year to itemize, then taking the standard deduction the next year. A Donor-Advised Fund (DAF) lets you make a large contribution in one year and distribute the funds to charities over time.</p>
+
+    <h2>AGI Limits</h2>
+    <p>Cash donations to public charities are deductible up to 60% of your Adjusted Gross Income (AGI). Appreciated stock donations can only be deducted up to 30% of AGI. Excess amounts carry forward up to 5 years.</p>
+  </div>
+
+  <div class="footer">
+    <p>Part of <a href="/profiterole-blog/finance/">Profiterole Finance Hub</a> — Free financial calculators.</p>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+  const fmt = (n) => '$' + Math.round(n).toLocaleString('en-US');
+  const fmtPct = (n) => n.toFixed(1) + '%';
+
+  const standardDeductions = { single: 14600, married: 29200, hoh: 21900 };
+
+  const brackets2024 = {
+    single: [[11600,0.10],[47150,0.12],[100525,0.22],[191950,0.24],[243725,0.32],[609350,0.35],[Infinity,0.37]],
+    married: [[23200,0.10],[94300,0.12],[201050,0.22],[383900,0.24],[487450,0.32],[731200,0.35],[Infinity,0.37]],
+    hoh: [[16550,0.10],[63100,0.12],[100500,0.22],[191950,0.24],[243700,0.32],[609350,0.35],[Infinity,0.37]]
+  };
+
+  function calcTax(income, status) {
+    const brackets = brackets2024[status];
+    let tax = 0, prev = 0;
+    let rem = income;
+    for (const [max, rate] of brackets) {
+      const slice = Math.min(rem, max - prev);
+      if (slice <= 0) { prev = max; continue; }
+      tax += slice * rate;
+      rem -= slice;
+      prev = max;
+      if (rem <= 0) break;
+    }
+    return tax;
+  }
+
+  function getMarginalRate(income, status) {
+    const brackets = brackets2024[status];
+    let prev = 0;
+    let rate = 0.10;
+    for (const [max, r] of brackets) {
+      if (income > prev) rate = r;
+      if (income <= max) break;
+      prev = max;
+    }
+    return rate;
+  }
+
+  function calculate() {
+    const income = parseFloat(document.getElementById('income').value) || 0;
+    const donation = parseFloat(document.getElementById('donation').value) || 0;
+    const other = parseFloat(document.getElementById('otherDeductions').value) || 0;
+    const status = document.getElementById('filingStatus').value;
+
+    const stdDed = standardDeductions[status];
+    const totalItemized = donation + other;
+    const useItemized = totalItemized > stdDed;
+    const effectiveDeduction = useItemized ? totalItemized : stdDed;
+
+    // Tax with standard deduction (or itemized without donation)
+    const taxableWithoutDonation = Math.max(0, income - (useItemized ? other : stdDed));
+    const taxWithout = calcTax(taxableWithoutDonation, status);
+
+    // Tax with donation included
+    const taxableWithDonation = Math.max(0, income - effectiveDeduction);
+    const taxWith = calcTax(taxableWithDonation, status);
+
+    const savings = Math.max(0, taxWithout - taxWith);
+    const afterTaxCost = donation - savings;
+    const effectiveCostPct = donation > 0 ? (afterTaxCost / donation * 100) : 0;
+    const marginalRate = getMarginalRate(taxableWithoutDonation, status);
+
+    document.getElementById('taxSavings').textContent = fmt(savings);
+    document.getElementById('afterTaxCost').textContent = fmt(afterTaxCost);
+    document.getElementById('effectiveCost').textContent = fmtPct(effectiveCostPct);
+    document.getElementById('marginalRate').textContent = fmtPct(marginalRate * 100);
+    document.getElementById('deductionUsed').textContent = useItemized ? 'Itemized' : 'Standard';
+    document.getElementById('standardDeduction').textContent = fmt(stdDed);
+
+    const notice = document.getElementById('noticeBox');
+    if (!useItemized) {
+      notice.innerHTML = `<strong>Note:</strong> Your itemized deductions (${fmt(totalItemized)}) are less than the standard deduction (${fmt(stdDed)}). You'd take the standard deduction, giving you <strong>$0 additional tax benefit</strong> from this donation. Consider bunching donations to exceed the threshold.`;
+    } else {
+      notice.innerHTML = `<strong>Good news:</strong> Your itemized deductions (${fmt(totalItemized)}) exceed the standard deduction (${fmt(stdDed)}) by ${fmt(totalItemized - stdDed)}. You'll save <strong>${fmt(savings)}</strong> in taxes from this donation.`;
+    }
+
+    document.getElementById('results').style.display = 'block';
+  }
+
+  calculate();
+</script>
+</body>
+</html>

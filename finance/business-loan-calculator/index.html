@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Loan Calculator — Monthly Payments & Total Cost</title>
+  <meta name="description" content="Calculate monthly payments, total interest, and true cost of a business loan. Compare SBA loans, term loans, and lines of credit. See full amortization.">
+  <meta name="keywords" content="business loan calculator, SBA loan calculator, small business loan payment, commercial loan calculator, business loan interest calculator">
+  <meta property="og:title" content="Business Loan Calculator — Monthly Payments & Total Cost">
+  <meta property="og:description" content="Calculate monthly payments, total interest, and true cost of a business loan.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/business-loan-calculator/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/business-loan-calculator/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>💰</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--muted:#8b949e;--green:#3fb950;--text:#e6edf3;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+    body { background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;padding:0 0 80px; }
+    a { color:var(--accent);text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px; }
+    header .logo { font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:-0.3px; }
+    header .logo span { color:var(--accent); }
+    .back-link { color:var(--muted);font-size:0.85rem; }
+    .container { max-width:680px;margin:0 auto;padding:32px 20px; }
+    .page-title { font-size:1.75rem;font-weight:700;margin:12px 0 6px;letter-spacing:-0.5px; }
+    .page-subtitle { color:var(--muted);font-size:0.95rem;margin-bottom:28px; }
+    .card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px; }
+    .card-title { font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:18px; }
+    .fields-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    @media (max-width:520px) { .fields-grid { grid-template-columns:1fr; } .page-title { font-size:1.4rem; } }
+    .field { display:flex;flex-direction:column;gap:6px; }
+    label { font-size:0.85rem;color:var(--muted);font-weight:500; }
+    input[type="number"],select { background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font);font-size:0.95rem;padding:9px 12px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
+    input:focus,select:focus { outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12); }
+    .calc-btn { margin-top:20px;background:var(--accent);color:#0d1117;border:none;border-radius:6px;font-family:var(--font);font-size:0.95rem;font-weight:600;padding:11px 28px;cursor:pointer;transition:opacity 0.15s;width:100%; }
+    .calc-btn:hover { opacity:0.88; }
+    #results { display:none; }
+    .results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+    @media (max-width:520px) { .results-grid { grid-template-columns:1fr 1fr; } }
+    .result-card { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center; }
+    .result-card.primary { border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,0.15); }
+    .result-label { font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:8px; }
+    .result-value { font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.5px; }
+    .result-card.primary .result-value { font-size:1.9rem;color:var(--green); }
+    .amort-table { width:100%;border-collapse:collapse;font-size:0.82rem;margin-top:4px; }
+    .amort-table th { text-align:right;color:var(--muted);font-weight:600;padding:7px 10px;border-bottom:1px solid var(--border); }
+    .amort-table th:first-child { text-align:left; }
+    .amort-table td { text-align:right;padding:7px 10px;border-bottom:1px solid #21262d; }
+    .amort-table td:first-child { text-align:left;color:var(--muted); }
+    .amort-table tr:last-child td { border-bottom:none; }
+    .show-more-btn { background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.82rem;padding:8px 16px;border-radius:6px;cursor:pointer;margin-top:12px;width:100%; }
+    .show-more-btn:hover { border-color:var(--accent);color:var(--accent); }
+    .explainer { color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px; }
+    .explainer h2 { color:var(--text);font-size:1.1rem;font-weight:600;margin:24px 0 10px; }
+    .footer { margin-top:40px;padding-top:20px;border-top:1px solid #21262d;font-size:0.8rem;color:#6e7681;text-align:center; }
+    .footer a { color:var(--accent); }
+    .coffee-btn { position:fixed;bottom:24px;right:24px;z-index:100;background:#ffdd00;color:#000;font-size:0.8rem;font-weight:700;padding:10px 16px;border-radius:24px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.15s; }
+    .coffee-btn:hover { opacity:0.9;text-decoration:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Profiterole <span>Finance</span></div>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <div class="page-title">Business Loan Calculator</div>
+  <div class="page-subtitle">Calculate monthly payments, total interest, and the full cost of your business loan. Includes year-by-year amortization.</div>
+
+  <div class="card">
+    <div class="card-title">Loan Details</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="loanAmount">Loan Amount ($)</label>
+        <input type="number" id="loanAmount" value="100000" min="1000" step="5000" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="annualRate">Annual Interest Rate (%)</label>
+        <input type="number" id="annualRate" value="7.5" min="0.1" step="0.1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="termYears">Loan Term</label>
+        <select id="termYears" onchange="calculate()">
+          <option value="1">1 year</option>
+          <option value="2">2 years</option>
+          <option value="3">3 years</option>
+          <option value="5" selected>5 years</option>
+          <option value="7">7 years</option>
+          <option value="10">10 years</option>
+          <option value="25">25 years (SBA 504)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="originationFee">Origination Fee (%)</label>
+        <input type="number" id="originationFee" value="1.5" min="0" step="0.1" oninput="calculate()">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Payments</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="card-title">Summary</div>
+      <div class="results-grid">
+        <div class="result-card primary">
+          <div class="result-label">Monthly Payment</div>
+          <div class="result-value" id="monthlyPayment">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Total Interest</div>
+          <div class="result-value" id="totalInterest">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Total Cost</div>
+          <div class="result-value" id="totalCost">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Origination Fee</div>
+          <div class="result-value" id="originationFeeAmt">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Effective APR</div>
+          <div class="result-value" id="effectiveAPR">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Total You Pay</div>
+          <div class="result-value" id="totalYouPay">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Year-by-Year Summary</div>
+      <table class="amort-table">
+        <thead>
+          <tr><th>Year</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
+        </thead>
+        <tbody id="amortBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>Understanding Business Loan Costs</h2>
+    <p>The interest rate doesn't tell the whole story. Origination fees, closing costs, and other charges increase your effective APR significantly. Always compare loans using APR, not just the stated interest rate.</p>
+
+    <h2>SBA Loans</h2>
+    <p>SBA 7(a) loans offer terms up to 10 years (25 years for real estate) with competitive rates, but require SBA approval and collateral. They're best for established businesses with strong financials. SBA 504 loans are specifically for major fixed assets like real estate and equipment.</p>
+
+    <h2>Qualifying Tips</h2>
+    <p>Lenders typically look for 2+ years in business, $100K+ annual revenue, and a credit score above 680 for favorable terms. Improving these metrics before applying can save tens of thousands in interest over the loan's life.</p>
+  </div>
+
+  <div class="footer">
+    <p>Part of <a href="/profiterole-blog/finance/">Profiterole Finance Hub</a> — Free financial calculators.</p>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+  const fmt = (n) => '$' + Math.round(n).toLocaleString('en-US');
+  const fmtD = (n) => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  function calculate() {
+    const principal = parseFloat(document.getElementById('loanAmount').value) || 0;
+    const annualRate = parseFloat(document.getElementById('annualRate').value) || 0;
+    const years = parseInt(document.getElementById('termYears').value) || 1;
+    const originationPct = parseFloat(document.getElementById('originationFee').value) || 0;
+
+    const n = years * 12;
+    const r = annualRate / 100 / 12;
+
+    let monthlyPmt;
+    if (r === 0) {
+      monthlyPmt = principal / n;
+    } else {
+      monthlyPmt = principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    }
+
+    const totalPaid = monthlyPmt * n;
+    const totalInterest = totalPaid - principal;
+    const originationFee = principal * originationPct / 100;
+    const totalWithFees = totalPaid + originationFee;
+
+    // Effective APR (approximate using Newton's method on effective monthly rate)
+    // APR includes origination fee amortized over loan life
+    let effectiveAPR = annualRate;
+    if (originationPct > 0) {
+      const netProceeds = principal - originationFee;
+      // Solve for rate: PMT * (1-(1+r)^-n)/r = netProceeds
+      let lo = 0, hi = 1;
+      for (let i = 0; i < 50; i++) {
+        const mid = (lo + hi) / 2;
+        const pv = monthlyPmt * (1 - Math.pow(1 + mid, -n)) / mid;
+        if (pv > netProceeds) lo = mid; else hi = mid;
+      }
+      effectiveAPR = (lo + hi) / 2 * 12 * 100;
+    }
+
+    document.getElementById('monthlyPayment').textContent = fmtD(monthlyPmt);
+    document.getElementById('totalInterest').textContent = fmt(totalInterest);
+    document.getElementById('totalCost').textContent = fmt(totalWithFees);
+    document.getElementById('originationFeeAmt').textContent = fmt(originationFee);
+    document.getElementById('effectiveAPR').textContent = effectiveAPR.toFixed(2) + '%';
+    document.getElementById('totalYouPay').textContent = fmt(totalWithFees);
+
+    // Year-by-year amortization
+    const tbody = document.getElementById('amortBody');
+    tbody.innerHTML = '';
+    let balance = principal;
+    for (let yr = 1; yr <= years; yr++) {
+      let yearPrincipal = 0, yearInterest = 0;
+      for (let mo = 1; mo <= 12 && balance > 0; mo++) {
+        const interest = balance * r;
+        const princ = Math.min(monthlyPmt - interest, balance);
+        yearInterest += interest;
+        yearPrincipal += princ;
+        balance = Math.max(0, balance - princ);
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>Year ${yr}</td><td>${fmt(monthlyPmt * 12)}</td><td>${fmt(yearPrincipal)}</td><td>${fmt(yearInterest)}</td><td>${fmt(balance)}</td>`;
+      tbody.appendChild(tr);
+    }
+
+    document.getElementById('results').style.display = 'block';
+  }
+
+  calculate();
+</script>
+</body>
+</html>

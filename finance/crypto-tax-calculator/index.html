@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Tax Calculator — Capital Gains on Cryptocurrency</title>
+  <meta name="description" content="Calculate taxes on cryptocurrency gains. Short-term vs long-term capital gains rates. Estimate your crypto tax bill for Bitcoin, Ethereum, and more.">
+  <meta name="keywords" content="crypto tax calculator, cryptocurrency capital gains tax, bitcoin tax calculator, crypto tax rate, short term long term crypto gains">
+  <meta property="og:title" content="Crypto Tax Calculator — Capital Gains on Cryptocurrency">
+  <meta property="og:description" content="Calculate taxes on cryptocurrency gains. Short-term vs long-term capital gains rates. Estimate your crypto tax bill for Bitcoin, Ethereum, and more.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/crypto-tax-calculator/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/crypto-tax-calculator/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>💰</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--muted:#8b949e;--green:#3fb950;--text:#e6edf3;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+    body { background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;padding:0 0 80px; }
+    a { color:var(--accent);text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px; }
+    header .logo { font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:-0.3px; }
+    header .logo span { color:var(--accent); }
+    .back-link { color:var(--muted);font-size:0.85rem; }
+    .container { max-width:680px;margin:0 auto;padding:32px 20px; }
+    .page-title { font-size:1.75rem;font-weight:700;margin:12px 0 6px;letter-spacing:-0.5px; }
+    .page-subtitle { color:var(--muted);font-size:0.95rem;margin-bottom:28px; }
+    .card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px; }
+    .card-title { font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:18px; }
+    .fields-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    @media (max-width:520px) { .fields-grid { grid-template-columns:1fr; } .page-title { font-size:1.4rem; } }
+    .field { display:flex;flex-direction:column;gap:6px; }
+    label { font-size:0.85rem;color:var(--muted);font-weight:500; }
+    input[type="number"],input[type="text"],select { background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font);font-size:0.95rem;padding:9px 12px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
+    input:focus,select:focus { outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12); }
+    .calc-btn { margin-top:20px;background:var(--accent);color:#0d1117;border:none;border-radius:6px;font-family:var(--font);font-size:0.95rem;font-weight:600;padding:11px 28px;cursor:pointer;transition:opacity 0.15s;width:100%; }
+    .calc-btn:hover { opacity:0.88; }
+    #results { display:none; }
+    .results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+    @media (max-width:520px) { .results-grid { grid-template-columns:1fr 1fr; } }
+    .result-card { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center; }
+    .result-card.primary { border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,0.15); }
+    .result-card.warn { border-color:#e3b341;box-shadow:0 0 0 1px rgba(227,179,65,0.15); }
+    .result-label { font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:8px; }
+    .result-value { font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.5px; }
+    .result-card.primary .result-value { font-size:1.9rem;color:var(--green); }
+    .result-card.warn .result-value { color:#e3b341; }
+    .rate-badge { display:inline-block;padding:4px 10px;border-radius:12px;font-size:0.82rem;font-weight:600;margin-bottom:16px; }
+    .rate-short { background:rgba(245,80,80,0.12);color:#f55050;border:1px solid rgba(245,80,80,0.3); }
+    .rate-long { background:rgba(63,185,80,0.12);color:var(--green);border:1px solid rgba(63,185,80,0.3); }
+    .explainer { color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px; }
+    .explainer h2 { color:var(--text);font-size:1.1rem;font-weight:600;margin:24px 0 10px; }
+    table { width:100%;border-collapse:collapse;font-size:0.85rem;margin:12px 0; }
+    th { text-align:left;color:var(--muted);font-weight:600;padding:8px 12px;border-bottom:1px solid var(--border); }
+    td { padding:8px 12px;border-bottom:1px solid #21262d; }
+    tr:last-child td { border-bottom:none; }
+    .footer { margin-top:40px;padding-top:20px;border-top:1px solid #21262d;font-size:0.8rem;color:#6e7681;text-align:center; }
+    .footer a { color:var(--accent); }
+    .coffee-btn { position:fixed;bottom:24px;right:24px;z-index:100;background:#ffdd00;color:#000;font-size:0.8rem;font-weight:700;padding:10px 16px;border-radius:24px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.15s; }
+    .coffee-btn:hover { opacity:0.9;text-decoration:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Profiterole <span>Finance</span></div>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <div class="page-title">Crypto Tax Calculator</div>
+  <div class="page-subtitle">Estimate your US capital gains tax on cryptocurrency. Short-term vs long-term rates. 2024 tax year.</div>
+
+  <div class="card">
+    <div class="card-title">Your Crypto Transaction</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="buyPrice">Purchase Price ($)</label>
+        <input type="number" id="buyPrice" value="10000" min="0" step="100" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="sellPrice">Sale Price ($)</label>
+        <input type="number" id="sellPrice" value="25000" min="0" step="100" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="holdingPeriod">Holding Period</label>
+        <select id="holdingPeriod" onchange="calculate()">
+          <option value="short">Short-term (≤ 1 year)</option>
+          <option value="long" selected>Long-term (> 1 year)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="income">Annual Income ($)</label>
+        <input type="number" id="income" value="75000" min="0" step="1000" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="filingStatus">Filing Status</label>
+        <select id="filingStatus" onchange="calculate()">
+          <option value="single">Single</option>
+          <option value="married">Married Filing Jointly</option>
+          <option value="hoh">Head of Household</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Tax</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="card-title">Results</div>
+      <div id="rateBadge" class="rate-badge"></div>
+      <div class="results-grid">
+        <div class="result-card primary">
+          <div class="result-label">Tax Owed</div>
+          <div class="result-value" id="taxOwed">—</div>
+        </div>
+        <div class="result-card warn">
+          <div class="result-label">Capital Gain</div>
+          <div class="result-value" id="capitalGain">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Tax Rate</div>
+          <div class="result-value" id="taxRate">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">After-Tax Profit</div>
+          <div class="result-value" id="afterTax">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Effective Rate</div>
+          <div class="result-value" id="effectiveRate">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Net Proceeds</div>
+          <div class="result-value" id="netProceeds">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>2024 Crypto Tax Rates</h2>
+    <p>The IRS treats cryptocurrency as property. Gains are taxed as capital gains — short-term if held 1 year or less, long-term if held more than 1 year.</p>
+
+    <p><strong>Short-term rates</strong> match ordinary income tax brackets (10%–37%).</p>
+
+    <table>
+      <tr><th>Filing Status</th><th>0% Rate</th><th>15% Rate</th><th>20% Rate</th></tr>
+      <tr><td>Single</td><td>≤ $47,025</td><td>$47,026–$518,900</td><td>> $518,900</td></tr>
+      <tr><td>Married Joint</td><td>≤ $94,050</td><td>$94,051–$583,750</td><td>> $583,750</td></tr>
+      <tr><td>Head of Household</td><td>≤ $63,000</td><td>$63,001–$551,350</td><td>> $551,350</td></tr>
+    </table>
+
+    <h2>Important Notes</h2>
+    <p>This calculator provides estimates. Actual tax may differ based on your full tax situation, state taxes (which vary widely), the Net Investment Income Tax (3.8% on high earners), and transaction fees. Always consult a tax professional for large gains.</p>
+
+    <h2>Tax-Loss Harvesting</h2>
+    <p>If you have losing positions, selling them before year-end lets you offset capital gains dollar-for-dollar. Up to $3,000 of net losses can also offset ordinary income each year, with remaining losses carried forward.</p>
+  </div>
+
+  <div class="footer">
+    <p>Part of <a href="/profiterole-blog/finance/">Profiterole Finance Hub</a> — Free financial calculators.</p>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+  const fmt = (n) => '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+  const fmtD = (n) => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  // 2024 ordinary income brackets (single) for short-term
+  const shortBrackets = {
+    single: [[11600,0.10],[47150,0.12],[100525,0.22],[191950,0.24],[243725,0.32],[609350,0.35],[Infinity,0.37]],
+    married: [[23200,0.10],[94300,0.12],[201050,0.22],[383900,0.24],[487450,0.32],[731200,0.35],[Infinity,0.37]],
+    hoh: [[16550,0.10],[63100,0.12],[100500,0.22],[191950,0.24],[243700,0.32],[609350,0.35],[Infinity,0.37]]
+  };
+
+  // 2024 long-term brackets
+  const ltBrackets = {
+    single: [{max:47025,rate:0},{max:518900,rate:0.15},{max:Infinity,rate:0.20}],
+    married: [{max:94050,rate:0},{max:583750,rate:0.15},{max:Infinity,rate:0.20}],
+    hoh: [{max:63000,rate:0},{max:551350,rate:0.15},{max:Infinity,rate:0.20}]
+  };
+
+  function calcShortTermTax(income, gain, status) {
+    const brackets = shortBrackets[status];
+    let tax = 0;
+    let prev = 0;
+    // Tax on income alone
+    let taxOnIncome = 0;
+    let rem = income;
+    for (const [max, rate] of brackets) {
+      const slice = Math.min(rem, max - prev);
+      if (slice <= 0) { prev = max; continue; }
+      taxOnIncome += slice * rate;
+      rem -= slice;
+      prev = max;
+      if (rem <= 0) break;
+    }
+    // Tax on income + gain
+    let taxOnIncomeGain = 0;
+    prev = 0;
+    rem = income + gain;
+    for (const [max, rate] of brackets) {
+      const slice = Math.min(rem, max - prev);
+      if (slice <= 0) { prev = max; continue; }
+      taxOnIncomeGain += slice * rate;
+      rem -= slice;
+      prev = max;
+      if (rem <= 0) break;
+    }
+    return taxOnIncomeGain - taxOnIncome;
+  }
+
+  function calcLongTermTax(income, gain, status) {
+    const brackets = ltBrackets[status];
+    // LT gains are stacked on top of ordinary income
+    const taxableIncome = income + gain;
+    let tax = 0;
+    for (const b of brackets) {
+      if (income >= b.max) continue;
+      const gainAboveThreshold = Math.min(taxableIncome, b.max) - Math.max(income, 0);
+      if (gainAboveThreshold > 0) {
+        tax += gainAboveThreshold * b.rate;
+      }
+    }
+    return tax;
+  }
+
+  function calculate() {
+    const buy = parseFloat(document.getElementById('buyPrice').value) || 0;
+    const sell = parseFloat(document.getElementById('sellPrice').value) || 0;
+    const holding = document.getElementById('holdingPeriod').value;
+    const income = parseFloat(document.getElementById('income').value) || 0;
+    const status = document.getElementById('filingStatus').value;
+
+    const gain = sell - buy;
+    if (gain <= 0) {
+      document.getElementById('capitalGain').textContent = fmt(gain) + ' (loss)';
+      document.getElementById('taxOwed').textContent = '$0';
+      document.getElementById('taxRate').textContent = '0%';
+      document.getElementById('afterTax').textContent = fmt(sell - buy);
+      document.getElementById('effectiveRate').textContent = '0%';
+      document.getElementById('netProceeds').textContent = fmt(sell);
+      document.getElementById('results').style.display = 'block';
+      return;
+    }
+
+    let tax, rateLabel, rateClass;
+    if (holding === 'short') {
+      tax = calcShortTermTax(income, gain, status);
+      rateLabel = 'Short-Term (Ordinary Income Rates)';
+      rateClass = 'rate-short';
+    } else {
+      tax = calcLongTermTax(income, gain, status);
+      // Determine applicable LT rate
+      const brackets = ltBrackets[status];
+      const topOfGain = income + gain;
+      let ltRate = 0;
+      for (const b of brackets) { if (topOfGain > b.max) ltRate = b.rate; }
+      if (topOfGain <= brackets[0].max) ltRate = 0;
+      else if (topOfGain <= brackets[1].max) ltRate = 0.15;
+      else ltRate = 0.20;
+      rateLabel = 'Long-Term Capital Gains Rate';
+      rateClass = 'rate-long';
+    }
+
+    const effectiveRate = gain > 0 ? (tax / gain * 100) : 0;
+    const afterTax = gain - tax;
+
+    document.getElementById('capitalGain').textContent = fmt(gain);
+    document.getElementById('taxOwed').textContent = fmt(tax);
+    document.getElementById('taxRate').textContent = effectiveRate.toFixed(1) + '%';
+    document.getElementById('afterTax').textContent = fmt(afterTax);
+    document.getElementById('effectiveRate').textContent = (tax / (sell) * 100).toFixed(1) + '%';
+    document.getElementById('netProceeds').textContent = fmt(sell - tax);
+
+    const badge = document.getElementById('rateBadge');
+    badge.textContent = rateLabel;
+    badge.className = 'rate-badge ' + rateClass;
+
+    document.getElementById('results').style.display = 'block';
+  }
+
+  calculate();
+</script>
+</body>
+</html>

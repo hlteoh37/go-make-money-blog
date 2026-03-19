@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Improvement ROI Calculator — Which Renovations Pay Off?</title>
+  <meta name="description" content="Calculate the return on investment for home renovations. See which improvements add the most value when selling your home. Based on Remodeling Magazine cost vs value data.">
+  <meta name="keywords" content="home improvement ROI calculator, renovation return on investment, home remodel value, which renovations add value, cost vs value home improvement">
+  <meta property="og:title" content="Home Improvement ROI Calculator — Which Renovations Pay Off?">
+  <meta property="og:description" content="Calculate the return on investment for home renovations. See which improvements add the most value when selling.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/home-improvement-roi/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/home-improvement-roi/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>💰</text></svg>">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0d1117;--card:#161b22;--border:#30363d;--accent:#58a6ff;--muted:#8b949e;--green:#3fb950;--text:#e6edf3;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+    body { background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;min-height:100vh;padding:0 0 80px; }
+    a { color:var(--accent);text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px; }
+    header .logo { font-weight:700;font-size:1.05rem;color:var(--text);letter-spacing:-0.3px; }
+    header .logo span { color:var(--accent); }
+    .back-link { color:var(--muted);font-size:0.85rem; }
+    .container { max-width:680px;margin:0 auto;padding:32px 20px; }
+    .page-title { font-size:1.75rem;font-weight:700;margin:12px 0 6px;letter-spacing:-0.5px; }
+    .page-subtitle { color:var(--muted);font-size:0.95rem;margin-bottom:28px; }
+    .card { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px; }
+    .card-title { font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:18px; }
+    .fields-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+    @media (max-width:520px) { .fields-grid { grid-template-columns:1fr; } .page-title { font-size:1.4rem; } }
+    .field { display:flex;flex-direction:column;gap:6px; }
+    label { font-size:0.85rem;color:var(--muted);font-weight:500; }
+    input[type="number"],select { background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font);font-size:0.95rem;padding:9px 12px;width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none; }
+    input:focus,select:focus { outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12); }
+    .calc-btn { margin-top:20px;background:var(--accent);color:#0d1117;border:none;border-radius:6px;font-family:var(--font);font-size:0.95rem;font-weight:600;padding:11px 28px;cursor:pointer;transition:opacity 0.15s;width:100%; }
+    .calc-btn:hover { opacity:0.88; }
+    #results { display:none; }
+    .results-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px; }
+    @media (max-width:520px) { .results-grid { grid-template-columns:1fr 1fr; } }
+    .result-card { background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center; }
+    .result-card.primary { border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,0.15); }
+    .result-card.loss { border-color:#f55353;box-shadow:0 0 0 1px rgba(245,83,83,0.15); }
+    .result-label { font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:8px; }
+    .result-value { font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-0.5px; }
+    .result-card.primary .result-value { font-size:1.9rem;color:var(--green); }
+    .result-card.loss .result-value { color:#f55353; }
+    .roi-bar-wrap { margin:20px 0; }
+    .roi-bar-label { font-size:0.8rem;color:var(--muted);margin-bottom:8px; }
+    .roi-bar { height:20px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border); }
+    .roi-bar-fill { height:100%;background:var(--green);transition:width 0.4s ease;border-radius:4px; }
+    .benchmarks { margin-top:24px; }
+    .bench-item { display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #21262d;font-size:0.88rem; }
+    .bench-item:last-child { border-bottom:none; }
+    .bench-name { color:var(--text); }
+    .bench-roi { font-weight:600; }
+    .bench-roi.good { color:var(--green); }
+    .bench-roi.ok { color:#e3b341; }
+    .bench-roi.poor { color:#f55353; }
+    .explainer { color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px; }
+    .explainer h2 { color:var(--text);font-size:1.1rem;font-weight:600;margin:24px 0 10px; }
+    .footer { margin-top:40px;padding-top:20px;border-top:1px solid #21262d;font-size:0.8rem;color:#6e7681;text-align:center; }
+    .footer a { color:var(--accent); }
+    .coffee-btn { position:fixed;bottom:24px;right:24px;z-index:100;background:#ffdd00;color:#000;font-size:0.8rem;font-weight:700;padding:10px 16px;border-radius:24px;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.4);transition:opacity 0.15s; }
+    .coffee-btn:hover { opacity:0.9;text-decoration:none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Profiterole <span>Finance</span></div>
+  <span style="color:var(--border);margin:0 4px">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">← All Calculators</a>
+</header>
+
+<div class="container">
+  <div class="page-title">Home Improvement ROI Calculator</div>
+  <div class="page-subtitle">Calculate how much value a renovation adds vs what it costs. Based on national cost-vs-value averages.</div>
+
+  <div class="card">
+    <div class="card-title">Your Renovation</div>
+    <div class="fields-grid">
+      <div class="field" style="grid-column:1/-1">
+        <label for="projectType">Project Type (national avg ROI)</label>
+        <select id="projectType" onchange="syncPreset()">
+          <option value="custom">Custom / Enter Your Own</option>
+          <option value="garage_door">Garage Door Replacement (194%)</option>
+          <option value="stone_veneer">Stone Veneer (153%)</option>
+          <option value="entry_door">Entry Door Replacement (88%)</option>
+          <option value="minor_kitchen">Minor Kitchen Remodel (86%)</option>
+          <option value="deck_wood">Wood Deck Addition (82%)</option>
+          <option value="siding">Siding Replacement (76%)</option>
+          <option value="window_replace">Window Replacement (69%)</option>
+          <option value="roofing">Roofing Replacement (61%)</option>
+          <option value="bath_remodel">Bathroom Remodel (67%)</option>
+          <option value="major_kitchen">Major Kitchen Remodel (49%)</option>
+          <option value="master_suite">Master Suite Addition (32%)</option>
+          <option value="sunroom">Sunroom Addition (47%)</option>
+          <option value="backup_generator">Backup Generator (57%)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="projectCost">Project Cost ($)</label>
+        <input type="number" id="projectCost" value="10000" min="0" step="500" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="roiPct">Expected ROI (%)</label>
+        <input type="number" id="roiPct" value="70" min="0" max="300" step="1" oninput="calculate()">
+      </div>
+      <div class="field">
+        <label for="homeValue">Current Home Value ($)</label>
+        <input type="number" id="homeValue" value="400000" min="0" step="5000" oninput="calculate()">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate ROI</button>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <div class="card-title">Results</div>
+      <div class="results-grid">
+        <div class="result-card primary">
+          <div class="result-label">Value Added</div>
+          <div class="result-value" id="valueAdded">—</div>
+        </div>
+        <div class="result-card loss">
+          <div class="result-label">Money "Lost"</div>
+          <div class="result-value" id="moneyLost">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">ROI</div>
+          <div class="result-value" id="roiDisplay">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">New Home Value</div>
+          <div class="result-value" id="newHomeValue">—</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Value Gain %</div>
+          <div class="result-value" id="valuePct">—</div>
+        </div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar-label">Cost recovered at resale</div>
+        <div class="roi-bar"><div class="roi-bar-fill" id="roiBar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">National Benchmarks (2024 Avg ROI)</div>
+      <div class="benchmarks">
+        <div class="bench-item"><span class="bench-name">Garage Door Replacement</span><span class="bench-roi good">194%</span></div>
+        <div class="bench-item"><span class="bench-name">Stone Veneer Siding</span><span class="bench-roi good">153%</span></div>
+        <div class="bench-item"><span class="bench-name">Entry Door Replacement</span><span class="bench-roi good">88%</span></div>
+        <div class="bench-item"><span class="bench-name">Minor Kitchen Remodel</span><span class="bench-roi good">86%</span></div>
+        <div class="bench-item"><span class="bench-name">Wood Deck Addition</span><span class="bench-roi good">82%</span></div>
+        <div class="bench-item"><span class="bench-name">Bathroom Remodel</span><span class="bench-roi ok">67%</span></div>
+        <div class="bench-item"><span class="bench-name">Major Kitchen Remodel</span><span class="bench-roi ok">49%</span></div>
+        <div class="bench-item"><span class="bench-name">Master Suite Addition</span><span class="bench-roi poor">32%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="explainer">
+    <h2>Understanding Home Improvement ROI</h2>
+    <p>ROI here means: for every dollar you spend on a renovation, how many cents do you get back when you sell the house? A 70% ROI means a $10,000 renovation adds $7,000 to your home's value — you "lose" $3,000 from a pure financial standpoint.</p>
+
+    <h2>When ROI Doesn't Matter</h2>
+    <p>Not every renovation needs a positive ROI. If you're staying in the home for 10+ years, improvements to livability (a new bathroom, better kitchen) provide years of enjoyment. The financial ROI matters most if you're renovating before selling.</p>
+
+    <h2>Higher ROI Projects</h2>
+    <p>Curb appeal wins — garage doors, entry doors, and siding consistently top the ROI charts because buyers form opinions before they enter the house. Functional improvements (updated bathrooms, minor kitchen refreshes) also outperform luxury additions (pools, sunrooms) which rarely recoup their cost.</p>
+  </div>
+
+  <div class="footer">
+    <p>Part of <a href="/profiterole-blog/finance/">Profiterole Finance Hub</a> — Free financial calculators.</p>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" class="coffee-btn" target="_blank" rel="noopener">Buy me a coffee</a>
+
+<script>
+  const fmt = (n) => '$' + Math.round(n).toLocaleString('en-US');
+
+  const presets = {
+    garage_door: [4302, 194],
+    stone_veneer: [11287, 153],
+    entry_door: [2355, 88],
+    minor_kitchen: [27492, 86],
+    deck_wood: [17615, 82],
+    siding: [19714, 76],
+    window_replace: [20091, 69],
+    roofing: [30680, 61],
+    bath_remodel: [25251, 67],
+    major_kitchen: [77939, 49],
+    master_suite: [156741, 32],
+    sunroom: [75000, 47],
+    backup_generator: [17747, 57]
+  };
+
+  function syncPreset() {
+    const val = document.getElementById('projectType').value;
+    if (val !== 'custom' && presets[val]) {
+      document.getElementById('projectCost').value = presets[val][0];
+      document.getElementById('roiPct').value = presets[val][1];
+    }
+    calculate();
+  }
+
+  function calculate() {
+    const cost = parseFloat(document.getElementById('projectCost').value) || 0;
+    const roi = parseFloat(document.getElementById('roiPct').value) || 0;
+    const homeVal = parseFloat(document.getElementById('homeValue').value) || 0;
+
+    const valueAdded = cost * roi / 100;
+    const moneyLost = cost - valueAdded;
+    const newHomeValue = homeVal + valueAdded;
+    const valuePct = homeVal > 0 ? (valueAdded / homeVal * 100) : 0;
+
+    document.getElementById('valueAdded').textContent = fmt(valueAdded);
+    document.getElementById('moneyLost').textContent = fmt(Math.max(0, moneyLost));
+    document.getElementById('roiDisplay').textContent = roi.toFixed(0) + '%';
+    document.getElementById('newHomeValue').textContent = fmt(newHomeValue);
+    document.getElementById('valuePct').textContent = valuePct.toFixed(1) + '%';
+
+    const barWidth = Math.min(100, roi);
+    document.getElementById('roiBar').style.width = barWidth + '%';
+    document.getElementById('roiBar').style.background = roi >= 100 ? '#3fb950' : roi >= 60 ? '#e3b341' : '#f55353';
+
+    document.getElementById('results').style.display = 'block';
+  }
+
+  calculate();
+</script>
+</body>
+</html>
