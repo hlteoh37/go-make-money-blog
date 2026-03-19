@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Net Worth Tracker — Free Personal Balance Sheet</title>
+  <meta name="description" content="Track your net worth with assets and liabilities. No account needed — data saved locally in your browser. Free personal finance tracker.">
+  <meta name="keywords" content="net worth tracker, personal balance sheet, assets liabilities calculator, net worth calculator, free net worth tracker, personal finance tracker">
+  <meta property="og:title" content="Net Worth Tracker — Free Personal Balance Sheet">
+  <meta property="og:description" content="Track your net worth with assets and liabilities. No account needed — data saved locally in your browser. Free personal finance tracker.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/net-worth/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Net Worth Tracker — Free Personal Balance Sheet">
+  <meta name="twitter:description" content="Track your net worth with assets and liabilities. No account needed — data saved locally in your browser.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/net-worth/">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --red: #f85149;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 100px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    header .logo span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    /* Net Worth Summary */
+    .networth-summary {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 28px 24px;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .networth-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .networth-value {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+
+    .networth-value.positive { color: var(--green); }
+    .networth-value.negative { color: var(--red); }
+    .networth-value.neutral  { color: var(--text); }
+
+    .summary-row {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .summary-item {
+      text-align: center;
+    }
+
+    .summary-item-label {
+      font-size: 0.73rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .summary-item-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+    }
+
+    .summary-item-value.assets-total  { color: var(--green); }
+    .summary-item-value.liab-total    { color: var(--red); }
+
+    .summary-divider {
+      width: 1px;
+      background: var(--border);
+      align-self: stretch;
+    }
+
+    /* Section actions row */
+    .section-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+    }
+
+    .section-total {
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 20px 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Rows table */
+    .rows-table {
+      width: 100%;
+      margin-bottom: 14px;
+    }
+
+    .row-item {
+      display: grid;
+      grid-template-columns: 1fr 180px 36px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .row-item {
+        grid-template-columns: 1fr 120px 32px;
+        gap: 8px;
+      }
+      .networth-value { font-size: 2.2rem; }
+      .summary-row { gap: 24px; }
+    }
+
+    .row-label-input,
+    .row-value-input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      padding: 8px 11px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+
+    .row-label-input:focus,
+    .row-value-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.1);
+    }
+
+    .row-value-input {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .remove-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .remove-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+      background: rgba(248,81,73,0.08);
+    }
+
+    .add-row-btn {
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      width: 100%;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .add-row-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Bottom action bar */
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 9px 20px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0d1117;
+    }
+
+    .btn-primary:hover { opacity: 0.88; }
+
+    .btn-danger {
+      background: rgba(248,81,73,0.12);
+      border: 1px solid rgba(248,81,73,0.3);
+      color: var(--red);
+    }
+
+    .btn-danger:hover { background: rgba(248,81,73,0.2); }
+
+    /* Privacy note */
+    .privacy-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .privacy-note .lock-icon { font-size: 0.9rem; }
+
+    /* Snapshots */
+    .snapshots-card { margin-top: 28px; }
+
+    .snapshots-empty {
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+      padding: 16px 0 8px;
+    }
+
+    .snapshots-table-wrap {
+      overflow-x: auto;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      margin-top: 14px;
+    }
+
+    .snapshots-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    .snapshots-table thead {
+      background: var(--bg);
+    }
+
+    .snapshots-table th {
+      padding: 9px 14px;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .snapshots-table th:first-child { text-align: left; }
+
+    .snapshots-table td {
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .snapshots-table td:first-child { text-align: left; color: var(--muted); }
+    .snapshots-table tr:last-child td { border-bottom: none; }
+    .snapshots-table tr:hover td { background: rgba(88,166,255,0.04); }
+
+    .snap-nw-positive { color: var(--green); font-weight: 700; }
+    .snap-nw-negative { color: var(--red); font-weight: 700; }
+
+    /* Explainer */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    .explainer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .explainer h2 {
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .explainer h3 {
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 18px 0 6px;
+    }
+
+    .explainer p { margin-bottom: 10px; }
+
+    .explainer ul {
+      padding-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    .explainer li { margin-bottom: 4px; }
+
+    /* Floating BMAC */
+    .bmac-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+    }
+
+    .bmac-float a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFDD00;
+      color: #000;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .bmac-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      text-decoration: none;
+    }
+
+    .bmac-icon { font-size: 1.1rem; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.88rem;
+      padding: 10px 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 200;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">Net Worth Tracker</h1>
+  <p class="page-subtitle">Your personal balance sheet — everything you own minus everything you owe.</p>
+
+  <!-- Net Worth Summary -->
+  <div class="networth-summary">
+    <div class="networth-label">Net Worth</div>
+    <div class="networth-value neutral" id="networth-display">$0</div>
+    <div class="summary-row">
+      <div class="summary-item">
+        <div class="summary-item-label">Total Assets</div>
+        <div class="summary-item-value assets-total" id="total-assets-display">$0</div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <div class="summary-item-label">Total Liabilities</div>
+        <div class="summary-item-value liab-total" id="total-liab-display">$0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSETS Section -->
+  <div class="card">
+    <div class="section-actions">
+      <div class="section-title">Assets</div>
+      <div class="section-total" id="assets-section-total" style="color: var(--green);">$0</div>
+    </div>
+    <div class="rows-table" id="assets-rows"></div>
+    <button class="add-row-btn" onclick="addRow('assets')">+ Add Asset</button>
+  </div>
+
+  <!-- LIABILITIES Section -->
+  <div class="card">
+    <div class="section-actions">
+      <div class="section-title">Liabilities</div>
+      <div class="section-total" id="liab-section-total" style="color: var(--red);">$0</div>
+    </div>
+    <div class="rows-table" id="liab-rows"></div>
+    <button class="add-row-btn" onclick="addRow('liabilities')">+ Add Liability</button>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <button class="btn btn-primary" onclick="saveSnapshot()">&#128247; Save Snapshot</button>
+    <button class="btn btn-danger" onclick="resetAll()">Reset All</button>
+    <span class="privacy-note">
+      <span class="lock-icon">&#128274;</span>
+      Your data never leaves your browser. Everything is stored locally.
+    </span>
+  </div>
+
+  <!-- Snapshots -->
+  <div class="card snapshots-card">
+    <div class="section-actions" style="margin-bottom:0;">
+      <div class="section-title">Net Worth History (last 5 snapshots)</div>
+    </div>
+    <div id="snapshots-container">
+      <p class="snapshots-empty">No snapshots yet. Click "Save Snapshot" to record your current net worth.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Explainer -->
+  <div class="explainer">
+    <h2>What Is Net Worth?</h2>
+    <p>
+      Net worth is the simplest measure of your financial health: the total value of everything you own (assets) minus the total of everything you owe (liabilities). A positive net worth means your assets exceed your debts. A negative net worth is common when starting out — student loans and a mortgage can easily push you into the red early in life.
+    </p>
+    <p>
+      The number itself matters less than the trend. Track it every few months and watch it grow over time.
+    </p>
+
+    <h3>What Counts as an Asset?</h3>
+    <ul>
+      <li><strong>Checking &amp; Savings:</strong> Cash in bank accounts, money market accounts.</li>
+      <li><strong>Investments:</strong> Brokerage accounts, stocks, ETFs, mutual funds, bonds.</li>
+      <li><strong>Retirement accounts:</strong> 401(k), IRA, Roth IRA, pension value.</li>
+      <li><strong>Real estate:</strong> Current market value of your home or investment properties.</li>
+      <li><strong>Other:</strong> Vehicles (at current value), business equity, crypto, collectibles.</li>
+    </ul>
+
+    <h3>What Counts as a Liability?</h3>
+    <ul>
+      <li><strong>Mortgage balance:</strong> What you still owe on your home loan(s).</li>
+      <li><strong>Car loans:</strong> Outstanding auto financing.</li>
+      <li><strong>Credit card debt:</strong> Current balances carrying interest.</li>
+      <li><strong>Student loans:</strong> Federal and private student loan balances.</li>
+      <li><strong>Other debts:</strong> Personal loans, medical debt, HELOC balances.</li>
+    </ul>
+
+    <h3>How Often Should You Track It?</h3>
+    <p>
+      Quarterly is the sweet spot for most people — frequent enough to catch trends, infrequent enough that short-term market swings don't create false anxiety. Use the Snapshot feature to build a history over time. Watching your net worth chart go up-and-to-the-right is one of the most motivating things in personal finance.
+    </p>
+
+    <h3>Privacy</h3>
+    <p>
+      This tool uses your browser's <code>localStorage</code> to save your data. Nothing is transmitted to any server. No account, no cookies, no tracking. Your financial data stays entirely on your device.
+    </p>
+  </div>
+</div>
+
+<!-- Floating Buy Me a Coffee -->
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ─── Storage Keys ─────────────────────────────────────────────────
+  const STORAGE_KEY_DATA      = 'nwt_data_v1';
+  const STORAGE_KEY_SNAPSHOTS = 'nwt_snapshots_v1';
+
+  // ─── Default rows ─────────────────────────────────────────────────
+  const DEFAULT_ASSETS = [
+    { label: 'Checking / Savings',          value: '' },
+    { label: 'Investments (Stocks / ETFs)', value: '' },
+    { label: 'Retirement (401k / IRA)',     value: '' },
+    { label: 'Home Value',                  value: '' },
+    { label: 'Other Assets',               value: '' },
+  ];
+
+  const DEFAULT_LIABILITIES = [
+    { label: 'Mortgage Balance',   value: '' },
+    { label: 'Car Loans',          value: '' },
+    { label: 'Credit Card Debt',   value: '' },
+    { label: 'Student Loans',      value: '' },
+    { label: 'Other Debts',        value: '' },
+  ];
+
+  // ─── State ────────────────────────────────────────────────────────
+  let state = {
+    assets:      [],
+    liabilities: [],
+  };
+
+  // ─── Formatting ───────────────────────────────────────────────────
+  function fmt(n) {
+    if (isNaN(n)) return '$0';
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function fmtShort(n) {
+    // For large numbers, abbreviate
+    const abs = Math.abs(n);
+    if (abs >= 1e9) return (n < 0 ? '-$' : '$') + (abs / 1e9).toFixed(2) + 'B';
+    if (abs >= 1e6) return (n < 0 ? '-$' : '$') + (abs / 1e6).toFixed(2) + 'M';
+    return fmt(n);
+  }
+
+  // ─── Load / Save ──────────────────────────────────────────────────
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_DATA);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        state.assets      = parsed.assets      || DEFAULT_ASSETS.map(r => ({ ...r }));
+        state.liabilities = parsed.liabilities || DEFAULT_LIABILITIES.map(r => ({ ...r }));
+      } else {
+        state.assets      = DEFAULT_ASSETS.map(r => ({ ...r }));
+        state.liabilities = DEFAULT_LIABILITIES.map(r => ({ ...r }));
+      }
+    } catch (e) {
+      state.assets      = DEFAULT_ASSETS.map(r => ({ ...r }));
+      state.liabilities = DEFAULT_LIABILITIES.map(r => ({ ...r }));
+    }
+  }
+
+  function saveData() {
+    try {
+      localStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(state));
+    } catch (e) {
+      // localStorage full or unavailable
+    }
+  }
+
+  function loadSnapshots() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_SNAPSHOTS);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveSnapshots(snaps) {
+    try {
+      localStorage.setItem(STORAGE_KEY_SNAPSHOTS, JSON.stringify(snaps));
+    } catch (e) {}
+  }
+
+  // ─── Row Building ─────────────────────────────────────────────────
+  function buildRows(section) {
+    const containerId = section === 'assets' ? 'assets-rows' : 'liab-rows';
+    const container = document.getElementById(containerId);
+    const rows = state[section === 'assets' ? 'assets' : 'liabilities'];
+
+    container.innerHTML = '';
+    rows.forEach((row, idx) => {
+      const div = document.createElement('div');
+      div.className = 'row-item';
+      div.setAttribute('data-idx', idx);
+
+      const labelInput = document.createElement('input');
+      labelInput.type = 'text';
+      labelInput.className = 'row-label-input';
+      labelInput.value = row.label;
+      labelInput.placeholder = section === 'assets' ? 'Asset name' : 'Liability name';
+      labelInput.addEventListener('input', () => {
+        rows[idx].label = labelInput.value;
+        saveData();
+      });
+
+      const valueInput = document.createElement('input');
+      valueInput.type = 'number';
+      valueInput.className = 'row-value-input';
+      valueInput.value = row.value;
+      valueInput.placeholder = '0.00';
+      valueInput.min = '0';
+      valueInput.step = '0.01';
+      valueInput.addEventListener('input', () => {
+        rows[idx].value = valueInput.value;
+        saveData();
+        recalculate();
+      });
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-btn';
+      removeBtn.innerHTML = '&times;';
+      removeBtn.title = 'Remove row';
+      removeBtn.addEventListener('click', () => {
+        rows.splice(idx, 1);
+        saveData();
+        buildRows(section);
+        recalculate();
+      });
+
+      div.appendChild(labelInput);
+      div.appendChild(valueInput);
+      div.appendChild(removeBtn);
+      container.appendChild(div);
+    });
+  }
+
+  // ─── Add Row ──────────────────────────────────────────────────────
+  function addRow(section) {
+    const arr = section === 'assets' ? state.assets : state.liabilities;
+    arr.push({ label: '', value: '' });
+    saveData();
+    buildRows(section);
+    // Focus the new label input
+    const container = document.getElementById(section === 'assets' ? 'assets-rows' : 'liab-rows');
+    const newRow = container.lastElementChild;
+    if (newRow) {
+      const labelInput = newRow.querySelector('.row-label-input');
+      if (labelInput) labelInput.focus();
+    }
+  }
+
+  // ─── Calculate ────────────────────────────────────────────────────
+  function sectionTotal(rows) {
+    return rows.reduce((sum, row) => {
+      const v = parseFloat(row.value);
+      return sum + (isNaN(v) ? 0 : v);
+    }, 0);
+  }
+
+  function recalculate() {
+    const totalAssets = sectionTotal(state.assets);
+    const totalLiab   = sectionTotal(state.liabilities);
+    const netWorth    = totalAssets - totalLiab;
+
+    // Section totals
+    document.getElementById('assets-section-total').textContent = fmt(totalAssets);
+    document.getElementById('liab-section-total').textContent   = fmt(totalLiab);
+
+    // Summary bar
+    document.getElementById('total-assets-display').textContent = fmt(totalAssets);
+    document.getElementById('total-liab-display').textContent   = fmt(totalLiab);
+
+    // Big net worth number
+    const nwEl = document.getElementById('networth-display');
+    nwEl.textContent = fmtShort(netWorth);
+    nwEl.className = 'networth-value ' + (netWorth > 0 ? 'positive' : netWorth < 0 ? 'negative' : 'neutral');
+  }
+
+  // ─── Snapshot ─────────────────────────────────────────────────────
+  function saveSnapshot() {
+    const totalAssets = sectionTotal(state.assets);
+    const totalLiab   = sectionTotal(state.liabilities);
+    const netWorth    = totalAssets - totalLiab;
+
+    const snaps = loadSnapshots();
+    const now   = new Date();
+    const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+    snaps.unshift({
+      date:    dateStr + ' ' + timeStr,
+      assets:  totalAssets,
+      liab:    totalLiab,
+      netWorth: netWorth,
+    });
+
+    // Keep only last 5
+    const trimmed = snaps.slice(0, 5);
+    saveSnapshots(trimmed);
+    renderSnapshots(trimmed);
+
+    showToast('Snapshot saved!');
+  }
+
+  function renderSnapshots(snaps) {
+    const container = document.getElementById('snapshots-container');
+    if (!snaps || snaps.length === 0) {
+      container.innerHTML = '<p class="snapshots-empty">No snapshots yet. Click "Save Snapshot" to record your current net worth.</p>';
+      return;
+    }
+
+    let html = '<div class="snapshots-table-wrap"><table class="snapshots-table"><thead><tr>' +
+      '<th>Date</th><th>Total Assets</th><th>Total Liabilities</th><th>Net Worth</th>' +
+      '</tr></thead><tbody>';
+
+    snaps.forEach(snap => {
+      const nwClass = snap.netWorth >= 0 ? 'snap-nw-positive' : 'snap-nw-negative';
+      html += `<tr>
+        <td>${escapeHtml(snap.date)}</td>
+        <td>${fmt(snap.assets)}</td>
+        <td>${fmt(snap.liab)}</td>
+        <td class="${nwClass}">${fmt(snap.netWorth)}</td>
+      </tr>`;
+    });
+
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+  }
+
+  // ─── Reset ────────────────────────────────────────────────────────
+  function resetAll() {
+    if (!confirm('Reset all data? This will clear all your assets, liabilities, and snapshots. This cannot be undone.')) {
+      return;
+    }
+    try {
+      localStorage.removeItem(STORAGE_KEY_DATA);
+      localStorage.removeItem(STORAGE_KEY_SNAPSHOTS);
+    } catch (e) {}
+
+    state.assets      = DEFAULT_ASSETS.map(r => ({ ...r }));
+    state.liabilities = DEFAULT_LIABILITIES.map(r => ({ ...r }));
+
+    buildRows('assets');
+    buildRows('liabilities');
+    recalculate();
+    renderSnapshots([]);
+    showToast('All data cleared.');
+  }
+
+  // ─── Toast ────────────────────────────────────────────────────────
+  let toastTimer = null;
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  // ─── Escape HTML ──────────────────────────────────────────────────
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ─── Init ─────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    buildRows('assets');
+    buildRows('liabilities');
+    recalculate();
+    renderSnapshots(loadSnapshots());
+  });
+</script>
+
+</body>
+</html>

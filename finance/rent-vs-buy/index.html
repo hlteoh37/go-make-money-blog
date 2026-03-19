@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rent vs Buy Calculator — Should You Rent or Buy a Home?</title>
+  <meta name="description" content="Compare the true cost of renting vs buying a home. Includes opportunity cost of down payment, appreciation, and maintenance. Free rent vs buy calculator.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/rent-vs-buy/">
+  <meta property="og:title" content="Rent vs Buy Calculator — Should You Rent or Buy a Home?">
+  <meta property="og:description" content="Compare the true cost of renting vs buying a home. Includes opportunity cost of down payment, appreciation, and maintenance. Free rent vs buy calculator.">
+  <meta property="og:type" content="website">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --red: #f85149;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.15s;
+    }
+
+    nav a:hover { color: var(--accent); }
+    nav .sep { color: var(--border); }
+    nav .brand { color: var(--text); font-weight: 600; }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.4rem; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .card-title.rent { color: #79c0ff; }
+    .card-title.buy { color: #56d364; }
+    .card-title.shared { color: var(--accent); }
+
+    .field {
+      margin-bottom: 0.9rem;
+    }
+
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-family: var(--font);
+      padding: 0.45rem 0.65rem;
+      transition: border-color 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .range-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    .range-val {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .calc-btn {
+      display: block;
+      width: 100%;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      transition: opacity 0.15s;
+    }
+    .calc-btn:hover { opacity: 0.88; }
+
+    #results { display: none; }
+
+    .winner-banner {
+      border-radius: 8px;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .winner-banner.rent-wins {
+      background: rgba(121,192,255,0.08);
+      border-color: #79c0ff;
+    }
+    .winner-banner.buy-wins {
+      background: rgba(63,185,80,0.08);
+      border-color: var(--green);
+    }
+    .winner-banner.close {
+      background: rgba(88,166,255,0.06);
+      border-color: var(--accent);
+    }
+
+    .winner-icon { font-size: 2rem; }
+    .winner-text h2 { font-size: 1.1rem; margin-bottom: 0.2rem; }
+    .winner-text p { font-size: 0.87rem; color: var(--muted); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 500px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .stat-value.green { color: var(--green); }
+    .stat-value.red { color: var(--red); }
+    .stat-value.blue { color: var(--accent); }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .compare-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem;
+    }
+
+    .compare-card h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+    }
+
+    .compare-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.87rem;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-item:last-child { border-bottom: none; }
+    .compare-item .val { font-weight: 600; }
+
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+
+    .table-wrap h3 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      padding: 0.9rem 1.1rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-scroll { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+
+    thead th {
+      background: #1c2128;
+      padding: 0.55rem 0.9rem;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    thead th:first-child { text-align: left; }
+
+    tbody tr { border-bottom: 1px solid #21262d; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #1c2128; }
+
+    tbody td {
+      padding: 0.5rem 0.9rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+    tbody td:first-child { text-align: left; color: var(--muted); font-weight: 600; }
+
+    .td-green { color: var(--green); }
+    .td-red { color: var(--red); }
+    .td-best { font-weight: 700; }
+
+    .methodology {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .methodology h3 {
+      color: var(--text);
+      font-size: 0.88rem;
+      margin-bottom: 0.6rem;
+    }
+    .methodology ul { padding-left: 1.3rem; }
+    .methodology li { margin-bottom: 0.3rem; }
+
+    /* Floating BMC */
+    .bmc-float {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 999;
+    }
+    .bmc-float a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #FFDD00;
+      color: #000;
+      text-decoration: none;
+      padding: 0.55rem 1rem;
+      border-radius: 24px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: var(--font);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .bmc-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/profiterole-blog/" class="brand">Profiterole</a>
+  <span class="sep">/</span>
+  <a href="/profiterole-blog/finance/">Calculators</a>
+  <span class="sep">/</span>
+  <span style="color:var(--text)">Rent vs Buy</span>
+</nav>
+
+<div class="container">
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+
+  <h1>Rent vs Buy Calculator</h1>
+  <p class="subtitle">True cost comparison over time — including opportunity cost, appreciation, and taxes.</p>
+
+  <!-- RENTING -->
+  <div class="grid">
+    <div class="card">
+      <div class="card-title rent">Renting</div>
+      <div class="field">
+        <label>Monthly Rent ($)</label>
+        <input type="number" id="rent" value="2000" min="0" step="50">
+      </div>
+      <div class="field">
+        <label>Annual Rent Increase (%)</label>
+        <input type="number" id="rentIncrease" value="3" min="0" max="20" step="0.1">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title buy">Buying</div>
+      <div class="field">
+        <label>Home Price ($)</label>
+        <input type="number" id="homePrice" value="400000" min="10000" step="1000">
+      </div>
+      <div class="field">
+        <label>Down Payment (%)</label>
+        <input type="number" id="downPct" value="20" min="3" max="100" step="0.5">
+      </div>
+      <div class="field">
+        <label>Mortgage Rate (%)</label>
+        <input type="number" id="mortgageRate" value="6.5" min="0.1" max="20" step="0.05">
+      </div>
+      <div class="field">
+        <label>Loan Term</label>
+        <select id="loanTerm">
+          <option value="15">15 years</option>
+          <option value="30" selected>30 years</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-title buy">Buying Costs</div>
+      <div class="field">
+        <label>Property Tax (% of value/year)</label>
+        <input type="number" id="propTax" value="1.2" min="0" max="5" step="0.05">
+      </div>
+      <div class="field">
+        <label>Annual Home Appreciation (%)</label>
+        <input type="number" id="appreciation" value="3" min="-5" max="15" step="0.1">
+      </div>
+      <div class="field">
+        <label>Maintenance (% of value/year)</label>
+        <input type="number" id="maintenance" value="1" min="0" max="5" step="0.1">
+      </div>
+      <div class="field">
+        <label>HOA ($/month)</label>
+        <input type="number" id="hoa" value="0" min="0" step="10">
+      </div>
+      <div class="field">
+        <label>Homeowners Insurance ($/month)</label>
+        <input type="number" id="insurance" value="150" min="0" step="10">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title shared">Shared Assumptions</div>
+      <div class="field">
+        <label>Investment Return (%)</label>
+        <input type="number" id="investReturn" value="7" min="0" max="20" step="0.1">
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">What you'd earn investing the down payment &amp; monthly savings</div>
+      </div>
+      <div class="field">
+        <label>Years to Compare: <span class="range-val" id="yearsLabel">10</span></label>
+        <input type="range" id="years" min="5" max="30" step="1" value="10" oninput="document.getElementById('yearsLabel').textContent=this.value">
+        <div class="range-row"><span>5 yrs</span><span>30 yrs</span></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">Calculate</button>
+
+  <div id="results">
+
+    <div class="winner-banner" id="winnerBanner">
+      <div class="winner-icon" id="winnerIcon">🏠</div>
+      <div class="winner-text">
+        <h2 id="winnerTitle">Loading...</h2>
+        <p id="winnerDesc">Loading...</p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Rent Net Worth</div>
+        <div class="stat-value blue" id="statRentNW">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Buy Net Worth</div>
+        <div class="stat-value blue" id="statBuyNW">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Break-even Year</div>
+        <div class="stat-value" id="statBreakEven">—</div>
+      </div>
+    </div>
+
+    <div class="compare-row">
+      <div class="compare-card">
+        <h3>Renting — Monthly Costs</h3>
+        <div class="compare-item"><span>Rent (year 1)</span><span class="val" id="cRent">—</span></div>
+        <div class="compare-item"><span>Renter's Insurance</span><span class="val">~$15</span></div>
+        <div class="compare-item" style="border-top:1px solid var(--accent);margin-top:0.3rem;padding-top:0.5rem"><span style="font-weight:600">Total (yr 1)</span><span class="val" id="cRentTotal">—</span></div>
+      </div>
+      <div class="compare-card">
+        <h3>Buying — Monthly Costs</h3>
+        <div class="compare-item"><span>Mortgage P&amp;I</span><span class="val" id="cMortgage">—</span></div>
+        <div class="compare-item"><span>Property Tax</span><span class="val" id="cPropTax">—</span></div>
+        <div class="compare-item"><span>Insurance</span><span class="val" id="cInsurance">—</span></div>
+        <div class="compare-item"><span>Maintenance</span><span class="val" id="cMaint">—</span></div>
+        <div class="compare-item"><span>HOA</span><span class="val" id="cHOA">—</span></div>
+        <div class="compare-item" style="border-top:1px solid var(--accent);margin-top:0.3rem;padding-top:0.5rem"><span style="font-weight:600">Total (yr 1)</span><span class="val" id="cBuyTotal">—</span></div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <h3>Year-by-Year Net Worth Comparison</h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Rent Net Worth</th>
+              <th>Buy Net Worth</th>
+              <th>Advantage</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="methodology">
+      <h3>How this works</h3>
+      <ul>
+        <li><strong>Rent net worth:</strong> Down payment invested at your return rate, plus investing monthly savings (when renting is cheaper) or minus monthly shortfall (when buying is cheaper).</li>
+        <li><strong>Buy net worth:</strong> Home equity (appreciated value minus remaining mortgage) minus transaction costs (closing ~3%, selling ~6%).</li>
+        <li><strong>Break-even:</strong> The year buying net worth first exceeds renting net worth.</li>
+        <li><strong>Opportunity cost:</strong> The down payment could be invested — this is included in renting net worth.</li>
+        <li>This is a simplified model. Consult a financial advisor for major decisions.</li>
+      </ul>
+    </div>
+
+  </div><!-- /results -->
+</div>
+
+<div class="bmc-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    ☕ Buy me a coffee
+  </a>
+</div>
+
+<script>
+  function fmt(n, decimals) {
+    if (decimals === undefined) decimals = 0;
+    return '$' + Number(n.toFixed(decimals)).toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    });
+  }
+
+  function fmtDiff(n) {
+    if (n >= 0) return '+' + fmt(n);
+    return '-' + fmt(Math.abs(n));
+  }
+
+  function mortgagePayment(principal, annualRate, years) {
+    const r = annualRate / 100 / 12;
+    const n = years * 12;
+    if (r === 0) return principal / n;
+    return principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function remainingBalance(principal, annualRate, years, monthsPaid) {
+    const r = annualRate / 100 / 12;
+    const n = years * 12;
+    if (r === 0) return principal * (1 - monthsPaid / n);
+    const payment = mortgagePayment(principal, annualRate, years);
+    return principal * Math.pow(1 + r, monthsPaid) - payment * (Math.pow(1 + r, monthsPaid) - 1) / r;
+  }
+
+  function calculate() {
+    // Inputs
+    const rent = parseFloat(document.getElementById('rent').value) || 0;
+    const rentInc = parseFloat(document.getElementById('rentIncrease').value) / 100 || 0;
+    const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+    const downPct = parseFloat(document.getElementById('downPct').value) / 100 || 0;
+    const mortRate = parseFloat(document.getElementById('mortgageRate').value) || 0;
+    const loanTerm = parseInt(document.getElementById('loanTerm').value) || 30;
+    const propTaxRate = parseFloat(document.getElementById('propTax').value) / 100 || 0;
+    const appRate = parseFloat(document.getElementById('appreciation').value) / 100 || 0;
+    const maintRate = parseFloat(document.getElementById('maintenance').value) / 100 || 0;
+    const hoa = parseFloat(document.getElementById('hoa').value) || 0;
+    const insurance = parseFloat(document.getElementById('insurance').value) || 0;
+    const investReturn = parseFloat(document.getElementById('investReturn').value) / 100 || 0;
+    const years = parseInt(document.getElementById('years').value) || 10;
+
+    const downPayment = homePrice * downPct;
+    const loanAmount = homePrice - downPayment;
+    const monthlyMortgage = mortgagePayment(loanAmount, mortRate, loanTerm);
+
+    // Monthly buying costs year 1
+    const monthlyPropTax = (homePrice * propTaxRate) / 12;
+    const monthlyMaint = (homePrice * maintRate) / 12;
+    const buyMonthly1 = monthlyMortgage + monthlyPropTax + monthlyMaint + hoa + insurance;
+    const rentMonthly1 = rent + 15; // ~$15 renter's insurance
+
+    // Update cost summary
+    document.getElementById('cRent').textContent = fmt(rent);
+    document.getElementById('cRentTotal').textContent = fmt(rentMonthly1);
+    document.getElementById('cMortgage').textContent = fmt(monthlyMortgage);
+    document.getElementById('cPropTax').textContent = fmt(monthlyPropTax);
+    document.getElementById('cInsurance').textContent = fmt(insurance);
+    document.getElementById('cMaint').textContent = fmt(monthlyMaint);
+    document.getElementById('cHOA').textContent = fmt(hoa);
+    document.getElementById('cBuyTotal').textContent = fmt(buyMonthly1);
+
+    // Year-by-year simulation
+    const monthlyReturn = Math.pow(1 + investReturn, 1/12) - 1;
+    let rentInvestment = downPayment; // Down payment invested
+    let buyerNetWorth = 0;
+    let rows = [];
+    let breakEvenYear = null;
+
+    // Closing costs ~3% buying, ~6% selling
+    const buyCosts = homePrice * 0.03;
+    const sellCostsPct = 0.06;
+
+    let currentRent = rent;
+    let currentHomeValue = homePrice;
+
+    for (let y = 1; y <= years; y++) {
+      // Renter: invest down payment + monthly difference
+      let rentNetWorthY = 0;
+      let buyNetWorthY = 0;
+
+      // Simulate month by month for renter
+      // Reset at start of year sim from cumulative state
+      // Simpler: track cumulative
+      if (y === 1) {
+        // Already initialized: rentInvestment = downPayment
+      }
+
+      // For this year
+      for (let m = 1; m <= 12; m++) {
+        // Grow existing investment
+        rentInvestment *= (1 + monthlyReturn);
+
+        // Monthly rent for this year
+        const thisMonthRent = currentRent + 15;
+        // Monthly buy cost (mortgage fixed; prop tax and maint on growing home)
+        const thisHomeValue = homePrice * Math.pow(1 + appRate, y - 1 + (m-1)/12);
+        const thisBuyMonthly = monthlyMortgage + (thisHomeValue * propTaxRate / 12) + (thisHomeValue * maintRate / 12) + hoa + insurance;
+
+        // Monthly surplus: if renting is cheaper, renter invests the difference
+        const monthlySurplus = thisBuyMonthly - thisMonthRent;
+        if (monthlySurplus > 0) {
+          // Buying is more expensive — renter invests the surplus
+          rentInvestment += monthlySurplus;
+        } else {
+          // Renting is more expensive — renter's investments reduced (they use savings)
+          rentInvestment += monthlySurplus; // negative = withdrawal
+          if (rentInvestment < 0) rentInvestment = 0;
+        }
+      }
+      currentRent *= (1 + rentInc);
+
+      // Home value at year y
+      currentHomeValue = homePrice * Math.pow(1 + appRate, y);
+
+      // Remaining mortgage balance
+      const monthsPaid = Math.min(y * 12, loanTerm * 12);
+      const remBal = monthsPaid >= loanTerm * 12 ? 0 : remainingBalance(loanAmount, mortRate, loanTerm, y * 12);
+
+      // Buyer net worth: home equity minus sell costs minus buy costs amortized
+      const equity = currentHomeValue - remBal;
+      const sellCosts = currentHomeValue * sellCostsPct;
+      buyNetWorthY = equity - sellCosts - buyCosts;
+      rentNetWorthY = rentInvestment;
+
+      if (breakEvenYear === null && buyNetWorthY > rentNetWorthY) {
+        breakEvenYear = y;
+      }
+
+      rows.push({ year: y, rentNW: rentNetWorthY, buyNW: buyNetWorthY });
+    }
+
+    const lastRow = rows[rows.length - 1];
+    const finalRentNW = lastRow.rentNW;
+    const finalBuyNW = lastRow.buyNW;
+
+    // Winner banner
+    const diff = finalBuyNW - finalRentNW;
+    const banner = document.getElementById('winnerBanner');
+    const winnerTitle = document.getElementById('winnerTitle');
+    const winnerDesc = document.getElementById('winnerDesc');
+    const winnerIcon = document.getElementById('winnerIcon');
+
+    banner.className = 'winner-banner';
+    if (Math.abs(diff) < 10000) {
+      banner.classList.add('close');
+      winnerIcon.textContent = '⚖️';
+      winnerTitle.textContent = `It\'s too close to call after ${years} years`;
+      winnerDesc.textContent = `Both options result in roughly the same net worth. Non-financial factors like flexibility and stability matter more here.`;
+    } else if (diff > 0) {
+      banner.classList.add('buy-wins');
+      winnerIcon.textContent = '🏠';
+      winnerTitle.textContent = `Buying wins after ${years} years (+${fmt(diff)} ahead)`;
+      winnerDesc.textContent = breakEvenYear
+        ? `Buying overtakes renting in year ${breakEvenYear}. Home appreciation and equity buildup outweigh the down payment opportunity cost.`
+        : `Buying nets more after ${years} years. Equity builds steadily despite higher monthly costs.`;
+    } else {
+      banner.classList.add('rent-wins');
+      winnerIcon.textContent = '🏢';
+      winnerTitle.textContent = `Renting wins after ${years} years (+${fmt(Math.abs(diff))} ahead)`;
+      winnerDesc.textContent = breakEvenYear
+        ? `Renting stays ahead for your full ${years}-year window. Investing the down payment and monthly savings outperforms home equity buildup.`
+        : `Investing the down payment delivers stronger returns than home equity over ${years} years. Buying may win long-term.`;
+    }
+
+    // Stats
+    document.getElementById('statRentNW').textContent = fmt(finalRentNW);
+    document.getElementById('statBuyNW').textContent = fmt(finalBuyNW);
+    if (breakEvenYear) {
+      document.getElementById('statBreakEven').textContent = `Year ${breakEvenYear}`;
+      document.getElementById('statBreakEven').className = 'stat-value green';
+    } else {
+      document.getElementById('statBreakEven').textContent = `>${years} yrs`;
+      document.getElementById('statBreakEven').className = 'stat-value red';
+    }
+
+    // Table
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    for (const row of rows) {
+      const adv = row.buyNW - row.rentNW;
+      const advStr = adv >= 0
+        ? `<span class="td-green td-best">Buy +${fmt(adv)}</span>`
+        : `<span class="td-red td-best">Rent +${fmt(Math.abs(adv))}</span>`;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>Year ${row.year}</td>
+        <td>${fmt(row.rentNW)}</td>
+        <td>${fmt(row.buyNW)}</td>
+        <td>${advStr}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Auto-calculate on load
+  window.addEventListener('DOMContentLoaded', calculate);
+</script>
+</body>
+</html>

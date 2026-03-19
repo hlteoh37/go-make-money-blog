@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Fund Calculator — How Much Should You Save?</title>
+  <meta name="description" content="Calculate your ideal emergency fund size based on your monthly expenses. See how long it will take to build your safety net.">
+  <meta name="keywords" content="emergency fund calculator, how much emergency fund, emergency savings calculator, 6 months expenses, financial safety net calculator">
+  <meta property="og:title" content="Emergency Fund Calculator — How Much Should You Save?">
+  <meta property="og:description" content="Calculate your ideal emergency fund size based on your monthly expenses. See how long it will take to build your safety net.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/emergency-fund/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/emergency-fund/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>💰</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 40px 20px 100px;
+    }
+    .container { max-width: 760px; margin: 0 auto; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: #58a6ff; text-decoration: none; font-size: 0.85rem; margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .hero { margin-bottom: 32px; }
+    .hero h1 {
+      font-size: 2rem; font-weight: 700; color: #f0f6fc;
+      margin-bottom: 8px; line-height: 1.25;
+    }
+    .hero p { color: #8b949e; font-size: 1rem; line-height: 1.6; }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: #8b949e; font-weight: 600; margin-bottom: 20px;
+    }
+
+    .form-stack { display: flex; flex-direction: column; gap: 24px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 0.88rem; font-weight: 500; color: #c9d1d9;
+    }
+    .field .hint { font-size: 0.75rem; color: #8b949e; }
+    .field input[type="number"] {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 1rem;
+      padding: 10px 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus { border-color: #58a6ff; }
+
+    /* Slider */
+    .slider-field { display: flex; flex-direction: column; gap: 10px; }
+    .slider-field label {
+      font-size: 0.88rem; font-weight: 500; color: #c9d1d9;
+    }
+    .slider-row {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .slider-value {
+      font-size: 1.3rem; font-weight: 700; color: #58a6ff;
+      min-width: 100px; text-align: right; white-space: nowrap;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      flex: 1;
+      height: 6px;
+      background: #30363d;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #58a6ff;
+      cursor: pointer;
+      border: 2px solid #0d1117;
+      box-shadow: 0 0 0 1px #58a6ff;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #58a6ff;
+      cursor: pointer;
+      border: 2px solid #0d1117;
+    }
+    .slider-ticks {
+      display: flex; justify-content: space-between;
+      font-size: 0.7rem; color: #8b949e; padding: 0 2px;
+    }
+
+    .calc-btn {
+      margin-top: 8px;
+      width: 100%;
+      background: #238636;
+      border: 1px solid #2ea043;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 12px 24px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .calc-btn:hover { background: #2ea043; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    /* Results */
+    .results { display: none; }
+    .results.visible { display: block; }
+
+    .target-hero {
+      text-align: center;
+      padding: 28px 20px;
+      background: #0d1117;
+      border: 1px solid #3fb950;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .target-label {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: #8b949e; font-weight: 600; margin-bottom: 10px;
+    }
+    .target-amount {
+      font-size: 3.2rem; font-weight: 800; color: #3fb950; line-height: 1;
+      margin-bottom: 8px;
+    }
+    .target-sub {
+      font-size: 0.9rem; color: #8b949e;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 520px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat-box {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+    }
+    .stat-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #8b949e; font-weight: 600; margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 1.7rem; font-weight: 700; color: #e6edf3; line-height: 1;
+    }
+    .stat-sub {
+      font-size: 0.78rem; color: #8b949e; margin-top: 6px;
+    }
+
+    /* Progress */
+    .progress-section {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .progress-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 12px;
+    }
+    .progress-title {
+      font-size: 0.85rem; font-weight: 600; color: #c9d1d9;
+    }
+    .progress-pct {
+      font-size: 1.1rem; font-weight: 700; color: #3fb950;
+    }
+    .progress-track {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 20px;
+      height: 16px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 20px;
+      background: linear-gradient(90deg, #238636, #3fb950);
+      transition: width 0.7s ease;
+    }
+    .progress-sub {
+      font-size: 0.8rem; color: #8b949e; text-align: right;
+    }
+
+    /* Timeline table */
+    .timeline {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .timeline th {
+      text-align: left; font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #8b949e; font-weight: 600;
+      padding: 0 0 10px 0; border-bottom: 1px solid #30363d;
+    }
+    .timeline td {
+      padding: 12px 0; border-bottom: 1px solid #21262d;
+      color: #c9d1d9; vertical-align: middle;
+    }
+    .timeline tr:last-child td { border-bottom: none; }
+    .timeline td:first-child { color: #8b949e; font-size: 0.82rem; }
+    .timeline .amount { font-weight: 700; color: #58a6ff; }
+    .timeline .months-to { color: #e6edf3; font-weight: 600; }
+
+    .note-box {
+      background: rgba(88, 166, 255, 0.06);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.83rem;
+      color: #8b949e;
+      line-height: 1.6;
+    }
+    .note-box strong { color: #58a6ff; }
+
+    .error-msg {
+      background: rgba(248, 81, 73, 0.1);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #f85149;
+      font-size: 0.88rem;
+      margin-top: 12px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    /* Already funded banner */
+    .funded-banner {
+      background: rgba(63, 185, 80, 0.1);
+      border: 1px solid rgba(63, 185, 80, 0.4);
+      border-radius: 8px;
+      padding: 16px 20px;
+      color: #3fb950;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .funded-banner.visible { display: block; }
+
+    .coffee-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #FFDD00;
+      color: #000;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      z-index: 100;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .coffee-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+
+  <div class="hero">
+    <h1>Emergency Fund Calculator</h1>
+    <p>Find out exactly how large your emergency fund should be — and how long it will take to build it.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Expenses</div>
+    <div class="form-stack">
+
+      <div class="field">
+        <label for="monthlyExpenses">Monthly Expenses ($)</label>
+        <input type="number" id="monthlyExpenses" value="4000" min="0" step="100">
+        <span class="hint">Rent, food, utilities, subscriptions, insurance — everything you need each month</span>
+      </div>
+
+      <div class="slider-field">
+        <label>Months of Coverage</label>
+        <div class="slider-row">
+          <input type="range" id="monthsCoverage" min="1" max="12" value="6" step="1"
+                 oninput="updateSlider(this.value)">
+          <span class="slider-value" id="sliderLabel">6 months</span>
+        </div>
+        <div class="slider-ticks">
+          <span>1 mo</span><span>3 mo</span><span>6 mo</span><span>9 mo</span><span>12 mo</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="currentFund">Current Emergency Fund ($)</label>
+        <input type="number" id="currentFund" value="0" min="0" step="100">
+        <span class="hint">What you've already set aside specifically for emergencies</span>
+      </div>
+
+    </div>
+    <div class="error-msg" id="errorMsg"></div>
+    <button class="calc-btn" onclick="calculate()" style="margin-top:24px;">Calculate My Emergency Fund</button>
+  </div>
+
+  <div class="results" id="results">
+
+    <div class="funded-banner" id="fundedBanner"></div>
+
+    <div class="target-hero">
+      <div class="target-label">Your Emergency Fund Target</div>
+      <div class="target-amount" id="targetAmount">—</div>
+      <div class="target-sub" id="targetSub"></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">Still Need to Save</div>
+        <div class="stat-value" id="stillNeeded">—</div>
+        <div class="stat-sub" id="stillNeededSub"></div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Covers</div>
+        <div class="stat-value" id="coverageValue">—</div>
+        <div class="stat-sub">months of expenses</div>
+      </div>
+    </div>
+
+    <div class="progress-section" id="progressSection" style="display:none">
+      <div class="progress-header">
+        <span class="progress-title" id="progressTitle">Progress</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-sub" id="progressSub"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-title">How Fast Can You Get There?</div>
+      <table class="timeline">
+        <thead>
+          <tr>
+            <th>Save this much per month</th>
+            <th>Months to fully funded</th>
+            <th>Target date</th>
+          </tr>
+        </thead>
+        <tbody id="timelineBody">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note-box">
+      <strong>Expert guidance:</strong> Most financial advisors recommend 3–6 months for stable jobs,
+      6–12 months for freelancers, variable income, or single-income households.
+      Keep your emergency fund in a high-yield savings account — not invested.
+    </div>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener" class="coffee-btn">
+  ☕ Buy me a coffee
+</a>
+
+<script>
+  function updateSlider(val) {
+    var label = val === '1' ? '1 month' : val + ' months';
+    document.getElementById('sliderLabel').textContent = label;
+  }
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function addMonths(date, months) {
+    var d = new Date(date);
+    d.setMonth(d.getMonth() + months);
+    return d;
+  }
+
+  function formatDate(d) {
+    return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+
+  function calculate() {
+    var errorEl = document.getElementById('errorMsg');
+    errorEl.classList.remove('visible');
+
+    var expenses = parseFloat(document.getElementById('monthlyExpenses').value) || 0;
+    var months = parseInt(document.getElementById('monthsCoverage').value) || 6;
+    var current = parseFloat(document.getElementById('currentFund').value) || 0;
+
+    if (expenses <= 0) {
+      errorEl.textContent = 'Please enter your monthly expenses.';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    var target = expenses * months;
+    var needed = Math.max(0, target - current);
+    var pct = Math.min(100, current > 0 ? (current / target) * 100 : 0);
+
+    // Target display
+    document.getElementById('targetAmount').textContent = fmt(target);
+    document.getElementById('targetSub').textContent =
+      months + ' months × ' + fmt(expenses) + '/month';
+    document.getElementById('coverageValue').textContent = months;
+
+    // Already funded?
+    var fundedBanner = document.getElementById('fundedBanner');
+    if (current >= target) {
+      fundedBanner.textContent = '🎉 Congratulations — you\'re fully funded! Your emergency fund covers ' + months + ' months of expenses.';
+      fundedBanner.classList.add('visible');
+      document.getElementById('stillNeeded').textContent = fmt(0);
+      document.getElementById('stillNeededSub').textContent = 'You\'re fully funded';
+    } else {
+      fundedBanner.classList.remove('visible');
+      document.getElementById('stillNeeded').textContent = fmt(needed);
+      document.getElementById('stillNeededSub').textContent =
+        current > 0 ? fmt(current) + ' already saved' : 'Starting from zero';
+    }
+
+    // Progress bar
+    if (current > 0) {
+      document.getElementById('progressSection').style.display = 'block';
+      document.getElementById('progressTitle').textContent = fmt(current) + ' saved of ' + fmt(target);
+      document.getElementById('progressPct').textContent = pct.toFixed(1) + '% funded';
+      document.getElementById('progressFill').style.width = pct.toFixed(1) + '%';
+      document.getElementById('progressSub').textContent =
+        fmt(needed) + ' remaining';
+    } else {
+      document.getElementById('progressSection').style.display = 'none';
+    }
+
+    // Timeline table
+    var savingAmounts = [200, 300, 500, 750, 1000];
+    var today = new Date();
+    var tbody = document.getElementById('timelineBody');
+    tbody.innerHTML = '';
+
+    if (needed <= 0) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td colspan="3" style="color:#3fb950;font-weight:600;padding-top:12px;">You already have enough! No additional savings needed.</td>';
+      tbody.appendChild(tr);
+    } else {
+      // Add a "6 month" and "12 month" row first
+      var specialRows = [
+        { label: 'Reach in 6 months', monthly: needed / 6 },
+        { label: 'Reach in 12 months', monthly: needed / 12 }
+      ];
+
+      specialRows.forEach(function(row) {
+        var monthsNeeded = needed / row.monthly;
+        var doneDate = addMonths(today, Math.ceil(monthsNeeded));
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + row.label + '</td>' +
+          '<td class="amount">' + fmt(row.monthly) + '/mo</td>' +
+          '<td class="months-to">' + formatDate(doneDate) + '</td>';
+        tbody.appendChild(tr);
+      });
+
+      // Separator row
+      var sep = document.createElement('tr');
+      sep.innerHTML = '<td colspan="3" style="padding:6px 0;border-bottom:1px solid #30363d;"></td>';
+      tbody.appendChild(sep);
+
+      savingAmounts.forEach(function(amount) {
+        if (amount <= needed) {
+          var monthsNeeded = Math.ceil(needed / amount);
+          var doneDate = addMonths(today, monthsNeeded);
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + fmt(amount) + ' per month</td>' +
+            '<td class="months-to">' + monthsNeeded + ' months</td>' +
+            '<td style="color:#8b949e">' + formatDate(doneDate) + '</td>';
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    document.getElementById('results').classList.add('visible');
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Allow Enter key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') calculate();
+  });
+</script>
+</body>
+</html>

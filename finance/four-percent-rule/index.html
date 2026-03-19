@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4% Rule Retirement Calculator — Will Your Portfolio Last?</title>
+  <meta name="description" content="Test if your retirement portfolio will last 30 years using the 4% rule. See year-by-year projections. Free retirement calculator.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/four-percent-rule/">
+  <meta property="og:title" content="4% Rule Retirement Calculator — Will Your Portfolio Last?">
+  <meta property="og:description" content="Test if your retirement portfolio will last 30 years using the 4% rule. See year-by-year projections. Free retirement calculator.">
+  <meta property="og:type" content="website">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--accent); }
+    nav .sep { color: var(--border); }
+    nav .brand { color: var(--text); font-weight: 600; }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .inputs-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.4rem; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .card-full {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .field {
+      margin-bottom: 0.9rem;
+    }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-family: var(--font);
+      padding: 0.45rem 0.65rem;
+      transition: border-color 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    .calc-btn {
+      display: block;
+      width: 100%;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 8px;
+      padding: 0.8rem;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      transition: opacity 0.15s;
+    }
+    .calc-btn:hover { opacity: 0.88; }
+
+    #results { display: none; }
+
+    /* Verdict banner */
+    .verdict {
+      border-radius: 8px;
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1.25rem;
+      border: 2px solid;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.1rem;
+    }
+    .verdict.success {
+      background: rgba(63,185,80,0.07);
+      border-color: var(--green);
+    }
+    .verdict.warning {
+      background: rgba(210,153,34,0.07);
+      border-color: var(--yellow);
+    }
+    .verdict.fail {
+      background: rgba(248,81,73,0.07);
+      border-color: var(--red);
+    }
+
+    .verdict-icon { font-size: 2.2rem; flex-shrink: 0; }
+    .verdict-body h2 { font-size: 1.15rem; margin-bottom: 0.3rem; }
+    .verdict-body p { font-size: 0.88rem; color: var(--muted); }
+    .verdict-body .highlight {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .verdict.success .highlight { color: var(--green); }
+    .verdict.warning .highlight { color: var(--yellow); }
+    .verdict.fail .highlight { color: var(--red); }
+
+    /* Stats row */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 700px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .stat-value.green { color: var(--green); }
+    .stat-value.red { color: var(--red); }
+    .stat-value.yellow { color: var(--yellow); }
+    .stat-value.blue { color: var(--accent); }
+
+    /* Gap card */
+    .gap-card {
+      background: rgba(248,81,73,0.06);
+      border: 1px solid rgba(248,81,73,0.3);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .gap-card strong { color: var(--text); }
+
+    /* Chart */
+    .chart-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .chart-wrap h3 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .bar-chart { display: flex; flex-direction: column; gap: 0.35rem; }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+    }
+    .bar-label { width: 50px; text-align: right; color: var(--muted); flex-shrink: 0; }
+    .bar-track {
+      flex: 1;
+      background: #21262d;
+      border-radius: 3px;
+      height: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s;
+      display: flex;
+      align-items: center;
+      padding: 0 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #0d1117;
+      min-width: 2px;
+    }
+    .bar-fill.alive { background: var(--green); }
+    .bar-fill.low { background: var(--yellow); }
+    .bar-fill.dead { background: var(--red); }
+
+    /* Table */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .table-wrap h3 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      padding: 0.9rem 1.1rem 0.6rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .table-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-family: var(--font);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .table-toggle:hover { color: var(--text); border-color: var(--accent); }
+
+    .table-scroll { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+    thead th {
+      background: #1c2128;
+      padding: 0.55rem 0.9rem;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    thead th:first-child { text-align: left; }
+    tbody tr { border-bottom: 1px solid #21262d; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #1c2128; }
+    tbody td {
+      padding: 0.5rem 0.9rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+    tbody td:first-child { text-align: left; color: var(--muted); font-weight: 600; }
+    .td-green { color: var(--green); }
+    .td-yellow { color: var(--yellow); }
+    .td-red { color: var(--red); font-weight: 700; }
+    .td-muted { color: var(--muted); }
+
+    .methodology {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .methodology h3 {
+      color: var(--text);
+      font-size: 0.88rem;
+      margin-bottom: 0.6rem;
+    }
+    .methodology ul { padding-left: 1.3rem; }
+    .methodology li { margin-bottom: 0.3rem; }
+
+    /* Floating BMC */
+    .bmc-float {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      z-index: 999;
+    }
+    .bmc-float a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #FFDD00;
+      color: #000;
+      text-decoration: none;
+      padding: 0.55rem 1rem;
+      border-radius: 24px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: var(--font);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .bmc-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    }
+
+    .table-hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/profiterole-blog/" class="brand">Profiterole</a>
+  <span class="sep">/</span>
+  <a href="/profiterole-blog/finance/">Calculators</a>
+  <span class="sep">/</span>
+  <span style="color:var(--text)">4% Rule</span>
+</nav>
+
+<div class="container">
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+
+  <h1>4% Rule Retirement Calculator</h1>
+  <p class="subtitle">Find your FIRE number, test portfolio survival, and see year-by-year projections.</p>
+
+  <div class="inputs-grid">
+    <div class="card">
+      <div class="card-title">Your Situation</div>
+      <div class="field">
+        <label>Current Portfolio ($)</label>
+        <input type="number" id="portfolio" value="500000" min="0" step="10000">
+      </div>
+      <div class="field">
+        <label>Annual Expenses ($)</label>
+        <input type="number" id="expenses" value="40000" min="0" step="1000">
+        <div class="hint">Your total yearly spending in retirement</div>
+      </div>
+      <div class="field">
+        <label>Years in Retirement</label>
+        <input type="number" id="retireYears" value="30" min="1" max="60" step="1">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Growth Assumptions</div>
+      <div class="field">
+        <label>Expected Annual Return (%)</label>
+        <input type="number" id="returnRate" value="7" min="0" max="20" step="0.1">
+        <div class="hint">Portfolio growth before withdrawals (nominal)</div>
+      </div>
+      <div class="field">
+        <label>Inflation Rate (%)</label>
+        <input type="number" id="inflation" value="3" min="0" max="15" step="0.1">
+        <div class="hint">Used to inflate withdrawals each year</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">Calculate</button>
+
+  <div id="results">
+
+    <!-- Verdict -->
+    <div class="verdict" id="verdictBox">
+      <div class="verdict-icon" id="verdictIcon">✅</div>
+      <div class="verdict-body">
+        <h2 id="verdictTitle">Loading...</h2>
+        <p id="verdictDesc">Loading...</p>
+        <span class="highlight" id="verdictHighlight"></span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Your FIRE Number</div>
+        <div class="stat-value blue" id="statFire">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">4% of Portfolio</div>
+        <div class="stat-value" id="statFourPct">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Withdrawal Rate</div>
+        <div class="stat-value" id="statWR">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Portfolio Lasts</div>
+        <div class="stat-value" id="statLasts">—</div>
+      </div>
+    </div>
+
+    <!-- Gap card (shown only when short) -->
+    <div class="gap-card" id="gapCard" style="display:none">
+      <strong>You need more to retire safely.</strong>
+      Your FIRE number is <strong id="gapFire">—</strong> but your portfolio is <strong id="gapPortfolio">—</strong>.
+      Gap: <strong id="gapAmount" style="color:var(--red)">—</strong>.
+      To close this gap you could: reduce annual expenses, increase savings, or wait longer to retire.
+    </div>
+
+    <!-- Bar chart -->
+    <div class="chart-wrap">
+      <h3>Portfolio Value Over Time</h3>
+      <div class="bar-chart" id="barChart"></div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <h3>
+        <span>Year-by-Year Projection</span>
+        <button class="table-toggle" id="tableToggleBtn" onclick="toggleTable()">Show all years</button>
+      </h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Start Balance</th>
+              <th>Growth</th>
+              <th>Withdrawal</th>
+              <th>Real Withdrawal</th>
+              <th>End Balance</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="methodology">
+      <h3>How this works</h3>
+      <ul>
+        <li><strong>4% Rule:</strong> The "safe withdrawal rate" from the Trinity Study — withdraw 4% of your initial portfolio each year, adjusted for inflation, for a 30-year retirement.</li>
+        <li><strong>FIRE Number:</strong> Annual Expenses ÷ 0.04 = the portfolio you need to retire.</li>
+        <li><strong>Withdrawals:</strong> Your year-1 withdrawal is your annual expenses. Each subsequent year it increases by inflation rate.</li>
+        <li><strong>Returns:</strong> Your portfolio grows at the expected return rate before each year's withdrawal.</li>
+        <li><strong>Real Withdrawal:</strong> The inflation-adjusted value of each withdrawal in today's dollars.</li>
+        <li>This is a simplified deterministic model. Actual results depend on sequence of returns risk. Consult a financial advisor.</li>
+      </ul>
+    </div>
+
+  </div><!-- /results -->
+</div>
+
+<div class="bmc-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    ☕ Buy me a coffee
+  </a>
+</div>
+
+<script>
+  let allRows = [];
+  let showAllRows = false;
+
+  function fmt(n, decimals) {
+    if (n === null || n === undefined || isNaN(n)) return '$0';
+    decimals = decimals === undefined ? 0 : decimals;
+    if (n < 0) return '-$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  }
+
+  function fmtPct(n) {
+    return n.toFixed(1) + '%';
+  }
+
+  function toggleTable() {
+    showAllRows = !showAllRows;
+    document.getElementById('tableToggleBtn').textContent = showAllRows ? 'Show fewer' : 'Show all years';
+    renderTable();
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    const rows = showAllRows ? allRows : allRows.slice(0, 10);
+
+    for (const row of rows) {
+      const isZero = row.endBalance <= 0;
+      const isCritical = !isZero && row.endBalance < row.startBalance * 0.3;
+      const isLow = !isZero && !isCritical && row.endBalance < row.startBalance * 0.7;
+
+      let endClass = 'td-green';
+      if (isZero) endClass = 'td-red';
+      else if (isCritical) endClass = 'td-yellow';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>Year ${row.year}</td>
+        <td>${fmt(row.startBalance)}</td>
+        <td class="td-green">+${fmt(row.growth)}</td>
+        <td class="td-red">-${fmt(row.withdrawal)}</td>
+        <td class="td-muted">${fmt(row.realWithdrawal)}</td>
+        <td class="${endClass}">${isZero ? 'Depleted' : fmt(row.endBalance)}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function calculate() {
+    const portfolio = parseFloat(document.getElementById('portfolio').value) || 0;
+    const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+    const retireYears = parseInt(document.getElementById('retireYears').value) || 30;
+    const returnRate = parseFloat(document.getElementById('returnRate').value) / 100 || 0;
+    const inflation = parseFloat(document.getElementById('inflation').value) / 100 || 0;
+
+    const fireNumber = expenses / 0.04;
+    const fourPctOfPortfolio = portfolio * 0.04;
+    const withdrawalRate = portfolio > 0 ? (expenses / portfolio) * 100 : 0;
+
+    // Simulate
+    allRows = [];
+    let balance = portfolio;
+    let withdrawal = expenses;
+    let depleteYear = null;
+
+    for (let y = 1; y <= retireYears; y++) {
+      const start = balance;
+      const growth = balance * returnRate;
+      const thisWithdrawal = Math.min(withdrawal, balance + growth); // can't withdraw more than exists
+      const realWithdrawal = withdrawal / Math.pow(1 + inflation, y - 1);
+      balance = start + growth - thisWithdrawal;
+      if (balance < 0) balance = 0;
+
+      allRows.push({
+        year: y,
+        startBalance: start,
+        growth: Math.max(0, growth),
+        withdrawal: thisWithdrawal,
+        realWithdrawal: realWithdrawal,
+        endBalance: balance
+      });
+
+      if (depleteYear === null && balance <= 0) {
+        depleteYear = y;
+      }
+      withdrawal *= (1 + inflation);
+    }
+
+    const finalBalance = allRows[allRows.length - 1].endBalance;
+    const portfolioLasts = depleteYear ? `Year ${depleteYear}` : `${retireYears}+ yrs`;
+
+    // Verdict
+    const verdictBox = document.getElementById('verdictBox');
+    const verdictIcon = document.getElementById('verdictIcon');
+    const verdictTitle = document.getElementById('verdictTitle');
+    const verdictDesc = document.getElementById('verdictDesc');
+    const verdictHighlight = document.getElementById('verdictHighlight');
+
+    verdictBox.className = 'verdict';
+
+    if (!depleteYear && finalBalance > portfolio * 0.5) {
+      verdictBox.classList.add('success');
+      verdictIcon.textContent = '✅';
+      verdictTitle.textContent = 'You can retire — your portfolio survives!';
+      verdictDesc.textContent = `At a ${fmtPct(withdrawalRate)} withdrawal rate, your portfolio lasts all ${retireYears} years with ${fmt(finalBalance)} remaining.`;
+      verdictHighlight.textContent = `${fmtPct(withdrawalRate)} withdrawal rate is ${withdrawalRate <= 4 ? 'at or below' : 'above'} the 4% safe threshold.`;
+    } else if (!depleteYear) {
+      verdictBox.classList.add('warning');
+      verdictIcon.textContent = '⚠️';
+      verdictTitle.textContent = 'Borderline — portfolio survives but is nearly depleted';
+      verdictDesc.textContent = `Your ${fmtPct(withdrawalRate)} withdrawal rate is high. The portfolio technically lasts ${retireYears} years but ends at just ${fmt(finalBalance)}. Consider reducing expenses or building a larger cushion.`;
+      verdictHighlight.textContent = `You're above the 4% safe threshold — sequence of returns risk is real.`;
+    } else {
+      verdictBox.classList.add('fail');
+      verdictIcon.textContent = '❌';
+      verdictTitle.textContent = `Portfolio depletes in Year ${depleteYear}`;
+      verdictDesc.textContent = `At ${fmtPct(withdrawalRate)} withdrawal rate, your portfolio runs out ${retireYears - depleteYear} years before your retirement horizon. You need a larger portfolio or lower expenses.`;
+      verdictHighlight.textContent = `Gap to FIRE: ${fmt(fireNumber - portfolio)} more needed.`;
+    }
+
+    // Stats
+    document.getElementById('statFire').textContent = fmt(fireNumber);
+    document.getElementById('statFourPct').textContent = fmt(fourPctOfPortfolio) + '/yr';
+    const wrEl = document.getElementById('statWR');
+    wrEl.textContent = fmtPct(withdrawalRate);
+    wrEl.className = 'stat-value ' + (withdrawalRate <= 4 ? 'green' : withdrawalRate <= 5 ? 'yellow' : 'red');
+    const lastsEl = document.getElementById('statLasts');
+    lastsEl.textContent = portfolioLasts;
+    lastsEl.className = 'stat-value ' + (!depleteYear ? 'green' : 'red');
+
+    // Gap card
+    const gapCard = document.getElementById('gapCard');
+    if (portfolio < fireNumber) {
+      gapCard.style.display = 'block';
+      document.getElementById('gapFire').textContent = fmt(fireNumber);
+      document.getElementById('gapPortfolio').textContent = fmt(portfolio);
+      document.getElementById('gapAmount').textContent = fmt(fireNumber - portfolio);
+    } else {
+      gapCard.style.display = 'none';
+    }
+
+    // Bar chart
+    const maxBalance = Math.max(...allRows.map(r => r.startBalance), portfolio);
+    const barChart = document.getElementById('barChart');
+    barChart.innerHTML = '';
+
+    for (const row of allRows) {
+      const pct = maxBalance > 0 ? (row.endBalance / maxBalance) * 100 : 0;
+      const clampedPct = Math.max(0, Math.min(100, pct));
+      let fillClass = 'alive';
+      if (row.endBalance <= 0) fillClass = 'dead';
+      else if (row.endBalance < maxBalance * 0.25) fillClass = 'low';
+      else if (row.endBalance < maxBalance * 0.5) fillClass = 'low';
+
+      const div = document.createElement('div');
+      div.className = 'bar-row';
+      div.innerHTML = `
+        <span class="bar-label">Yr ${row.year}</span>
+        <div class="bar-track">
+          <div class="bar-fill ${fillClass}" style="width:${clampedPct}%">
+            ${clampedPct > 12 ? fmt(row.endBalance) : ''}
+          </div>
+        </div>
+      `;
+      barChart.appendChild(div);
+    }
+
+    // Table
+    showAllRows = false;
+    document.getElementById('tableToggleBtn').textContent = 'Show all years';
+    renderTable();
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  window.addEventListener('DOMContentLoaded', calculate);
+</script>
+</body>
+</html>

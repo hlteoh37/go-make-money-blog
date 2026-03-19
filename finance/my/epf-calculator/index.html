@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPF Calculator Malaysia 2025 — KWSP Retirement Projection</title>
+  <meta name="description" content="Calculate your EPF (KWSP) retirement savings. Employee 11%, employer 12-13% contributions. Dividend rate projections for Malaysia 2025.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/my/epf-calculator/">
+  <meta property="og:title" content="EPF Calculator Malaysia 2025 — KWSP Retirement Projection">
+  <meta property="og:description" content="Calculate your EPF (KWSP) retirement savings. Employee 11%, employer 12-13% contributions. Dividend rate projections for Malaysia 2025.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/my/epf-calculator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="EPF Calculator Malaysia 2025 — KWSP Retirement Projection">
+  <meta name="twitter:description" content="Calculate your EPF (KWSP) retirement savings. Employee 11%, employer 12-13% contributions.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    header .logo span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .results-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .results-grid { grid-template-columns: 1fr; }
+      .results-grid-4 { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 380px) {
+      .results-grid-4 { grid-template-columns: 1fr; }
+    }
+
+    .result-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .result-card.primary {
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px rgba(63,185,80,0.15);
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .result-card.primary .result-value {
+      font-size: 1.75rem;
+      color: var(--green);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+    }
+
+    th {
+      padding: 10px 14px;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th:first-child, th:nth-child(2) { text-align: center; }
+
+    td {
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    td:first-child, td:nth-child(2) { text-align: center; color: var(--muted); }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.04); }
+    td.interest-col { color: var(--green); }
+
+    .explainer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .explainer h2 {
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .explainer h3 {
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 16px 0 6px;
+    }
+
+    .explainer p { margin-bottom: 10px; }
+
+    .explainer ul {
+      margin: 8px 0 10px 20px;
+    }
+
+    .explainer li { margin-bottom: 4px; }
+
+    .info-box {
+      background: rgba(88, 166, 255, 0.08);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .info-box strong { color: var(--accent); }
+
+    .bmac-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+    }
+
+    .bmac-float a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFDD00;
+      color: #000;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .bmac-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/my/" class="back-link">&#8592; 🇲🇾 Malaysian Finance Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/my/" class="back-link">&#8592; 🇲🇾 Malaysian Finance Calculators</a>
+  </p>
+
+  <h1 class="page-title">EPF (KWSP) Retirement Calculator</h1>
+  <p class="page-subtitle">Project your Employees Provident Fund balance at retirement. Uses 2025 contribution rates.</p>
+
+  <div class="info-box">
+    <strong>2025 EPF rates:</strong> Employee contributes <strong>11%</strong> of gross salary. Employer contributes <strong>13%</strong> (salary ≤ RM5,000) or <strong>12%</strong> (salary &gt; RM5,000). Dividend rate averaged 5–6% historically; default is 5.5%.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Details</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label for="currentAge">Current Age</label>
+        <input type="number" id="currentAge" value="30" min="18" max="59" step="1">
+        <span class="field-hint">Must be under 60</span>
+      </div>
+      <div class="field">
+        <label for="retirementAge">Retirement Age</label>
+        <input type="number" id="retirementAge" value="60" min="40" max="70" step="1">
+        <span class="field-hint">Default EPF withdrawal age: 60</span>
+      </div>
+      <div class="field">
+        <label for="monthlySalary">Monthly Gross Salary (RM)</label>
+        <input type="number" id="monthlySalary" value="5000" min="0" step="100">
+        <span class="field-hint">Your before-deduction pay</span>
+      </div>
+      <div class="field">
+        <label for="currentBalance">Current EPF Balance (RM)</label>
+        <input type="number" id="currentBalance" value="20000" min="0" step="500">
+        <span class="field-hint">Check your i-Akaun app</span>
+      </div>
+      <div class="field">
+        <label for="dividendRate">EPF Dividend Rate (%)</label>
+        <input type="number" id="dividendRate" value="5.5" min="1" max="15" step="0.1">
+        <span class="field-hint">Historical avg: 5–6%. 2024: 6.3%</span>
+      </div>
+      <div class="field">
+        <label for="salaryGrowth">Annual Salary Growth (%)</label>
+        <input type="number" id="salaryGrowth" value="3" min="0" max="20" step="0.5">
+        <span class="field-hint">Expected annual pay rise</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-grid-4">
+      <div class="result-card">
+        <div class="result-label">Your Monthly</div>
+        <div class="result-value" id="res-employee">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Employer Monthly</div>
+        <div class="result-value" id="res-employer">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Total Monthly</div>
+        <div class="result-value" id="res-total-monthly">—</div>
+      </div>
+      <div class="result-card primary">
+        <div class="result-label">Projected Balance</div>
+        <div class="result-value" id="res-final">—</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="card-title" style="padding:16px 20px 0;">Year-by-Year Breakdown</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Age</th>
+              <th>Annual Contribution</th>
+              <th>Dividend Earned</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Explainer -->
+  <div class="explainer">
+    <h2>About EPF (KWSP)</h2>
+    <p>
+      The Employees Provident Fund (EPF), known in Malay as Kumpulan Wang Simpanan Pekerja (KWSP), is Malaysia's mandatory retirement savings scheme. It covers all private-sector employees and some public-sector workers. Both you and your employer contribute a percentage of your monthly salary into your EPF account every month.
+    </p>
+    <p>
+      EPF investments are managed by professional fund managers and historically declare dividends of 5–6% per year — well above Malaysia's fixed deposit rates. The 2024 dividend was 6.30% for conventional savings. Over a 30-year career, even modest monthly contributions compound into a substantial nest egg.
+    </p>
+
+    <h3>2025 Contribution Rates</h3>
+    <ul>
+      <li><strong>Employee (age &lt; 60):</strong> 11% of gross salary</li>
+      <li><strong>Employer (salary ≤ RM5,000):</strong> 13% of gross salary</li>
+      <li><strong>Employer (salary &gt; RM5,000):</strong> 12% of gross salary</li>
+      <li><strong>Employee (age 60–75):</strong> 5.5% (reduced rate)</li>
+    </ul>
+
+    <h3>EPF Account Structure</h3>
+    <p>
+      Since 2024, EPF uses a three-account structure: Account 1 (Akaun Persaraan, 75%) is locked until retirement; Account 2 (Akaun Sejahtera, 15%) can be used for housing, education, and health; Account 3 (Akaun Fleksibel, 10%) is freely withdrawable anytime. This calculator projects the total across all accounts.
+    </p>
+
+    <h3>Maximising Your EPF</h3>
+    <p>
+      Voluntary top-up contributions are allowed up to RM60,000 per year and are tax-deductible (as part of the RM7,000 EPF/life insurance relief). If your employer offers a Voluntary Contribution (VC) scheme, consider maximising it — it's one of the most tax-efficient savings vehicles available to Malaysians.
+    </p>
+  </div>
+</div>
+
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  function fmtRM(n) {
+    if (isNaN(n) || !isFinite(n)) return 'RM0.00';
+    return 'RM' + Math.abs(n).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calculate() {
+    const currentAge = parseInt(document.getElementById('currentAge').value) || 30;
+    const retirementAge = parseInt(document.getElementById('retirementAge').value) || 60;
+    const salary = parseFloat(document.getElementById('monthlySalary').value) || 0;
+    const currentBalance = parseFloat(document.getElementById('currentBalance').value) || 0;
+    const dividendRate = (parseFloat(document.getElementById('dividendRate').value) || 5.5) / 100;
+    const salaryGrowth = (parseFloat(document.getElementById('salaryGrowth').value) || 0) / 100;
+
+    const years = Math.max(retirementAge - currentAge, 0);
+
+    if (years <= 0 || salary <= 0) {
+      document.getElementById('results').style.display = 'none';
+      return;
+    }
+
+    // Employer rate depends on salary tier (use starting salary as proxy)
+    const employeeRate = 0.11;
+    let employerRate = salary <= 5000 ? 0.13 : 0.12;
+
+    // Monthly contributions (year 1)
+    const empMonthly = salary * employeeRate;
+    const empRMonthly = salary * employerRate;
+
+    document.getElementById('res-employee').textContent = fmtRM(empMonthly);
+    document.getElementById('res-employer').textContent = fmtRM(empRMonthly);
+    document.getElementById('res-total-monthly').textContent = fmtRM(empMonthly + empRMonthly);
+
+    const tableBody = document.getElementById('table-body');
+    tableBody.innerHTML = '';
+
+    let balance = currentBalance;
+    let currentSalary = salary;
+
+    for (let yr = 1; yr <= years; yr++) {
+      const age = currentAge + yr;
+      // Employer rate may change if salary crosses RM5,000
+      const erRate = currentSalary <= 5000 ? 0.13 : 0.12;
+      const annualContrib = currentSalary * (employeeRate + erRate) * 12;
+      const dividend = (balance + annualContrib / 2) * dividendRate; // approximate mid-year contributions
+      balance = balance + annualContrib + dividend;
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${new Date().getFullYear() + yr - 1}</td>
+        <td>${age}</td>
+        <td>${fmtRM(annualContrib)}</td>
+        <td class="interest-col">${fmtRM(dividend)}</td>
+        <td>${fmtRM(balance)}</td>
+      `;
+      tableBody.appendChild(row);
+
+      // Grow salary for next year
+      currentSalary *= (1 + salaryGrowth);
+    }
+
+    document.getElementById('res-final').textContent = fmtRM(balance);
+    document.getElementById('results').style.display = 'block';
+  }
+
+  // Listen to all inputs
+  document.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('input', calculate);
+  });
+
+  // Run on load
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+
+</body>
+</html>

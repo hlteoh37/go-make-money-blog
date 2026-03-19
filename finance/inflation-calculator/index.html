@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inflation Calculator — What Will Your Money Be Worth?</title>
+  <meta name="description" content="Calculate how inflation erodes purchasing power over time. See what today's dollars will be worth in the future.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/inflation-calculator/">
+  <meta property="og:title" content="Inflation Calculator — What Will Your Money Be Worth?">
+  <meta property="og:description" content="Calculate how inflation erodes purchasing power over time. See what today's dollars will be worth in the future.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/inflation-calculator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Inflation Calculator — What Will Your Money Be Worth?">
+  <meta name="twitter:description" content="Calculate how inflation erodes purchasing power over time. See what today's dollars will be worth in the future.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --orange: #d29922;
+      --red: #f85149;
+      --text: #e6edf3;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    header .logo span { color: var(--accent); }
+
+    .back-link {
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 1.4rem; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input[type="number"] {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 9px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
+    }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    /* Direction toggle */
+    .toggle-group {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      background: var(--bg);
+      color: var(--muted);
+      border: none;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      text-align: center;
+    }
+
+    .toggle-btn:first-child {
+      border-right: 1px solid var(--border);
+    }
+
+    .toggle-btn.active {
+      background: var(--accent);
+      color: #0d1117;
+      font-weight: 700;
+    }
+
+    .toggle-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .calc-btn {
+      margin-top: 20px;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      width: 100%;
+    }
+
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    #results { display: none; }
+
+    /* Headline result */
+    .headline-result {
+      background: var(--card);
+      border: 1px solid var(--orange);
+      border-radius: 10px;
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      text-align: center;
+      box-shadow: 0 0 0 1px rgba(210,153,34,0.1);
+    }
+
+    .headline-result .hl-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .headline-result .hl-value {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .headline-result .hl-sub {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .headline-result .hl-plain {
+      margin-top: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Results summary cards */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .result-card.danger { border-color: rgba(248,81,73,0.4); }
+    .result-card.good { border-color: rgba(63,185,80,0.4); }
+
+    .result-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.4px;
+    }
+
+    .result-card.danger .result-value { color: var(--red); }
+    .result-card.good .result-value { color: var(--green); }
+
+    /* Table */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+    }
+
+    th {
+      padding: 10px 14px;
+      text-align: right;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th:first-child { text-align: center; }
+
+    td {
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(48,54,61,0.5);
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    td:first-child { text-align: center; color: var(--muted); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,0.04); }
+
+    /* Progress bar column */
+    .bar-cell {
+      width: 120px;
+      padding: 9px 14px;
+    }
+
+    .bar-track {
+      background: var(--border);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--orange);
+      transition: width 0.3s;
+    }
+
+    .bar-fill.depleted { background: var(--red); }
+
+    /* Explainer */
+    .explainer {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .explainer h2 {
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .explainer h3 {
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin: 16px 0 6px;
+    }
+
+    .explainer p { margin-bottom: 10px; }
+
+    .explainer .formula-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+
+    /* Floating BMAC */
+    .bmac-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+    }
+
+    .bmac-float a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFDD00;
+      color: #000;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .bmac-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    .bmac-float .bmac-icon { font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/profiterole-blog/" class="logo">Profiter<span>ole</span></a>
+  <span style="color:var(--border);">|</span>
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+</header>
+
+<div class="container">
+  <p style="margin-bottom:8px;">
+    <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+  </p>
+
+  <h1 class="page-title">Inflation Calculator</h1>
+  <p class="page-subtitle">See how inflation silently erodes your money's purchasing power — year by year.</p>
+
+  <div class="card">
+    <div class="card-title">Settings</div>
+
+    <div style="margin-bottom:20px;">
+      <div class="toggle-label">Direction</div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="btn-future" onclick="setDirection('future')">Future Value &rarr; (Erosion)</button>
+        <button class="toggle-btn" id="btn-past" onclick="setDirection('past')">&larr; Past Value (Required)</button>
+      </div>
+      <p id="direction-hint" style="font-size:0.8rem; color:var(--muted); margin-top:6px;">
+        How much is $100,000 <em>today</em> worth in 20 years? Answer: less than you think.
+      </p>
+    </div>
+
+    <div class="fields-grid">
+      <div class="field">
+        <label for="amount" id="amount-label">Amount ($) — Today's Value</label>
+        <input type="number" id="amount" value="100000" min="1" step="1000">
+        <span class="field-hint">The sum you want to analyze</span>
+      </div>
+      <div class="field">
+        <label for="inflation">Inflation Rate (%)</label>
+        <input type="number" id="inflation" value="3" min="0.1" max="50" step="0.1">
+        <span class="field-hint">US historical avg ≈ 3.2%</span>
+      </div>
+      <div class="field">
+        <label for="years">Years</label>
+        <input type="number" id="years" value="20" min="1" max="100" step="1">
+        <span class="field-hint">Time horizon</span>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+
+    <!-- Headline -->
+    <div class="headline-result">
+      <div class="hl-label" id="hl-label">Purchasing Power After Inflation</div>
+      <div class="hl-value" id="hl-value">—</div>
+      <div class="hl-sub" id="hl-sub">—</div>
+      <div class="hl-plain" id="hl-plain">—</div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="result-label" id="card1-label">Original Amount</div>
+        <div class="result-value" id="res-original">—</div>
+      </div>
+      <div class="result-card danger">
+        <div class="result-label" id="card2-label">Lost to Inflation</div>
+        <div class="result-value" id="res-lost">—</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Purchasing Power Retained</div>
+        <div class="result-value" id="res-pct">—</div>
+      </div>
+    </div>
+
+    <!-- Year-by-year table -->
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="card-title" style="padding:16px 20px 0;" id="table-title">Year-by-Year Value Erosion</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th id="th-value">Purchasing Power</th>
+              <th>% of Original</th>
+              <th>Lost</th>
+              <th style="text-align:left; padding-left:14px;">Remaining</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <hr>
+
+  <div class="explainer">
+    <h2>How Inflation Erodes Wealth</h2>
+    <p>
+      Inflation is the rate at which prices rise over time. When prices go up, each dollar you hold buys less. A 3% annual inflation rate might sound modest, but over 20 years it cuts your purchasing power roughly in half. Over 30 years, you lose nearly two-thirds of it.
+    </p>
+    <p>
+      This isn't a theoretical risk. It's the default outcome for any cash sitting idle — in a savings account earning 0.5% while inflation runs at 3%, you're losing 2.5% of real purchasing power every year.
+    </p>
+
+    <h3>The Formula</h3>
+    <div class="formula-block">Future Purchasing Power = Amount / (1 + inflation_rate)^years
+
+Required Amount = Amount × (1 + inflation_rate)^years</div>
+    <p>
+      The first formula answers: "What will my $X be worth in N years?" The second answers: "How much money will I need in N years to match today's $X in purchasing power?"
+    </p>
+
+    <h3>The Rule of 70</h3>
+    <p>
+      A quick mental shortcut: divide 70 by the inflation rate to estimate how many years it takes for your purchasing power to halve. At 3% inflation, your money loses half its real value in roughly 23 years (70 ÷ 3 = 23.3). At 7%, it takes just 10 years.
+    </p>
+
+    <h3>What Beats Inflation?</h3>
+    <p>
+      Historically, broad stock market indices (like the S&amp;P 500) have returned roughly 7% annually after inflation. Real estate has historically kept pace. Long-term Treasury bonds and I-Bonds are explicitly inflation-linked. Cash and basic savings accounts generally lose to inflation over long periods.
+    </p>
+    <p>
+      The point isn't to fear inflation — it's to understand that money sitting still is money slowly evaporating. Putting capital to work in assets that grow faster than inflation is how wealth is preserved across decades.
+    </p>
+
+    <h3>Historical US Inflation Reference</h3>
+    <p>
+      The Federal Reserve targets 2% inflation. The US long-run average since 1913 is approximately 3.2%. The 1970s saw peaks above 13%. Post-pandemic 2021–2023 inflation peaked around 9%. For long-term planning, 2.5–3.5% is a reasonable base assumption.
+    </p>
+  </div>
+</div>
+
+<!-- Floating Buy Me a Coffee -->
+<div class="bmac-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="bmac-icon">&#9749;</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  let direction = 'future'; // 'future' or 'past'
+
+  function setDirection(dir) {
+    direction = dir;
+    document.getElementById('btn-future').classList.toggle('active', dir === 'future');
+    document.getElementById('btn-past').classList.toggle('active', dir === 'past');
+
+    const amountLabel = document.getElementById('amount-label');
+    const hint = document.getElementById('direction-hint');
+
+    if (dir === 'future') {
+      amountLabel.textContent = "Amount ($) — Today's Value";
+      hint.innerHTML = "How much is your money <em>today</em> worth in the future? Answer: less than you think.";
+    } else {
+      amountLabel.textContent = "Amount ($) — Target Future Value";
+      hint.innerHTML = "How much money do you need in the future to match today's purchasing power?";
+    }
+    calculate();
+  }
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function fmtPrecise(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calculate() {
+    const amount = parseFloat(document.getElementById('amount').value) || 0;
+    const inflation = parseFloat(document.getElementById('inflation').value) || 0;
+    const years = parseInt(document.getElementById('years').value) || 1;
+
+    if (amount <= 0 || inflation <= 0 || years <= 0) return;
+
+    const r = inflation / 100;
+    const today = new Date().getFullYear();
+
+    let finalValue, lostAmount, retainedPct;
+    let tableTitle, thValue, hlLabel, hlSub;
+
+    if (direction === 'future') {
+      // Future purchasing power of today's amount
+      finalValue = amount / Math.pow(1 + r, years);
+      lostAmount = amount - finalValue;
+      retainedPct = (finalValue / amount) * 100;
+      tableTitle = 'Year-by-Year Purchasing Power Erosion';
+      thValue = 'Purchasing Power';
+      hlLabel = 'Purchasing Power in ' + (today + years);
+      hlSub = 'of today\'s ' + fmt(amount);
+    } else {
+      // How much you need in the future to match today's amount
+      finalValue = amount * Math.pow(1 + r, years);
+      lostAmount = finalValue - amount;
+      retainedPct = (amount / finalValue) * 100;
+      tableTitle = 'Year-by-Year Amount Required';
+      thValue = 'Amount Needed';
+      hlLabel = 'Amount Needed in ' + (today + years);
+      hlSub = 'to equal today\'s ' + fmt(amount) + ' in purchasing power';
+    }
+
+    // Update headline
+    document.getElementById('hl-label').textContent = hlLabel;
+    document.getElementById('hl-value').textContent = fmt(finalValue);
+    document.getElementById('hl-sub').textContent = hlSub;
+
+    if (direction === 'future') {
+      const pctLost = 100 - retainedPct;
+      document.getElementById('hl-plain').innerHTML =
+        'In other words: your <strong>' + fmt(amount) + ' today</strong> will have the purchasing power of <strong>' + fmt(finalValue) + '</strong> in ' + years + ' year' + (years !== 1 ? 's' : '') + ' at ' + inflation + '% annual inflation — that\'s a loss of <strong>' + pctLost.toFixed(1) + '%</strong> of real value.';
+    } else {
+      document.getElementById('hl-plain').innerHTML =
+        'In other words: to have the same purchasing power as <strong>' + fmt(amount) + ' today</strong>, you\'ll need <strong>' + fmt(finalValue) + '</strong> in ' + years + ' year' + (years !== 1 ? 's' : '') + ' at ' + inflation + '% annual inflation.';
+    }
+
+    // Summary cards
+    document.getElementById('res-original').textContent = fmt(amount);
+    document.getElementById('res-lost').textContent = fmt(lostAmount);
+    document.getElementById('res-pct').textContent = retainedPct.toFixed(1) + '%';
+
+    if (direction === 'past') {
+      document.getElementById('card2-label').textContent = 'Additional Amount Required';
+    } else {
+      document.getElementById('card2-label').textContent = 'Lost to Inflation';
+    }
+
+    // Table
+    document.getElementById('table-title').textContent = tableTitle;
+    document.getElementById('th-value').textContent = thValue;
+
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+
+    for (let y = 1; y <= years; y++) {
+      let val;
+      if (direction === 'future') {
+        val = amount / Math.pow(1 + r, y);
+      } else {
+        val = amount * Math.pow(1 + r, y);
+      }
+      const pct = direction === 'future' ? (val / amount) * 100 : (amount / val) * 100;
+      const lost = direction === 'future' ? (amount - val) : (val - amount);
+      const barPct = Math.min(100, Math.max(0, pct));
+      const isDepleted = barPct < 50;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${y}</td>
+        <td>${fmt(val)}</td>
+        <td>${pct.toFixed(1)}%</td>
+        <td style="color:var(--red);">${fmt(lost)}</td>
+        <td class="bar-cell" style="text-align:left;">
+          <div class="bar-track">
+            <div class="bar-fill${isDepleted ? ' depleted' : ''}" style="width:${barPct.toFixed(1)}%;"></div>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    const resultsEl = document.getElementById('results');
+    resultsEl.style.display = 'block';
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.addEventListener('DOMContentLoaded', calculate);
+</script>
+</body>
+</html>

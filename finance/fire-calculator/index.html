@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIRE Calculator — Financial Independence Number Calculator</title>
+  <meta name="description" content="Calculate your FIRE number and how many years until you can retire early. Free FIRE calculator — no login required.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/fire-calculator/">
+  <meta property="og:title" content="FIRE Calculator — Financial Independence Number Calculator">
+  <meta property="og:description" content="Calculate your FIRE number and how many years until you can retire early. Free FIRE calculator — no login required.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/fire-calculator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="FIRE Calculator — Financial Independence Number Calculator">
+  <meta name="twitter:description" content="Calculate your FIRE number and how many years until you can retire early. Free FIRE calculator — no login required.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --muted: #8b949e;
+      --green: #3fb950;
+      --text: #e6edf3;
+      --gold: #f0a500;
+      --red: #f85149;
+      --orange: #d29922;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav a.brand {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    nav a.brand span.emoji { font-size: 1.2rem; }
+    nav a.back {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-left: auto;
+      transition: color 0.15s;
+    }
+    nav a.back:hover { color: var(--accent); }
+
+    /* LAYOUT */
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+    }
+
+    /* HEADER */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    .page-header h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+    .page-header .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .fire-badge {
+      display: inline-block;
+      background: rgba(240, 165, 0, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(240, 165, 0, 0.3);
+      border-radius: 20px;
+      padding: 0.2rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card h2 .icon {
+      width: 22px;
+      height: 22px;
+      background: rgba(88, 166, 255, 0.15);
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    /* FORM GRID */
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 520px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .page-header h1 { font-size: 1.5rem; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .field label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .field .hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: -0.25rem;
+      margin-bottom: 0.1rem;
+    }
+    .field input[type="number"] {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 0.55rem 0.75rem;
+      width: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -moz-appearance: textfield;
+    }
+    .field input[type="number"]::-webkit-outer-spin-button,
+    .field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .field input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+    }
+
+    /* BUTTON */
+    .btn-calc {
+      width: 100%;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      margin-top: 1.25rem;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+    .btn-calc:hover { background: #79b8ff; }
+    .btn-calc:active { transform: scale(0.99); }
+
+    /* RESULTS */
+    #results { display: none; }
+
+    .fire-number-display {
+      text-align: center;
+      padding: 1.75rem 1rem;
+    }
+    .fire-number-display .label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+    .fire-number-display .value {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--green);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .fire-number-display .value-sub {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* PROGRESS BAR */
+    .progress-section { margin-top: 1.25rem; }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+    }
+    .progress-header .prog-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .progress-header .prog-pct {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .progress-bar-track {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      height: 12px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0%;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 0;
+    }
+    @media (max-width: 520px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+    .stat-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-box .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
+    }
+    .stat-box .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .stat-box .stat-unit {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .stat-box.highlight .stat-value { color: var(--green); }
+
+    /* MONTHLY SAVINGS TABLE */
+    .monthly-table { width: 100%; border-collapse: collapse; }
+    .monthly-table th {
+      text-align: left;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0 0.75rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .monthly-table th:last-child { text-align: right; }
+    .monthly-table td {
+      padding: 0.7rem 0.75rem;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+    }
+    .monthly-table td:last-child {
+      text-align: right;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .monthly-table td .horizon-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: block;
+    }
+    .monthly-table tr:last-child td { border-bottom: none; }
+    .timeline-badge {
+      display: inline-block;
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      border-radius: 20px;
+      padding: 0.1rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .timeline-badge.orange {
+      background: rgba(210, 153, 34, 0.15);
+      color: var(--orange);
+      border-color: rgba(210, 153, 34, 0.3);
+    }
+
+    /* EXPLAINER */
+    .explainer h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+      margin-top: 1.1rem;
+    }
+    .explainer h3:first-child { margin-top: 0; }
+    .explainer p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .explainer .formula-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin: 0.6rem 0;
+      word-break: break-all;
+    }
+    .explainer ul {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0;
+    }
+    .explainer ul li {
+      font-size: 0.88rem;
+      color: var(--muted);
+      padding: 0.3rem 0;
+      padding-left: 1.1rem;
+      position: relative;
+    }
+    .explainer ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+
+    /* FLOATING COFFEE */
+    .coffee-float {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 200;
+    }
+    .coffee-float a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--gold);
+      color: #1a1200;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.6rem 1rem;
+      border-radius: 50px;
+      box-shadow: 0 4px 20px rgba(240, 165, 0, 0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    .coffee-float a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(240, 165, 0, 0.5);
+    }
+    .coffee-float .emoji { font-size: 1rem; }
+
+    /* DIVIDER */
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+
+    /* ALERT (already-fire) */
+    .alert-fire {
+      background: rgba(63, 185, 80, 0.1);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      color: var(--green);
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/profiterole-blog/" class="brand">
+    <span class="emoji">🥐</span> Profiterole
+  </a>
+  <a href="/profiterole-blog/finance/" class="back">← All Calculators</a>
+</nav>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="fire-badge">🔥 FIRE CALCULATOR</div>
+    <h1>Financial Independence Number Calculator</h1>
+    <p class="subtitle">Find your FIRE number, track your progress, and see exactly when you can retire early.</p>
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="card">
+    <h2><span class="icon">📝</span> Your Numbers</h2>
+    <div class="fields-grid">
+
+      <div class="field">
+        <label for="annualExpenses">Annual Expenses ($)</label>
+        <span class="hint">How much do you spend per year?</span>
+        <input type="number" id="annualExpenses" value="40000" min="1" step="1000">
+      </div>
+
+      <div class="field">
+        <label for="withdrawalRate">Withdrawal Rate (%)</label>
+        <span class="hint">Safe withdrawal rate (4% is standard)</span>
+        <input type="number" id="withdrawalRate" value="4" min="2" max="10" step="0.1">
+      </div>
+
+      <div class="field">
+        <label for="currentSavings">Current Savings ($)</label>
+        <span class="hint">Total invested assets today</span>
+        <input type="number" id="currentSavings" value="50000" min="0" step="1000">
+      </div>
+
+      <div class="field">
+        <label for="annualSavings">Annual Savings ($)</label>
+        <span class="hint">How much you invest each year</span>
+        <input type="number" id="annualSavings" value="20000" min="0" step="1000">
+      </div>
+
+      <div class="field">
+        <label for="expectedReturn">Expected Return (%)</label>
+        <span class="hint">Annual investment return (7% is historical average)</span>
+        <input type="number" id="expectedReturn" value="7" min="0.1" max="30" step="0.5">
+      </div>
+
+    </div>
+
+    <button class="btn-calc" id="calcBtn" onclick="calculate()">Calculate My FIRE Number →</button>
+  </div>
+
+  <!-- RESULTS (hidden until calculated) -->
+  <div id="results">
+
+    <!-- FIRE NUMBER -->
+    <div class="card">
+      <div class="fire-number-display">
+        <div class="label">Your FIRE Number</div>
+        <div class="value" id="fireNumberDisplay">$1,000,000</div>
+        <div class="value-sub" id="fireNumberSub">Annual expenses ÷ withdrawal rate</div>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="prog-label">Current Progress</span>
+          <span class="prog-pct" id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:0.4rem;">
+          <span style="font-size:0.78rem;color:var(--muted);" id="currentSavingsLabel">$0 saved</span>
+          <span style="font-size:0.78rem;color:var(--muted);" id="fireNumberLabel">$0 needed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALREADY FIRE ALERT (conditionally shown) -->
+    <div id="alreadyFireAlert" style="display:none;margin-bottom:1.25rem;">
+      <div class="alert-fire">
+        🎉 Congratulations — you've already reached Financial Independence! Your savings can sustain your expenses indefinitely.
+      </div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-box highlight">
+        <div class="stat-label">Years to FIRE</div>
+        <div class="stat-value" id="yearsToFire">—</div>
+        <div class="stat-unit" id="fireYear">at current savings rate</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Amount Remaining</div>
+        <div class="stat-value" id="amountRemaining">—</div>
+        <div class="stat-unit">to reach FIRE</div>
+      </div>
+    </div>
+
+    <!-- MONTHLY SAVINGS NEEDED -->
+    <div class="card" id="monthlySavingsCard">
+      <h2><span class="icon">📅</span> Monthly Savings Needed to FIRE in...</h2>
+      <table class="monthly-table">
+        <thead>
+          <tr>
+            <th>Target Timeline</th>
+            <th>Monthly Savings Required</th>
+          </tr>
+        </thead>
+        <tbody id="monthlySavingsBody">
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /#results -->
+
+  <!-- EXPLAINER -->
+  <div class="card explainer">
+    <h2><span class="icon">📖</span> What is FIRE?</h2>
+
+    <h3>The Concept</h3>
+    <p>FIRE stands for <strong style="color:var(--text)">Financial Independence, Retire Early</strong>. The idea: accumulate enough invested assets so that your portfolio's annual returns cover all your living expenses — forever. You don't need to "retire" at 65. You retire when your money works harder than you do.</p>
+
+    <h3>The 4% Rule</h3>
+    <p>The 4% rule comes from the <strong style="color:var(--text)">Trinity Study</strong> (1998), which found that a portfolio of stocks and bonds survived 30+ years of withdrawals 95% of the time when withdrawing 4% per year. It's not a guarantee — it's a historically-grounded guideline.</p>
+    <div class="formula-block">FIRE Number = Annual Expenses ÷ Withdrawal Rate</div>
+    <p>At 4%: spend $40,000/year → need $1,000,000 invested. At 3%: need $1,333,333 (more conservative). At 5%: need $800,000 (riskier).</p>
+
+    <h3>FIRE variants</h3>
+    <ul>
+      <li><strong style="color:var(--text)">Lean FIRE</strong> — retire on a very low budget (&lt;$40k/year). Maximum frugality.</li>
+      <li><strong style="color:var(--text)">Fat FIRE</strong> — retire with a comfortable lifestyle ($80k-$100k+/year).</li>
+      <li><strong style="color:var(--text)">Barista FIRE</strong> — reach partial FI, then do part-time work to cover remaining expenses.</li>
+      <li><strong style="color:var(--text)">Coast FIRE</strong> — save enough early that compound growth alone carries you to full FIRE by retirement age.</li>
+    </ul>
+
+    <hr class="divider">
+    <p style="font-size:0.8rem;color:var(--muted);">This calculator is for educational purposes only and does not constitute financial advice. Results are estimates based on assumed constant returns, which real markets do not provide. Consider consulting a licensed financial advisor.</p>
+  </div>
+
+</div><!-- /.container -->
+
+<!-- FLOATING BUY ME A COFFEE -->
+<div class="coffee-float">
+  <a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener">
+    <span class="emoji">☕</span> Buy me a coffee
+  </a>
+</div>
+
+<script>
+  // Format number as USD currency string
+  function fmtUSD(n, decimals) {
+    if (!isFinite(n)) return '∞';
+    var d = decimals === undefined ? 0 : decimals;
+    return '$' + n.toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  // Format a number with commas
+  function fmtNum(n, decimals) {
+    if (!isFinite(n)) return '∞';
+    var d = decimals === undefined ? 1 : decimals;
+    return n.toFixed(d).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  // Calculate years until portfolio reaches target
+  // FV = PV*(1+r)^n + PMT*((1+r)^n - 1)/r
+  // Solve for n: iterate (can't solve analytically with both PV and PMT simply)
+  function yearsToReach(currentSavings, annualSavings, rate, target) {
+    if (currentSavings >= target) return 0;
+    if (annualSavings <= 0 && rate <= 0) return Infinity;
+    var r = rate / 100;
+    var portfolio = currentSavings;
+    for (var y = 1; y <= 200; y++) {
+      portfolio = portfolio * (1 + r) + annualSavings;
+      if (portfolio >= target) return y;
+    }
+    return Infinity;
+  }
+
+  // Monthly savings needed so that, starting from currentSavings,
+  // we reach target in exactly `years` years at `rate` % annual return
+  // FV = PV*(1+r)^n + PMT_annual*((1+r)^n - 1)/r
+  // PMT_annual = (target - PV*(1+r)^n) * r / ((1+r)^n - 1)
+  // PMT_monthly = PMT_annual / 12
+  function monthlySavingsNeeded(currentSavings, rate, target, years) {
+    var r = rate / 100;
+    var n = years;
+    var fvCurrent = currentSavings * Math.pow(1 + r, n);
+    var remaining = target - fvCurrent;
+    if (remaining <= 0) return 0;
+    if (r === 0) return (remaining / n) / 12;
+    var annuityFactor = (Math.pow(1 + r, n) - 1) / r;
+    var annualNeeded = remaining / annuityFactor;
+    return annualNeeded / 12;
+  }
+
+  function calculate() {
+    var expenses   = parseFloat(document.getElementById('annualExpenses').value)  || 0;
+    var wdRate     = parseFloat(document.getElementById('withdrawalRate').value)   || 4;
+    var savings    = parseFloat(document.getElementById('currentSavings').value)   || 0;
+    var annualSav  = parseFloat(document.getElementById('annualSavings').value)    || 0;
+    var retRate    = parseFloat(document.getElementById('expectedReturn').value)   || 7;
+
+    // Guard
+    if (expenses <= 0) { alert('Please enter your annual expenses.'); return; }
+    if (wdRate <= 0)   { alert('Withdrawal rate must be greater than 0.'); return; }
+
+    // Core calculation
+    var fireNumber = expenses / (wdRate / 100);
+    var progressPct = Math.min((savings / fireNumber) * 100, 100);
+    var remaining = Math.max(fireNumber - savings, 0);
+    var years = yearsToReach(savings, annualSav, retRate, fireNumber);
+
+    // Show results section
+    document.getElementById('results').style.display = 'block';
+
+    // FIRE number
+    document.getElementById('fireNumberDisplay').textContent = fmtUSD(fireNumber);
+    document.getElementById('fireNumberSub').textContent =
+      fmtUSD(expenses) + ' ÷ ' + wdRate + '% withdrawal rate';
+
+    // Progress bar
+    setTimeout(function() {
+      document.getElementById('progressBar').style.width = progressPct.toFixed(2) + '%';
+    }, 50);
+    document.getElementById('progressPct').textContent = progressPct.toFixed(1) + '%';
+    document.getElementById('currentSavingsLabel').textContent = fmtUSD(savings) + ' saved';
+    document.getElementById('fireNumberLabel').textContent   = fmtUSD(fireNumber) + ' needed';
+
+    // Already FIRE?
+    var alreadyFire = savings >= fireNumber;
+    document.getElementById('alreadyFireAlert').style.display = alreadyFire ? 'block' : 'none';
+
+    // Stats
+    if (alreadyFire) {
+      document.getElementById('yearsToFire').textContent = '0';
+      document.getElementById('fireYear').textContent = 'You\'re already there!';
+      document.getElementById('amountRemaining').textContent = '$0';
+    } else if (!isFinite(years)) {
+      document.getElementById('yearsToFire').textContent = '∞';
+      document.getElementById('fireYear').textContent = 'Increase savings rate to retire';
+      document.getElementById('amountRemaining').textContent = fmtUSD(remaining);
+    } else {
+      var currentYear = new Date().getFullYear();
+      document.getElementById('yearsToFire').textContent = fmtNum(years, 0);
+      document.getElementById('fireYear').textContent = 'by ~' + (currentYear + years);
+      document.getElementById('amountRemaining').textContent = fmtUSD(remaining);
+    }
+
+    // Monthly savings table
+    var horizons = [10, 15, 20];
+    var tbody = document.getElementById('monthlySavingsBody');
+    tbody.innerHTML = '';
+
+    var isFasterThanNeeded = !isFinite(years) ? false : true;
+
+    horizons.forEach(function(h) {
+      var monthly = monthlySavingsNeeded(savings, retRate, fireNumber, h);
+      var row = document.createElement('tr');
+      var isFeasible = monthly >= 0;
+      var isAlreadyAchievable = isFinite(years) && years <= h;
+
+      var badgeHtml = '';
+      if (monthly <= 0 || isAlreadyAchievable) {
+        badgeHtml = '<span class="timeline-badge">Already on track</span>';
+      }
+
+      row.innerHTML =
+        '<td>' +
+          '<strong>' + h + ' years</strong>' +
+          '<span class="horizon-label">FIRE by ~' + (new Date().getFullYear() + h) + '</span>' +
+        '</td>' +
+        '<td>' +
+          (monthly <= 0
+            ? '<span style="color:var(--green);font-weight:700;">$0 ' + badgeHtml + '</span>'
+            : '<span>' + fmtUSD(monthly, 0) + '/mo</span>'
+          ) +
+        '</td>';
+      tbody.appendChild(row);
+    });
+
+    // Scroll to results smoothly
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Allow Enter key to trigger calculation
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') calculate();
+  });
+
+  // Auto-calculate on load with defaults
+  window.addEventListener('load', function() {
+    calculate();
+  });
+</script>
+
+</body>
+</html>

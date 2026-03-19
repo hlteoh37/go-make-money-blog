@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savings Goal Calculator — Monthly Savings Planner</title>
+  <meta name="description" content="Calculate exactly how much to save each month to reach your financial goal by your target date.">
+  <meta name="keywords" content="savings goal calculator, monthly savings calculator, how much to save per month, savings planner, financial goal calculator">
+  <meta property="og:title" content="Savings Goal Calculator — Monthly Savings Planner">
+  <meta property="og:description" content="Calculate exactly how much to save each month to reach your financial goal by your target date.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/finance/savings-goal/">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/finance/savings-goal/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>💰</text></svg>">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 40px 20px 100px;
+    }
+    .container { max-width: 760px; margin: 0 auto; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: #58a6ff; text-decoration: none; font-size: 0.85rem; margin-bottom: 32px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .hero { margin-bottom: 32px; }
+    .hero h1 {
+      font-size: 2rem; font-weight: 700; color: #f0f6fc;
+      margin-bottom: 8px; line-height: 1.25;
+    }
+    .hero p { color: #8b949e; font-size: 1rem; line-height: 1.6; }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: #8b949e; font-weight: 600; margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 0.85rem; font-weight: 500; color: #c9d1d9;
+    }
+    .field .hint { font-size: 0.75rem; color: #8b949e; }
+    .field input[type="number"],
+    .field input[type="date"] {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 1rem;
+      padding: 10px 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus { border-color: #58a6ff; }
+    .field input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.7);
+      cursor: pointer;
+    }
+
+    .calc-btn {
+      margin-top: 24px;
+      width: 100%;
+      background: #238636;
+      border: 1px solid #2ea043;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 12px 24px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .calc-btn:hover { background: #2ea043; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    .results { display: none; }
+    .results.visible { display: block; }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 560px) { .results-grid { grid-template-columns: 1fr; } }
+
+    .stat-box {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-box.highlight {
+      border-color: #3fb950;
+      background: rgba(63, 185, 80, 0.06);
+    }
+    .stat-label {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #8b949e; font-weight: 600; margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 1.9rem; font-weight: 700; color: #e6edf3; line-height: 1;
+    }
+    .stat-box.highlight .stat-value { color: #3fb950; }
+    .stat-sub {
+      font-size: 0.78rem; color: #8b949e; margin-top: 6px;
+    }
+
+    .progress-section { margin-top: 4px; }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.82rem; color: #8b949e; margin-bottom: 8px;
+    }
+    .progress-track {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 20px;
+      height: 14px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 20px;
+      background: linear-gradient(90deg, #238636, #3fb950);
+      transition: width 0.6s ease;
+    }
+    .progress-pct {
+      font-size: 0.82rem; color: #3fb950; font-weight: 600;
+      text-align: right; margin-top: 6px;
+    }
+
+    .note-box {
+      background: rgba(88, 166, 255, 0.06);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.83rem;
+      color: #8b949e;
+      line-height: 1.6;
+      margin-top: 16px;
+    }
+    .note-box strong { color: #58a6ff; }
+
+    .coffee-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #FFDD00;
+      color: #000;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      z-index: 100;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .coffee-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    }
+
+    .error-msg {
+      background: rgba(248, 81, 73, 0.1);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #f85149;
+      font-size: 0.88rem;
+      margin-top: 12px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="/profiterole-blog/finance/" class="back-link">&#8592; All Calculators</a>
+
+  <div class="hero">
+    <h1>Savings Goal Calculator</h1>
+    <p>Enter your goal, your target date, and your expected return — get the exact monthly savings amount you need.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Goal</div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="goalAmount">Goal Amount ($)</label>
+        <input type="number" id="goalAmount" value="10000" min="0" step="100">
+      </div>
+      <div class="field">
+        <label for="currentSavings">Current Savings ($)</label>
+        <input type="number" id="currentSavings" value="0" min="0" step="100">
+        <span class="hint">What you've already saved toward this goal</span>
+      </div>
+      <div class="field">
+        <label for="targetDate">Target Date</label>
+        <input type="date" id="targetDate">
+      </div>
+      <div class="field">
+        <label for="annualReturn">Expected Annual Return (%)</label>
+        <input type="number" id="annualReturn" value="4" min="0" max="30" step="0.1">
+        <span class="hint">Use 0% for no-interest savings account</span>
+      </div>
+    </div>
+    <div class="error-msg" id="errorMsg"></div>
+    <button class="calc-btn" onclick="calculate()">Calculate Monthly Savings</button>
+  </div>
+
+  <div class="results" id="results">
+    <div class="card">
+      <div class="card-title">Results</div>
+      <div class="results-grid">
+        <div class="stat-box highlight">
+          <div class="stat-label">Monthly Savings Needed</div>
+          <div class="stat-value" id="monthlySavings">—</div>
+          <div class="stat-sub" id="monthlySubtext"></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Time to Goal</div>
+          <div class="stat-value" id="timeToGoal">—</div>
+          <div class="stat-sub" id="timeSubtext"></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total Contributions</div>
+          <div class="stat-value" id="totalContributions">—</div>
+          <div class="stat-sub">Money you put in</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Interest Earned</div>
+          <div class="stat-value" id="interestEarned">—</div>
+          <div class="stat-sub">Compounding return</div>
+        </div>
+      </div>
+
+      <div class="progress-section" id="progressSection" style="display:none">
+        <div class="card-title" style="margin-bottom:12px;">Progress Toward Goal</div>
+        <div class="progress-label">
+          <span id="progressSavedLabel">Saved so far</span>
+          <span id="progressGoalLabel">Goal</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="progress-pct" id="progressPct"></div>
+      </div>
+
+      <div class="note-box">
+        <strong>Assumes</strong> monthly contributions compounded monthly.
+        Returns are not guaranteed — use a conservative rate (3–5%) for realistic planning.
+        Adjust the return rate to 0% to see what pure savings looks like.
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="https://buymeacoffee.com/gl89tu25lp" target="_blank" rel="noopener" class="coffee-btn">
+  ☕ Buy me a coffee
+</a>
+
+<script>
+  // Set default target date to 2 years from now
+  (function() {
+    var d = new Date();
+    d.setFullYear(d.getFullYear() + 2);
+    document.getElementById('targetDate').value = d.toISOString().split('T')[0];
+  })();
+
+  function fmt(n) {
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function calculate() {
+    var errorEl = document.getElementById('errorMsg');
+    errorEl.classList.remove('visible');
+
+    var goal = parseFloat(document.getElementById('goalAmount').value) || 0;
+    var current = parseFloat(document.getElementById('currentSavings').value) || 0;
+    var dateStr = document.getElementById('targetDate').value;
+    var annualRate = parseFloat(document.getElementById('annualReturn').value) || 0;
+
+    // Validate
+    if (goal <= 0) {
+      errorEl.textContent = 'Please enter a goal amount greater than $0.';
+      errorEl.classList.add('visible');
+      return;
+    }
+    if (!dateStr) {
+      errorEl.textContent = 'Please select a target date.';
+      errorEl.classList.add('visible');
+      return;
+    }
+    var targetDate = new Date(dateStr + 'T00:00:00');
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    if (targetDate <= today) {
+      errorEl.textContent = 'Target date must be in the future.';
+      errorEl.classList.add('visible');
+      return;
+    }
+    if (current >= goal) {
+      errorEl.textContent = 'You\'ve already reached (or exceeded) your goal!';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    // Calculate months
+    var months = (targetDate.getFullYear() - today.getFullYear()) * 12
+                 + (targetDate.getMonth() - today.getMonth());
+    if (targetDate.getDate() > today.getDate()) months += 0; // partial month already counted
+
+    if (months < 1) {
+      errorEl.textContent = 'Target date must be at least one month away.';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    var remaining = goal - current;
+    var monthlyRate = annualRate / 100 / 12;
+    var monthly;
+
+    if (monthlyRate === 0) {
+      // No interest: simple division
+      monthly = remaining / months;
+      // Future value of current savings is just current savings (no growth)
+      var interestOnCurrent = 0;
+      var totalInterest = 0;
+      var totalContrib = monthly * months;
+    } else {
+      // Future value of current savings
+      var fvCurrent = current * Math.pow(1 + monthlyRate, months);
+      var remainingAfterCurrent = goal - fvCurrent;
+
+      if (remainingAfterCurrent <= 0) {
+        // Current savings + returns alone will hit goal
+        monthly = 0;
+        var interestOnCurrent = fvCurrent - current;
+        var totalInterest = interestOnCurrent;
+        var totalContrib = 0;
+      } else {
+        // PMT formula: monthly = FV * r / ((1+r)^n - 1)
+        monthly = remainingAfterCurrent * monthlyRate / (Math.pow(1 + monthlyRate, months) - 1);
+        var totalContrib = monthly * months;
+        var fvContributions = totalContrib; // cash put in
+        var totalInterest = goal - current - totalContrib;
+        if (totalInterest < 0) totalInterest = 0;
+      }
+    }
+
+    // Recalculate clean totals for display
+    var displayContrib = monthly * months;
+    var displayInterest = goal - current - displayContrib;
+    if (displayInterest < 0) displayInterest = 0;
+
+    // Format time
+    var years = Math.floor(months / 12);
+    var remMonths = months % 12;
+    var timeStr = '';
+    if (years > 0) timeStr += years + (years === 1 ? ' yr' : ' yrs');
+    if (remMonths > 0) timeStr += (years > 0 ? ' ' : '') + remMonths + (remMonths === 1 ? ' mo' : ' mos');
+
+    // Populate results
+    document.getElementById('monthlySavings').textContent = fmt(monthly);
+    document.getElementById('monthlySubtext').textContent = 'per month for ' + months + ' months';
+    document.getElementById('timeToGoal').textContent = timeStr;
+    document.getElementById('timeSubtext').textContent = months + ' monthly payments';
+    document.getElementById('totalContributions').textContent = fmt(displayContrib);
+    document.getElementById('interestEarned').textContent = fmt(displayInterest);
+
+    // Progress bar
+    if (current > 0) {
+      var pct = Math.min(100, (current / goal) * 100);
+      document.getElementById('progressSection').style.display = 'block';
+      document.getElementById('progressSavedLabel').textContent = fmt(current) + ' saved';
+      document.getElementById('progressGoalLabel').textContent = 'Goal: ' + fmt(goal);
+      document.getElementById('progressFill').style.width = pct.toFixed(1) + '%';
+      document.getElementById('progressPct').textContent = pct.toFixed(1) + '% funded';
+    } else {
+      document.getElementById('progressSection').style.display = 'none';
+    }
+
+    document.getElementById('results').classList.add('visible');
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Allow Enter key to trigger calculation
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') calculate();
+  });
+</script>
+</body>
+</html>
