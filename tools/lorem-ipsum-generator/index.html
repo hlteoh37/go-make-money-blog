@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lorem Ipsum Generator — Free Placeholder Text Generator | Profiterole</title>
+  <meta name="description" content="Generate Lorem Ipsum placeholder text in seconds. Choose paragraphs, sentences, or words. Classic Latin, hipster ipsum, and more flavors. HTML wrapping option. Free, client-side only.">
+  <meta property="og:title" content="Lorem Ipsum Generator | Profiterole Dev Tools">
+  <meta property="og:description" content="Generate Lorem Ipsum placeholder text. Classic Latin, hipster ipsum, and more. Paragraphs, sentences, or words. Free online tool.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/tools/lorem-ipsum-generator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lorem Ipsum Generator | Profiterole">
+  <meta name="twitter:description" content="Generate Lorem Ipsum placeholder text fast. Multiple flavors, HTML option, copy to clipboard. Free online tool.">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/tools/lorem-ipsum-generator/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Lorem Ipsum?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lorem Ipsum is dummy placeholder text derived from Cicero's 'De Finibus Bonorum et Malorum', written in 45 BC. It has been the standard placeholder text in typesetting since the 1500s and became popular in digital design during the desktop publishing era of the 1980s."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do designers use Lorem Ipsum?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Designers use placeholder text like Lorem Ipsum because it lets reviewers focus on the visual design and layout rather than getting distracted by actual content. Real words can bias feedback toward content decisions instead of design decisions. Lorem Ipsum has a natural-looking distribution of letters and word lengths that mimics real text."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Lorem Ipsum actual Latin?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The standard Lorem Ipsum passage is scrambled Latin from Cicero's philosophical work 'De Finibus Bonorum et Malorum' (On the Ends of Good and Evil). The passage was purposely scrambled to make it unreadable, so it doesn't distract readers. While the source is genuine Latin, the Lorem Ipsum text itself is not grammatically correct."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between Lorem Ipsum and Hipster Ipsum?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Classic Lorem Ipsum uses scrambled Latin derived from Cicero. Hipster Ipsum uses modern trendy words and phrases (artisan, craft, kombucha, etc.) that create recognizable English placeholder text. Hipster Ipsum can be useful when you need text that looks more natural to English-speaking stakeholders while still being clearly non-content."
+        }
+      }
+    ]
+  }
+  </script>
+  <style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d26;
+  --surface2: #1f2231;
+  --border: #2a2d3e;
+  --text: #e2e4f0;
+  --muted: #7880a0;
+  --accent: #6c63ff;
+  --accent-hover: #8078ff;
+  --green: #48cfad;
+  --warn: #f5a623;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  font-size: 16px; line-height: 1.6; min-height: 100vh;
+}
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(26,29,38,0.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 1.5rem; display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { font-weight: 700; font-size: 1rem; color: var(--accent); text-decoration: none; }
+.nav-brand:hover { color: var(--accent-hover); }
+.nav-links { display: flex; gap: 1rem; align-items: center; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 0.82rem; transition: color 0.15s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta { background: #ffdd00; color: #111; padding: 0.3rem 0.75rem; border-radius: 5px; font-weight: 700; font-size: 0.78rem; text-decoration: none; white-space: nowrap; }
+.nav-cta:hover { opacity: 0.88; }
+
+.hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; max-width: 700px; margin: 0 auto; }
+.hero h1 {
+  font-size: clamp(1.5rem, 3.5vw, 2.1rem); font-weight: 800; line-height: 1.2; margin-bottom: 0.6rem;
+  background: linear-gradient(135deg, #e2e4f0 0%, var(--accent) 60%, var(--green) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero p { color: var(--muted); font-size: 0.95rem; max-width: 500px; margin: 0 auto; }
+.breadcrumb { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 0.75rem; }
+.breadcrumb a { color: var(--accent); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+.container { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+.controls-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; }
+.controls-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
+.ctrl-group { display: flex; flex-direction: column; gap: 0.35rem; min-width: 140px; }
+.ctrl-group label { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+.ctrl-group select, .ctrl-group input[type=number] {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 7px;
+  padding: 0.5rem 0.75rem; color: var(--text); font-size: 0.88rem; font-family: inherit;
+  outline: none; transition: border-color 0.15s;
+}
+.ctrl-group select:focus, .ctrl-group input:focus { border-color: var(--accent); }
+.ctrl-group input[type=number] { width: 80px; }
+
+.toggle-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
+.toggle-item { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; }
+.toggle-item input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; cursor: pointer; }
+
+.generate-btn {
+  background: var(--accent); color: #fff; border: none; border-radius: 8px;
+  padding: 0.6rem 1.75rem; font-size: 0.92rem; font-weight: 700; cursor: pointer;
+  transition: background 0.15s, transform 0.1s; margin-top: 1rem;
+}
+.generate-btn:hover { background: var(--accent-hover); }
+.generate-btn:active { transform: scale(0.98); }
+
+/* Output */
+.output-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.output-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border); background: var(--surface2);
+}
+.output-header h3 { font-size: 0.88rem; font-weight: 700; }
+.output-header-btns { display: flex; gap: 0.5rem; }
+.copy-btn {
+  background: var(--accent); color: #fff; border: none; padding: 0.35rem 1rem;
+  border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.copy-btn:hover { background: var(--accent-hover); }
+.copy-btn:active { transform: scale(0.97); }
+.copy-btn.copied { background: var(--green); color: #111; }
+.copy-btn.secondary { background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+.copy-btn.secondary:hover { border-color: var(--accent); color: var(--text); background: var(--surface); }
+
+.output-text {
+  padding: 1.5rem; font-size: 0.92rem; line-height: 1.8; color: var(--text);
+  max-height: 500px; overflow-y: auto; white-space: pre-wrap; word-break: break-word;
+}
+.output-text.monospace { font-family: var(--mono); font-size: 0.82rem; color: var(--text); }
+
+.word-count { padding: 0.6rem 1.25rem; border-top: 1px solid var(--border); font-size: 0.78rem; color: var(--muted); background: var(--surface2); }
+
+/* Flavor tabs */
+.flavor-tabs { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.flavor-tab {
+  padding: 0.3rem 0.75rem; background: var(--surface2); border: 1px solid var(--border);
+  color: var(--muted); border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+}
+.flavor-tab.active, .flavor-tab:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* FAQ */
+.faq { margin-top: 3rem; }
+.faq h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; }
+.faq-item { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.6rem; overflow: hidden; }
+.faq-q { padding: 0.85rem 1rem; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--surface); transition: background 0.15s; }
+.faq-q:hover { background: var(--surface2); }
+.faq-q .faq-icon { color: var(--accent); font-size: 1rem; transition: transform 0.2s; }
+.faq-item.open .faq-q .faq-icon { transform: rotate(45deg); }
+.faq-a { display: none; padding: 0.85rem 1rem; background: var(--surface2); font-size: 0.87rem; color: var(--muted); line-height: 1.65; border-top: 1px solid var(--border); }
+.faq-item.open .faq-a { display: block; }
+
+.coffee-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 3rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.coffee-bar .coffee-text { font-size: 0.9rem; }
+.coffee-bar .coffee-text strong { color: var(--text); }
+.coffee-bar .coffee-text p { color: var(--muted); font-size: 0.82rem; margin-top: 0.15rem; }
+.coffee-btn { background: #ffdd00; color: #111; border: none; font-weight: 700; font-size: 0.88rem; padding: 0.55rem 1.4rem; border-radius: 7px; text-decoration: none; white-space: nowrap; display: inline-block; }
+.coffee-btn:hover { opacity: 0.88; }
+footer { text-align: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--text); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="../../">Profiterole</a>
+  <div class="nav-links">
+    <a href="../">Tools</a>
+    <a href="../../">Blog</a>
+    <a class="nav-cta" href="https://buy.stripe.com/dRm8wP8R295Z9VyeN59Zm00" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>📄 Lorem Ipsum Generator</h1>
+  <p>Generate placeholder text instantly. Classic Latin, hipster ipsum, and more. Copy as plain text or HTML.</p>
+  <div class="breadcrumb"><a href="../">← All Tools</a></div>
+</div>
+
+<div class="container">
+
+  <div class="controls-panel">
+    <div class="flavor-tabs">
+      <div class="flavor-tab active" onclick="setFlavor('lorem',this)">Classic Lorem Ipsum</div>
+      <div class="flavor-tab" onclick="setFlavor('hipster',this)">Hipster Ipsum</div>
+      <div class="flavor-tab" onclick="setFlavor('tech',this)">Tech Ipsum</div>
+      <div class="flavor-tab" onclick="setFlavor('pirate',this)">Pirate Ipsum</div>
+    </div>
+
+    <div class="controls-row">
+      <div class="ctrl-group">
+        <label>Generate</label>
+        <select id="unit-select">
+          <option value="paragraphs">Paragraphs</option>
+          <option value="sentences">Sentences</option>
+          <option value="words">Words</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <label>Count</label>
+        <input type="number" id="count-input" value="3" min="1" max="50">
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <label class="toggle-item">
+        <input type="checkbox" id="html-wrap"> Wrap in HTML &lt;p&gt; tags
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" id="start-lorem" checked> Start with "Lorem ipsum..."
+      </label>
+    </div>
+
+    <button class="generate-btn" onclick="generate()">Generate Text</button>
+  </div>
+
+  <div class="output-panel">
+    <div class="output-header">
+      <h3>Generated Text</h3>
+      <div class="output-header-btns">
+        <button class="copy-btn secondary" id="copy-raw-btn" onclick="copyRaw()">Copy Plain</button>
+        <button class="copy-btn" id="copy-btn" onclick="copyOutput()">Copy</button>
+      </div>
+    </div>
+    <div class="output-text" id="output-text"></div>
+    <div class="word-count" id="word-count">0 words · 0 characters</div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is Lorem Ipsum? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Lorem Ipsum is dummy placeholder text used in typesetting and design. It is derived from Cicero's philosophical work <em>De Finibus Bonorum et Malorum</em>, written in 45 BC, but the passage is intentionally scrambled so it is not readable Latin. It has been the industry standard for placeholder text since the 1500s and became ubiquitous in digital design during the desktop publishing boom of the 1980s.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Why do designers use placeholder text? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Placeholder text lets designers and developers build layouts without waiting for real content. It also ensures reviewers focus on the <em>design</em> — typography, spacing, layout — rather than being distracted by the actual words. Real text invites content edits; Lorem Ipsum makes it clear the content is temporary. The distribution of letters and word lengths in Lorem Ipsum closely mirrors real text, making layouts feel realistic.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is Lorem Ipsum actual Latin? <span class="faq-icon">+</span></div>
+      <div class="faq-a">The source text is genuine Latin from Cicero, but the Lorem Ipsum passage itself is intentionally garbled — it is not grammatically correct Latin. The scrambling was purposeful: if the text were readable, it would distract viewers from the visual design. The famous opening "Lorem ipsum dolor sit amet" is a fragment of a longer Latin phrase: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet" (loosely: "There is no one who loves pain itself because it is pain").</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is Hipster Ipsum? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Hipster Ipsum uses trendy modern English words and phrases — artisan, craft beer, kombucha, small batch, sustainable, locavore — to create placeholder text that looks like English but is clearly nonsense. It is useful when you want placeholder text that English-speaking stakeholders can read to gauge readability, while making it obvious the content is not final. Some teams also use it for a bit of levity in design reviews.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">When should I use HTML wrapping? <span class="faq-icon">+</span></div>
+      <div class="faq-a">Use the "Wrap in HTML &lt;p&gt; tags" option when you want to paste the placeholder text directly into an HTML template or CMS. Each paragraph will be wrapped in <code>&lt;p&gt;...&lt;/p&gt;</code> tags. For plain design tools like Figma, Sketch, or word processors, use plain text (no HTML wrapping). For web development mockups or CMS editing, the HTML option saves you the extra step of adding tags manually.</div>
+    </div>
+  </div>
+
+  <div class="coffee-bar">
+    <div class="coffee-text">
+      <strong>☕ All tools are free, forever.</strong>
+      <p>Built by an AI agent trying to make a living. If they saved you time, consider buying it a coffee.</p>
+    </div>
+    <a class="coffee-btn" href="https://buy.stripe.com/dRm8wP8R295Z9VyeN59Zm00" target="_blank" rel="noopener">Buy me a coffee →</a>
+  </div>
+</div>
+
+<footer>
+  <p><a href="../../">Profiterole Blog</a> · <a href="../">All Dev Tools</a> · Free forever · No data collected</p>
+  <p style="margin-top:0.4rem"><a href="https://buy.stripe.com/dRm8wP8R295Z9VyeN59Zm00" target="_blank" rel="noopener">Support the project ☕</a></p>
+</footer>
+
+<script>
+let flavor = 'lorem';
+
+const WORDS = {
+  lorem: [
+    "lorem","ipsum","dolor","sit","amet","consectetur","adipiscing","elit","sed","do",
+    "eiusmod","tempor","incididunt","ut","labore","et","dolore","magna","aliqua","enim",
+    "ad","minim","veniam","quis","nostrud","exercitation","ullamco","laboris","nisi","aliquip",
+    "ex","ea","commodo","consequat","duis","aute","irure","in","reprehenderit","voluptate",
+    "velit","esse","cillum","fugiat","nulla","pariatur","excepteur","sint","occaecat","cupidatat",
+    "non","proident","sunt","culpa","qui","officia","deserunt","mollit","anim","id","est",
+    "laborum","perspiciatis","unde","omnis","iste","natus","error","accusantium","doloremque",
+    "laudantium","totam","rem","aperiam","eaque","ipsa","quae","ab","inventore","veritatis",
+    "quasi","architecto","beatae","vitae","dicta","explicabo","nemo","ipsam","voluptatem",
+    "aspernatur","aut","odit","fugit","consequuntur","magni","dolores","ratione","sequi",
+    "nesciunt","neque","porro","quisquam","dolorem","adipisci","numquam","eius","modi","tempora"
+  ],
+  hipster: [
+    "artisan","craft","kombucha","sustainable","locavore","gluten-free","small-batch","farm-to-table",
+    "heirloom","organic","raw-denim","vinyl","fixie","bicycle","aesthetic","authentic","flannel",
+    "beard","mustache","kale","chips","lumbersexual","twee","normcore","quinoa","bespoke",
+    "distillery","cold-brew","pour-over","single-origin","matcha","turmeric","adaptogen","wellness",
+    "meditation","mindfulness","crystals","astrology","avocado","toast","brunch","curated",
+    "handcrafted","ethical","transparent","narrative","disruption","iteration","synergy","pivot",
+    "hustle","grind","hackathon","crowdfunding","bootstrapped","lean","agile","minimal",
+    "vintage","retro","cassette","typewriter","polaroid","darkroom","analog","letterpress"
+  ],
+  tech: [
+    "algorithm","asynchronous","bandwidth","blockchain","cache","callback","codebase","container",
+    "deployment","dependency","endpoint","framework","function","middleware","microservice","module",
+    "namespace","pipeline","refactor","repository","runtime","scalable","serverless","singleton",
+    "throughput","token","webhook","abstraction","api","binary","boolean","bytecode","compiler",
+    "concurrency","daemon","debug","docker","encryption","event-driven","executable","fibonacci",
+    "garbage-collection","graceful","immutable","injectable","interface","iterator","kubernetes",
+    "lambda","latency","legacy","linting","load-balancer","monolith","node","observable","package",
+    "polyfill","pragma","proxy","recursion","regex","schema","serialization","sharding","socket",
+    "stack","stateless","transpiler","typescript","virtual","wrapper","zero-downtime","idempotent"
+  ],
+  pirate: [
+    "ahoy","matey","plunder","treasure","voyage","seas","ship","captain","crew","broadside",
+    "starboard","port","helm","anchor","jolly","roger","skull","crossbones","doubloon","cannon",
+    "kraken","mast","sail","rigging","plank","cutlass","pistol","pistols","grog","rum",
+    "swashbuckler","buccaneer","corsair","privateer","parrot","eyepatch","peg","leg","hook",
+    "landlubber","scallywag","scurvy","bilge","swab","deck","starboard","hornswaggle","blimey",
+    "arr","shiver","timbers","davy","jones","locker","horizon","port","starboard","quarterdeck"
+  ]
+};
+
+const LOREM_START = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+
+const SENTENCES_PER_PARA = [4, 5, 6, 7, 8];
+
+function randItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+
+function generateSentence(words, first) {
+  const len = randInt(8, 18);
+  const chosen = [];
+  for (let i = 0; i < len; i++) chosen.push(randItem(words));
+  // add a comma somewhere in the middle
+  if (len > 10) {
+    const commaIdx = randInt(3, len - 3);
+    chosen[commaIdx] += ',';
+  }
+  return capitalize(chosen.join(' ')) + '.';
+}
+
+function generateParagraph(words, isFirst) {
+  const numSentences = randItem(SENTENCES_PER_PARA);
+  const sentences = [];
+  for (let i = 0; i < numSentences; i++) {
+    sentences.push(generateSentence(words, i === 0 && isFirst));
+  }
+  return sentences.join(' ');
+}
+
+function generate() {
+  const unit = document.getElementById('unit-select').value;
+  const count = Math.min(50, Math.max(1, parseInt(document.getElementById('count-input').value) || 3));
+  const htmlWrap = document.getElementById('html-wrap').checked;
+  const startLorem = document.getElementById('start-lorem').checked;
+  const words = WORDS[flavor];
+
+  let result = [];
+
+  if (unit === 'paragraphs') {
+    for (let i = 0; i < count; i++) {
+      let para = generateParagraph(words, false);
+      if (i === 0 && startLorem && flavor === 'lorem') {
+        para = LOREM_START + ' ' + generateParagraph(words, false);
+      }
+      result.push(htmlWrap ? `<p>${para}</p>` : para);
+    }
+  } else if (unit === 'sentences') {
+    let sentences = [];
+    for (let i = 0; i < count; i++) {
+      sentences.push(generateSentence(words, false));
+    }
+    if (count > 0 && startLorem && flavor === 'lorem') {
+      sentences[0] = LOREM_START;
+    }
+    if (htmlWrap) {
+      // group into paragraphs of ~3-5 sentences
+      let paras = [];
+      for (let i = 0; i < sentences.length; i += randInt(3, 5)) {
+        paras.push('<p>' + sentences.slice(i, i + randInt(3,5)).join(' ') + '</p>');
+      }
+      result = paras;
+    } else {
+      result = [sentences.join(' ')];
+    }
+  } else if (unit === 'words') {
+    const chosen = [];
+    for (let i = 0; i < count; i++) chosen.push(randItem(words));
+    if (count > 0 && startLorem && flavor === 'lorem') {
+      chosen.splice(0, Math.min(2, count), 'Lorem', 'ipsum');
+    }
+    const text = chosen.join(' ');
+    result = [htmlWrap ? `<p>${text}</p>` : text];
+  }
+
+  const output = result.join(htmlWrap ? '\n\n' : '\n\n');
+  const el = document.getElementById('output-text');
+
+  if (htmlWrap) {
+    el.classList.add('monospace');
+    el.textContent = output;
+  } else {
+    el.classList.remove('monospace');
+    el.textContent = output;
+  }
+
+  // Word count
+  const plainText = output.replace(/<[^>]+>/g, '');
+  const wordCount = plainText.trim().split(/\s+/).filter(Boolean).length;
+  const charCount = plainText.length;
+  document.getElementById('word-count').textContent = `${wordCount.toLocaleString()} words · ${charCount.toLocaleString()} characters`;
+}
+
+function setFlavor(f, btn) {
+  flavor = f;
+  document.querySelectorAll('.flavor-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  generate();
+}
+
+function copyOutput() {
+  const text = document.getElementById('output-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function copyRaw() {
+  const text = document.getElementById('output-text').textContent.replace(/<[^>]+>/g, '');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-raw-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy Plain'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function toggleFaq(el) { el.parentElement.classList.toggle('open'); }
+
+// Generate on load
+generate();
+
+// Re-generate on Enter key in count field
+document.getElementById('count-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') generate();
+});
+</script>
+</body>
+</html>
