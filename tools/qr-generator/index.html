@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free QR Code Generator — Create QR Codes Instantly | Profiterole Tools</title>
+  <meta name="description" content="Generate QR codes instantly for any URL or text. Free, no signup, 100% client-side. Download as PNG, adjust size and colors. Your data never leaves your browser.">
+  <meta name="keywords" content="QR code generator, free QR code, QR code maker, create QR code, QR code download, URL QR code">
+  <meta property="og:title" content="Free QR Code Generator — Create QR Codes Instantly | Profiterole Tools">
+  <meta property="og:description" content="Generate QR codes instantly for any URL or text. Free, no signup, 100% client-side. Download as PNG, adjust size and colors.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hlteoh37.github.io/profiterole-blog/tools/qr-generator/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Free QR Code Generator | Profiterole Tools">
+  <meta name="twitter:description" content="Generate QR codes instantly for any URL or text. Free, no signup, 100% client-side.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://hlteoh37.github.io/profiterole-blog/tools/qr-generator/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a QR code?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A QR code (Quick Response code) is a two-dimensional barcode that can store data like URLs, text, contact info, or Wi-Fi credentials. QR codes can be scanned by any smartphone camera and redirect users to the encoded destination instantly. They were invented in 1994 by Denso Wave and are now used worldwide for everything from menus to payment systems."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this QR code generator free and private?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes — completely free with no signup required. All QR codes are generated entirely in your browser using the open-source qrcode.js library. No data is sent to any server. Your URLs and text stay 100% private on your device. You can even use this tool offline after the page has loaded."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I download my QR code as an image?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "After generating your QR code, click the 'Download PNG' button below the code. The image will be saved to your device as a PNG file, ready to use in print materials, presentations, or websites. For best quality in print, use the Large (400px) size option."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a22;
+      --surface2: #20202c;
+      --border: #2a2a38;
+      --text: #e0e0f0;
+      --muted: #8888a8;
+      --accent: #7c6af5;
+      --accent-hover: #9585ff;
+      --green: #5ecfb1;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(26, 26, 34, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { font-weight: 700; font-size: 1rem; text-decoration: none; color: var(--text); }
+    .nav-brand span { color: var(--accent); }
+    .nav-back {
+      font-size: 0.85rem; color: var(--muted); text-decoration: none;
+      padding: 0.3rem 0.75rem; border: 1px solid var(--border);
+      border-radius: var(--radius); transition: color 0.15s, border-color 0.15s;
+    }
+    .nav-back:hover { color: var(--text); border-color: var(--accent); }
+
+    /* MAIN */
+    main { max-width: 680px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+    h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 2rem; }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: var(--muted); }
+
+    /* OPTIONS ROW */
+    .options-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .option-group label { margin-bottom: 0.4rem; }
+
+    .btn-group {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .btn-opt {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 0.4rem 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-opt:hover { border-color: var(--accent); color: var(--text); }
+    .btn-opt.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* COLOR PICKERS */
+    .color-row {
+      display: flex;
+      gap: 1.25rem;
+      align-items: center;
+      margin-top: 0.4rem;
+    }
+    .color-swatch {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    input[type="color"] {
+      -webkit-appearance: none;
+      width: 32px; height: 32px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+
+    /* GENERATE BUTTON */
+    .btn-generate {
+      display: block;
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.85rem;
+      background: var(--accent);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-generate:hover { background: var(--accent-hover); }
+    .btn-generate:active { transform: scale(0.98); }
+
+    /* QR OUTPUT */
+    #qr-output {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    #qr-output.visible { display: flex; }
+
+    #qr-canvas-wrap {
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      display: inline-block;
+      line-height: 0;
+    }
+
+    .qr-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-action {
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .btn-download {
+      background: var(--green);
+      color: #0f0f13;
+      border-color: var(--green);
+    }
+    .btn-download:hover { filter: brightness(1.1); }
+    .btn-copy {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-copy:hover { border-color: var(--accent); }
+
+    /* BADGE */
+    .privacy-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.3rem 0.9rem;
+    }
+    .privacy-badge::before { content: "🔒"; font-size: 0.75rem; }
+
+    /* FAQ */
+    .faq-section { margin-top: 2.5rem; }
+    .faq-section h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+    details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 0.6rem;
+      overflow: hidden;
+    }
+    summary {
+      padding: 0.9rem 1.1rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--accent); font-size: 1.2rem; transition: transform 0.2s; }
+    details[open] summary::after { transform: rotate(45deg); }
+    .faq-body { padding: 0 1.1rem 1rem; color: var(--muted); font-size: 0.92rem; line-height: 1.7; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .tip-jar {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.45rem 1rem;
+      background: #f5a623;
+      color: #0f0f13;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: filter 0.15s;
+    }
+    .tip-jar:hover { filter: brightness(1.1); text-decoration: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 480px) {
+      h1 { font-size: 1.4rem; }
+      .options-row { grid-template-columns: 1fr; }
+      .card { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="https://hlteoh37.github.io/profiterole-blog/">Profite<span>role</span></a>
+  <a class="nav-back" href="../">← All Tools</a>
+</nav>
+
+<main>
+  <h1>QR Code Generator</h1>
+  <p class="subtitle">Paste any URL or text, get a QR code instantly. Free, private, no signup.</p>
+
+  <div class="card">
+    <label for="qr-input">URL or text</label>
+    <textarea id="qr-input" placeholder="https://example.com" spellcheck="false"></textarea>
+
+    <div class="options-row">
+      <div class="option-group">
+        <label>Size</label>
+        <div class="btn-group" id="size-group">
+          <button class="btn-opt" data-size="128">Small</button>
+          <button class="btn-opt active" data-size="200">Medium</button>
+          <button class="btn-opt" data-size="400">Large</button>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label>Colors</label>
+        <div class="color-row">
+          <label class="color-swatch" title="Dark color (foreground)">
+            <input type="color" id="color-dark" value="#000000">
+            Dark
+          </label>
+          <label class="color-swatch" title="Light color (background)">
+            <input type="color" id="color-light" value="#ffffff">
+            Light
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-generate" id="btn-generate">Generate QR Code</button>
+  </div>
+
+  <div id="qr-output">
+    <div class="privacy-badge">100% client-side — your data never leaves your browser</div>
+    <div id="qr-canvas-wrap"></div>
+    <div class="qr-actions">
+      <button class="btn-action btn-download" id="btn-download">⬇ Download PNG</button>
+      <button class="btn-action btn-copy" id="btn-copy">Copy Image</button>
+    </div>
+  </div>
+
+  <section class="faq-section" aria-label="Frequently asked questions">
+    <h2>Frequently Asked Questions</h2>
+
+    <details>
+      <summary>What is a QR code?</summary>
+      <div class="faq-body">
+        A QR code (Quick Response code) is a two-dimensional barcode that stores data — like a URL, text, contact info, or Wi-Fi credentials. Any smartphone camera can scan it and jump to the encoded destination instantly. QR codes were invented in 1994 and are now used worldwide for menus, payments, product packaging, and more.
+      </div>
+    </details>
+
+    <details>
+      <summary>Is this QR code generator free and private?</summary>
+      <div class="faq-body">
+        Yes — completely free with no signup required. All QR codes are generated entirely in your browser using the open-source qrcode.js library. No data is ever sent to any server. Your URLs and text stay 100% private. You can even use this tool offline after the page has loaded.
+      </div>
+    </details>
+
+    <details>
+      <summary>How do I download my QR code as an image?</summary>
+      <div class="faq-body">
+        After generating your QR code, click the <strong>Download PNG</strong> button below the code. The image saves to your device as a PNG file — ready for print materials, presentations, or websites. For the best quality in print, choose the <strong>Large (400px)</strong> size option before generating.
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <p>Built by <a href="https://hlteoh37.github.io/profiterole-blog/">Profiterole</a> · <a href="../">All Tools</a></p>
+  <p style="margin-top:0.4rem;">Find this useful?</p>
+  <a class="tip-jar" href="https://buy.stripe.com/4gw9C01Gs4ZP8OAdQQ">☕ Buy me a coffee ($3)</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+(function () {
+  'use strict';
+
+  var selectedSize = 200;
+  var qrInstance = null;
+
+  // Size toggle
+  document.getElementById('size-group').addEventListener('click', function (e) {
+    var btn = e.target.closest('.btn-opt');
+    if (!btn) return;
+    document.querySelectorAll('#size-group .btn-opt').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    selectedSize = parseInt(btn.dataset.size, 10);
+  });
+
+  // Generate
+  document.getElementById('btn-generate').addEventListener('click', generate);
+  document.getElementById('qr-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); generate(); }
+  });
+
+  function generate() {
+    var text = document.getElementById('qr-input').value.trim();
+    if (!text) {
+      document.getElementById('qr-input').focus();
+      return;
+    }
+
+    var darkColor = document.getElementById('color-dark').value;
+    var lightColor = document.getElementById('color-light').value;
+    var wrap = document.getElementById('qr-canvas-wrap');
+
+    // Clear previous
+    wrap.innerHTML = '';
+    if (qrInstance) { qrInstance = null; }
+
+    // Update white wrapper bg to match light color
+    wrap.style.background = lightColor;
+
+    qrInstance = new QRCode(wrap, {
+      text: text,
+      width: selectedSize,
+      height: selectedSize,
+      colorDark: darkColor,
+      colorLight: lightColor,
+      correctLevel: QRCode.CorrectLevel.M
+    });
+
+    var output = document.getElementById('qr-output');
+    output.classList.add('visible');
+    output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Download PNG
+  document.getElementById('btn-download').addEventListener('click', function () {
+    var canvas = document.querySelector('#qr-canvas-wrap canvas');
+    if (!canvas) return;
+    var link = document.createElement('a');
+    link.download = 'qrcode.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  // Copy to clipboard
+  document.getElementById('btn-copy').addEventListener('click', function () {
+    var canvas = document.querySelector('#qr-canvas-wrap canvas');
+    if (!canvas) return;
+    canvas.toBlob(function (blob) {
+      if (!navigator.clipboard || !window.ClipboardItem) {
+        alert('Copy not supported in this browser. Use Download instead.');
+        return;
+      }
+      navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(function () {
+        var btn = document.getElementById('btn-copy');
+        var orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = orig; }, 1500);
+      }).catch(function () {
+        alert('Could not copy. Use Download instead.');
+      });
+    });
+  });
+
+  // Auto-generate if input has content on page load
+  var inp = document.getElementById('qr-input');
+  inp.focus();
+})();
+</script>
+
+</body>
+</html>
